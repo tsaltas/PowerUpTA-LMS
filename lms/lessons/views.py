@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView, DetailView
 
-from lessons.models import Curriculum, Lesson, Tag, Relationship
+from lessons.models import Curriculum, Lesson, Tag, LessonRelationship
 
 class LessonsIndexView(ListView):
 	model = Lesson
@@ -20,9 +20,9 @@ class LessonDetailView(DetailView):
 		# Add in a QuerySet of all the tags
 		context['tags'] = lesson.tags.all()
 		# Add in a QuerySet of all the components
-		context['components'] = Lesson.objects.filter(relationship__to_lessons=lesson)
+		context['components'] = lesson.relationships.filter(hello=1)
 		# Add in a QuerySet of all the extensions
-		context['extensions'] = Lesson.objects.filter(relationship__from_lessons=lesson)
+		#context['extensions'] = lesson.from_lessons.all()
 		# Add in a QuerySet of all the curricula
 		context['curricula'] = lesson.curricula.all()
 		return context

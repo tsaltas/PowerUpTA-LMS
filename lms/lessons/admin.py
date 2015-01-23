@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from lessons.models import Curriculum, Tag, Lesson, Relationship
+from lessons.models import Curriculum, Tag, Lesson, LessonRelationship
 
 class RelationshipInline(admin.StackedInline):
-    model = Relationship
+    model = LessonRelationship
     fk_name = 'from_lesson'
 
 class LessonAdmin(admin.ModelAdmin):

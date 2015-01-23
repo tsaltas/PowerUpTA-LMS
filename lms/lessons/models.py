@@ -36,10 +36,9 @@ class Lesson(models.Model):
 	# video = 
 	# A lesson has a recursive many-to-many relationship with itself
 	# A lesson can be broken down in to components, and can have extensions, which are themselves lessons
-	relationship = models.ManyToManyField('self',
-		through='Relationship',
-		symmetrical=False,
-		related_name='related_to')
+	relationships = models.ManyToManyField('self',
+		through='LessonRelationship',
+		symmetrical=False)
 	# A lesson has a many-to-many relationship with tags
 	tags = models.ManyToManyField(Tag)
 	# A lesson has a many-to-many relationship with curricula (defined ABOVE)
@@ -85,16 +84,21 @@ class Lesson(models.Model):
 			to_people__from_person=self
 		)
 
-# Some information for the relationship model
-COMPONENT = 1
-EXTENSION = 2
-RELATIONSHIP_STYLES = (
-	(COMPONENT, 'Component'),
-	(EXTENSION, 'Extension'),
-)
+class RelationshipType(models.Model):
+	# Some information for the relationship model
+	COMPONENT = 1
+	EXTENSION = 2
+	RELATIONSHIP_STYLES = (
+		(COMPONENT, 'Component'),
+		(EXTENSION, 'Extension'),
+	)
+	relationship_type = models.IntegerField(choices=RELATIONSHIP_STYLES)
 
 # Relationships to model many-to-many relationships that lessons have with each other
-class Relationship(models.Model):
+class LessonRelationship(models.Model):
+	style = models.ManyToManyField(RelationshipType, blank=True, related_name='lesson_relationships')
 	from_lesson = models.ForeignKey(Lesson, related_name='from_lessons')
 	to_lesson = models.ForeignKey(Lesson, related_name='to_lessons')
-	style = models.IntegerField(choices=RELATIONSHIP_STYLES)
+
+	class Meta:
+		unique_together = ('from_lesson', 'to_lesson')
