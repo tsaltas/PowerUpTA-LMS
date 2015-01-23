@@ -1,4 +1,5 @@
 from django.db import models
+
 from django.conf import settings
 
 class Curriculum(models.Model):
@@ -33,7 +34,9 @@ class Lesson(models.Model):
 	"""
 	name = models.CharField(max_length=50, unique=True)
 	description = models.TextField()
-	# video = 
+	
+	# TODO: Add videos to lessons
+
 	# A lesson has a recursive many-to-many relationship with itself
 	# A lesson can be broken down in to components, and can have extensions, which are themselves lessons
 	relationships = models.ManyToManyField('self',
