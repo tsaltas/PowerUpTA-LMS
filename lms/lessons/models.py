@@ -22,7 +22,7 @@ class Tag(models.Model):
 	Tags are strings.
 	"""
 	name = models.CharField(max_length=50, unique=True)
-	logo = models.ImageField(upload_to='tag_logos', default=settings.MEDIA_URL + 'tag_logos/default.jpg')
+	logo = models.ImageField(upload_to='tag_logos', default='tag_logos/default.jpg')
 	# A tag has a many-to-many relationship with lessons (DEFINED IN LESSON)
 	def __unicode__(self):
 		return self.name

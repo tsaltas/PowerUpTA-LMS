@@ -1,0 +1,46 @@
+<h2>{{ lesson.name }}</h2>
+<h5>{{ lesson.description }}</h5>
+
+Tags:
+{% if tags %}    
+    <ul>
+    {% for tag in tags %}
+        <li> <img src="{{ tag.logo.url }}" height="16" width="16"> {{ tag.name }} </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No tags for this lesson.</p>
+{% endif %}
+
+Component lessons:
+{% if components %}    
+    <ul>
+    {% for component in components %}
+        <li><a href="{% url 'lessons:lesson-detail' component.id %}">{{ component.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No component lessons are available.</p>
+{% endif %}
+
+Extension lessons:
+{% if extensions %}    
+    <ul>
+    {% for extension in extensions %}
+        <li><a href="{% url 'lessons:lesson-detail' extension.id %}">{{ extension.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No extension lessons are available.</p>
+{% endif %}
+
+Related curricula:
+{% if curricula %}    
+    <ul>
+    {% for curriculum in curricula %}
+        <li><a href="{% url 'lessons:curriculum-detail' curriculum.id %}">{{ curriculum.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No related curricula are available.</p>
+{% endif %}

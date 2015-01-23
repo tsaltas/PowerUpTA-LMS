@@ -1,0 +1,23 @@
+<h2>{{ curriculum.name }}</h2>
+<h5>{{ curriculum.description }}</h5>
+
+Tags:
+{% if tags %}    
+    <ul>
+    {% for tag in tags %}
+        <li> <img src="{{ tag.logo.url }}" height="16" width="16"> {{ tag.name }} </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No tags for this curriculum.</p>
+{% endif %}
+
+{% if lessons %}
+    <ul>
+    {% for lesson in lessons %}
+        <li><a href="{% url 'lessons:lesson-detail' lesson.id %}">{{ lesson.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No lessons currently available for this curriculum.</p>
+{% endif %}
