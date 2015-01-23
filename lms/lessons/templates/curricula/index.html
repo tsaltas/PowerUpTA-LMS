@@ -5,6 +5,8 @@
     {% for curriculum in curricula %}
         <li><a href="{% url 'lessons:curriculum-detail' curriculum.id %}">{{ curriculum.name }}</a></li>
     {% endfor %}
+    <br>
+    <li><a href="{% url 'lessons:add-curriculum' %}">New curriculum</a></li>
     </ul>
 {% else %}
     <p>No curricula are available.</p>

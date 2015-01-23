@@ -5,6 +5,8 @@
     {% for lesson in lessons %}
         <li><a href="{% url 'lessons:lesson-detail' lesson.id %}">{{ lesson.name }}</a></li>
     {% endfor %}
+    <br>
+    <li><a href="{% url 'lessons:add-lesson' %}">New lesson</a></li>
     </ul>
 {% else %}
     <p>No lessons are available.</p>
