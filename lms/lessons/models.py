@@ -13,7 +13,7 @@ class Curriculum(models.Model):
 	lessons = models.ManyToManyField('Lesson', related_name="curricula")
 	
 	def __unicode__(self):
-		return self.name + ": " + self.description
+		return self.name
 
 class Tag(models.Model):
 	"""
@@ -44,8 +44,10 @@ class Lesson(models.Model):
 	# A lesson has a many-to-many relationship with curricula (defined ABOVE)
 
 	def __unicode__(self):
-		return self.name + ": " + self.description
+		return self.name
 
+	# TODO: Write methods that create symmetric relationships between lessons
+	"""
 	# Add a relationship with another lesson
 	def add_relationship(self, lesson, style, symm=True):
 		relationship, created = Relationship.objects.get_or_create(
@@ -83,6 +85,7 @@ class Lesson(models.Model):
 			to_people__style = style,
 			to_people__from_person=self
 		)
+	"""
 
 class RelationshipType(models.Model):
 	# Some information for the relationship model
@@ -94,6 +97,10 @@ class RelationshipType(models.Model):
 	)
 	relationship_type = models.IntegerField(choices=RELATIONSHIP_STYLES)
 
+	def __unicode__(self):
+		# TODO: Fix this, kind of hackish right now
+		return self.RELATIONSHIP_STYLES[self.relationship_type-1][1]
+
 # Relationships to model many-to-many relationships that lessons have with each other
 class LessonRelationship(models.Model):
 	style = models.ManyToManyField(RelationshipType, blank=True, related_name='lesson_relationships')
@@ -102,3 +109,7 @@ class LessonRelationship(models.Model):
 
 	class Meta:
 		unique_together = ('from_lesson', 'to_lesson')
+
+	def __unicode__(self):
+		# TODO: Make this print the type of relationship as well
+		return "Relationship from " + self.from_lesson.name + " to " + self.to_lesson.name
