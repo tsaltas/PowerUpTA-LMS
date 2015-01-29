@@ -56,11 +56,11 @@ class Tag(models.Model):
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	logo = models.ImageField(upload_to='tag_logos')
-	category = models.CharField(choices=CATEGORIES)
+	category = models.CharField(max_length=3, choices=CATEGORIES)
 	# A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 	
 	def __unicode__(self):
-		return self.category + ": " + self.name
+		return self.name + " (" + self.get_category_display() + ")"
 
 class Material(models.Model):
 	"""
@@ -104,13 +104,13 @@ class Activity(models.Model):
 	description = models.TextField()
 	tags = models.ManyToManyField(Tag)
 	# OPTIONAL
-	category = models.CharField(choices=CATEGORIES, blank=True)
+	category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
 	teaching_notes = models.TextField(blank=True)
 	video = models.TextField(validators=[URLValidator()], blank=True) # Assuming link to YouTube
 	image = models.ImageField(upload_to='activity_images', blank=True)
 	relationships = models.ManyToManyField('self',
 		through='ActivityRelationship',
-		symmetrical=False
+		symmetrical=False,
 		blank=True
 	)
 	materials = models.ManyToManyField(Material, blank=True)
@@ -175,7 +175,7 @@ class ActivityRelationship(models.Model):
 		('EXT', 'Extension'),
 	)
 	# ALL REQUIRED
-	rel_type = models.CharField(choices=RELATIONSHIP_TYPES)
+	rel_type = models.CharField(max_length=3, choices=RELATIONSHIP_TYPES)
 	from_activity = models.ForeignKey(Activity, related_name='relationships_to')
 	to_activity = models.ForeignKey(Activity, related_name='relationships_from')
 

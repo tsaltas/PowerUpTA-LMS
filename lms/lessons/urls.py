@@ -3,13 +3,13 @@ from django.conf.urls import patterns, url
 from lessons import views
 
 urlpatterns = patterns('',
-	# ex: /lessons/
-	url(r'^$', views.LessonsIndexView.as_view(), name='lessons'),
-	# ex: /lessons/5/
+	# ex: lessons/activities/
+	url(r'^actvities$', views.ActivitiesIndexView.as_view(), name='activities'),
+	# ex: /lessons/activities/5/
 	# note: pk stands for primary key
-	url(r'^(?P<pk>\d+)/$', views.LessonDetailView.as_view(), name='lesson-detail'),
-	# ex: /lessons/new/
-	url(r'^new/$', views.add_lesson, name='add-lesson'),
+	url(r'^activities/(?P<pk>\d+)/$', views.ActivityDetailView.as_view(), name='activity-detail'),
+	# ex: /lessons/activities/new/
+	url(r'^activities/new/$', views.add_activity, name='add-activity'),
 	# ex: /lessons/curricula
 	url(r'^curricula/$', views.CurriculaIndexView.as_view(), name='curricula'),
 	# ex: /lessons/curricula/5/

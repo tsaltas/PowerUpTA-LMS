@@ -1,10 +1,10 @@
 from django.forms import ModelForm
-from lessons.models import Lesson, Curriculum, Tag
+from lessons.models import Activity, Curriculum, Tag
 
 # New lesson form
-class LessonForm(ModelForm):
+class ActivityForm(ModelForm):
 	class Meta:
-		model = Lesson
+		model = Activity
 		fields = '__all__'
 
 # New curriculum form

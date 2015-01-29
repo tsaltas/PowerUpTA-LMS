@@ -1,16 +1,17 @@
 from django.contrib import admin
 
-from lessons.models import Curriculum, Tag, Lesson, LessonRelationship, RelationshipType
+from lessons.models import Curriculum, Tag, Material, Resource, Activity, ActivityRelationship
 
 class RelationshipInline(admin.StackedInline):
-    model = LessonRelationship
-    fk_name = 'from_lesson'
+    model = ActivityRelationship
+    fk_name = 'from_activity'
 
-class LessonAdmin(admin.ModelAdmin):
+class ActivityAdmin(admin.ModelAdmin):
 	inlines = [RelationshipInline]
 
-admin.site.register(Lesson, LessonAdmin)
+admin.site.register(Activity, ActivityAdmin)
 admin.site.register(Curriculum)
 admin.site.register(Tag)
-admin.site.register(RelationshipType)
-admin.site.register(LessonRelationship)
+admin.site.register(Material)
+admin.site.register(Resource)
+admin.site.register(ActivityRelationship)
