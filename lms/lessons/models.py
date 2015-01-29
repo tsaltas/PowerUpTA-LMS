@@ -10,26 +10,26 @@ class Curriculum(models.Model):
 		# First element of tuple is the value stored in the DB
 		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
 		# Given an instance of a Curriculum object called "c", the display value can be accessed like this: c.get_grade_display()
-		('0', 'K'),
-		('1', 'First'),
-		('2', 'Second'),
-		('3', 'Third'),
-		('4', 'Fourth'),
-		('5', 'Fifth'),
-		('6', 'Sixth'),
-		('7', 'Seventh'),
-		('8', 'Eighth'),
-		('9', 'Ninth'),
-		('10', 'Tenth'),
-		('11', 'Eleventh'),
-		('12', 'Twelfth'),
+		(0, 'K'),
+		(1, 'First'),
+		(2, 'Second'),
+		(3, 'Third'),
+		(4, 'Fourth'),
+		(5, 'Fifth'),
+		(6, 'Sixth'),
+		(7, 'Seventh'),
+		(8, 'Eighth'),
+		(9, 'Ninth'),
+		(10, 'Tenth'),
+		(11, 'Eleventh'),
+		(12, 'Twelfth'),
 	)
 	# REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	description = models.TextField()
 	lower_grade = models.IntegerField(choices = GRADES)
 	upper_grade = models.IntegerField(choices = GRADES)
-	length_hours = models.IntegerField()
+	length_hours = models.IntegerField(verbose_name = "length (hours)")
 	activities = models.ManyToManyField('Activity', related_name="curriculums")
 	# OPTIONAL
 	tagline = models.CharField(max_length=100, blank=True)
@@ -113,7 +113,7 @@ class Activity(models.Model):
 	# OPTIONAL
 	category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
 	teaching_notes = models.TextField(blank=True)
-	video = models.URLField(blank=True) # Assuming link to YouTube
+	video_url = models.URLField(blank=True) # Assuming link to YouTube
 	image = models.ImageField(upload_to='activity_images', blank=True)
 	relationships = models.ManyToManyField('self',
 		through='ActivityRelationship',
@@ -128,7 +128,10 @@ class Activity(models.Model):
 		verbose_name_plural = "activities"
 
 	def __unicode__(self):
-		return self.category + ": " + self.name
+		if self.category:
+			return self.get_category_display() + ": " + self.name
+		else:
+			return self.name
 
 	# TODO: Write methods that create symmetric relationships between activities
 	"""
@@ -180,12 +183,12 @@ class ActivityRelationship(models.Model):
 	3) One activity is a short extension of another
 	"""
 	RELATIONSHIP_TYPES = (
-		('SUB', 'Sub-activity'),
-		('SUP', 'Super-activity'),
-		('EXT', 'Extension'),
+		('SUB', 'sub-activity'),
+		('SUP', 'super-activity'),
+		('EXT', 'extension'),
 	)
 	# ALL REQUIRED
-	rel_type = models.CharField(max_length=3, choices=RELATIONSHIP_TYPES)
+	rel_type = models.CharField(max_length=3, choices=RELATIONSHIP_TYPES, verbose_name="Relationship Type")
 	from_activity = models.ForeignKey(Activity, related_name='relationships_to')
 	to_activity = models.ForeignKey(Activity, related_name='relationships_from')
 
@@ -195,4 +198,4 @@ class ActivityRelationship(models.Model):
 		verbose_name_plural = "relationships"
 
 	def __unicode__(self):
-		return self.from_activity.name + " is a " + self.rel_type + " of " + self.to_activity.name
+		return self.from_activity.name + " is a " + self.get_rel_type_display() + " of " + self.to_activity.name
