@@ -161,29 +161,26 @@ class Activity(models.Model):
 		)
 	"""
 
-class RelationshipType(models.Model):
-	# Some information for the relationship model
-	COMPONENT = 1
-	EXTENSION = 2
-	RELATIONSHIP_STYLES = (
-		(COMPONENT, 'Component'),
-		(EXTENSION, 'Extension'),
-	)
-	relationship_type = models.IntegerField(choices=RELATIONSHIP_STYLES)
-
-	def __unicode__(self):
-		# TODO: Fix this, kind of hackish right now
-		return self.RELATIONSHIP_STYLES[self.relationship_type-1][1]
-
 # Relationships to model many-to-many relationships that activities have with each other
 class ActivityRelationship(models.Model):
-	style = models.ManyToManyField(RelationshipType, blank=True, related_name='activity_relationships')
-	from_activity = models.ForeignKey(Activity, related_name='from_activities')
-	to_activity = models.ForeignKey(Activity, related_name='to_activities')
+	"""
+	Activities can be related to each other (but need not be)
+	1) One activity is a sub-activity of another
+	2) One activity is a super-lesson of another (symmetrical to the one above)
+	3) One activity is a short extension of another
+	"""
+	RELATIONSHIP_TYPES = (
+		('SUB', 'Sub-activity'),
+		('SUP', 'Super-activity'),
+		('EXT', 'Extension'),
+	)
+	# ALL REQUIRED
+	rel_type = models.CharField(choices=RELATIONSHIP_TYPES)
+	from_activity = models.ForeignKey(Activity, related_name='relationships_to')
+	to_activity = models.ForeignKey(Activity, related_name='relationships_from')
 
 	class Meta:
 		unique_together = ('from_activity', 'to_activity')
 
 	def __unicode__(self):
-		# TODO: Make this print the type of relationship as well
-		return "Relationship from " + self.from_activity.name + " to " + self.to_activity.name
+		return self.from_activity.name + " is a " + self.rel_type + " of " + self.to_activity.name
