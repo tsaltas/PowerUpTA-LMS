@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Add a Tag</h1>
 
-<form class="form-inline" id="tag_form" method="post" action="/lessons/tags/new/">
+<form class="form-inline" id="tag_form" method="post" action="/lessons/tags/new/" enctype="multipart/form-data">
     {% csrf_token %}
 
     {% for field in form.visible_fields %}

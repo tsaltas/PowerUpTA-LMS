@@ -1,5 +1,5 @@
-from django.forms import ModelForm
 from django.forms.models import modelformset_factory
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
@@ -33,7 +33,7 @@ class LessonDetailView(DetailView):
 
 # Create a new lesson
 def add_lesson(request):
-	# Get the context from the request
+    # Get the context from the request
     context = RequestContext(request)
 
     # A HTTP POST?
@@ -44,13 +44,15 @@ def add_lesson(request):
         if form.is_valid():
             # Save the new lesson to the database.
             form.save(commit=True)
+            print "we're returning the lessons page"
 
             # The user will be shown the list of lessons
-            return LessonsIndexView.as_view(request)
+            return HttpResponseRedirect('/lessons/')
         else:
             # The supplied form contained errors - just print them to the terminal.
             print form.errors
     else:
+        print "it's not a post request"
         # If the request was not a POST, display the form to enter details.
         form = LessonForm()
 
@@ -114,7 +116,7 @@ def add_tag(request):
 
     # A HTTP POST?
     if request.method == 'POST':
-        form = TagForm(request.POST)
+        form = TagForm(request.POST, request.FILES)
 
         # Have we been provided with a valid form?
         if form.is_valid():
@@ -122,7 +124,7 @@ def add_tag(request):
             form.save(commit=True)
 
             # The user will be shown the list of lessons
-            return LessonsIndexView.as_view()
+            return HttpResponseRedirect('/lessons/')
         else:
             # The supplied form contained errors - just print them to the terminal.
             print form.errors

@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Add a Lesson</h1>
 
-<form class="form-inline" id="lesson_form" method="post" action="/lessons/add_lesson/">
+<form class="form-inline" id="lesson_form" method="post" action="/lessons/new/">
     {% csrf_token %}
 
     {% for field in form.visible_fields %}
