@@ -34,6 +34,9 @@ class Curriculum(models.Model):
 	# OPTIONAL
 	tagline = models.CharField(max_length=100, blank=True)
 
+	class Meta:
+		verbose_name_plural = "curricula"
+
 	def __unicode__(self):
 		return self.name + ": " + self.tagline
 
@@ -121,6 +124,9 @@ class Activity(models.Model):
 	resources = models.ManyToManyField(Resource, blank=True)
 	# An activity has a many-to-many relationship with Curriculum (defined ABOVE)
 
+	class Meta:
+		verbose_name_plural = "activities"
+
 	def __unicode__(self):
 		return self.category + ": " + self.name
 
@@ -185,6 +191,8 @@ class ActivityRelationship(models.Model):
 
 	class Meta:
 		unique_together = ('from_activity', 'to_activity')
+		verbose_name = "relationship"
+		verbose_name_plural = "relationships"
 
 	def __unicode__(self):
 		return self.from_activity.name + " is a " + self.rel_type + " of " + self.to_activity.name
