@@ -9,13 +9,6 @@ class ActivityRelationshipInline(admin.TabularInline):
 class CurriculumRelationshipInline(admin.TabularInline):
     model = CurriculumActivityRelationship
 
-@admin.register(CurriculumActivityRelationship)
-class CurriculumRelationshipAdmin(admin.ModelAdmin):
-	list_display = ('curriculum', 'activity', 'number')
-	list_editable = ('curriculum', 'activity', 'number')
-	list_filter = ('curriculum',)
-	list_display_links = None
-
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
 	inlines = [ActivityRelationshipInline, CurriculumRelationshipInline]
@@ -39,6 +32,12 @@ class ActivityAdmin(admin.ModelAdmin):
         }),
     )
 
+@admin.register(Curriculum)
+class CurriculumAdmin(admin.ModelAdmin):
+	inlines = [CurriculumRelationshipInline]
+	exclude = ('activities',)
+	list_display = ('name', 'tagline','lower_grade', 'upper_grade', 'length_hours')
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
 	fields = (('name', 'category'), 'logo')
@@ -59,14 +58,15 @@ class ResourceAdmin(admin.ModelAdmin):
 	list_editable = ('name', 'url',)
 	list_display_links = None
 
-@admin.register(Curriculum)
-class CurriculumAdmin(admin.ModelAdmin):
-	inlines = [CurriculumRelationshipInline]
-	exclude = ('activities',)
-	list_display = ('name', 'tagline','lower_grade', 'upper_grade', 'length_hours')
-
 @admin.register(ActivityRelationship)
 class ActivityRelationshipAdmin(admin.ModelAdmin):
 	fields = (('from_activity', 'to_activity'), 'rel_type')
 	list_display = ('from_activity', 'to_activity', 'rel_type')
 	list_editable = ('rel_type',)
+
+@admin.register(CurriculumActivityRelationship)
+class CurriculumRelationshipAdmin(admin.ModelAdmin):
+	list_display = ('curriculum', 'activity', 'number')
+	list_editable = ('curriculum', 'activity', 'number')
+	list_filter = ('curriculum',)
+	list_display_links = None
