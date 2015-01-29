@@ -1,32 +1,68 @@
-from django.db import models
++from django.db import models
 
 from django.conf import settings
 
 class Curriculum(models.Model):
 	"""
-	A curriculum is a set of lessons on a specific theme.
-	The lessons may relate to a single project, illustrate a single concept, or use a single technology/language.
+	A curriculum is a set of activities on a specific theme. A class follows a curriculum.
 	"""
+	GRADES = (
+		# First element of tuple is the value stored in the DB
+		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
+		# Given an instance of a Curriculum object called "c", the display value can be accessed like this: c.get_grade_display()
+		('0', 'K'),
+		('1', 'First'),
+		('2', 'Second'),
+		('3', 'Third'),
+		('4', 'Fourth'),
+		('5', 'Fifth'),
+		('6', 'Sixth'),
+		('7', 'Seventh'),
+		('8', 'Eighth'),
+		('9', 'Ninth'),
+		('10', 'Tenth'),
+		('11', 'Eleventh'),
+		('12', 'Twelfth'),
+	)
+	# REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	description = models.TextField()
 	# A curriculum has a many-to-many relationship with lessons
 	# Curriculum will inherit tags from the lessons
 	lessons = models.ManyToManyField('Lesson', related_name="curricula")
-	
+	lower_grade = models.IntegerField(choices = GRADES)
+	upper_grade = models.IntegerField(choices = GRADES)
+	length_hours = models.IntegerField()
+	# OPTIONAL
+	tagline = models.CharField(max_length=100, blank=True)
+
 	def __unicode__(self):
-		return self.name
+		return self.name + ": " + self.tagline
 
 class Tag(models.Model):
 	"""
-	Tags are used to label and categorize lessons and curricula.
-	Examples: "front-end", "recursion", "html", "30 minutes", "beginner", "project extension"
-	Tags are strings.
+	Tags are short strings used to label and categorize lessons and curricula.
+	Examples: "front-end", "recursion", "html", "30 minutes", "beginner"
+	Tags are organized into categories
 	"""
+	CATEGORIES = (
+		# First element of tuple is the value stored in the DB
+		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
+		# Given an instance of a Tag object called "t", the display value can be accessed like this: t.get_category_display()
+		('LAN', 'Language'),
+		('TEC', 'Technology'),
+		('DIF', 'Difficulty'),
+		('LEN', 'Length'),
+		('CON', 'Concept'),
+	)
+	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
-	logo = models.ImageField(upload_to='tag_logos', default='tag_logos/default.jpg')
+	logo = models.ImageField(upload_to='tag_logos')
+	category = models.CharField(choices=CATEGORIES)
 	# A tag has a many-to-many relationship with lessons (DEFINED IN LESSON)
+	
 	def __unicode__(self):
-		return self.name
+		return self.category + ": " + self.name
 
 class Lesson(models.Model):
 	"""
