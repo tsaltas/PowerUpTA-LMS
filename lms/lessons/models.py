@@ -66,7 +66,19 @@ class Tag(models.Model):
 
 class Material(models.Model):
 	"""
-	Materials are documents or items required to complete an activity.
+	Materials are documents required to complete an activity.
+	"""
+	# ALL REQUIRED
+	name = models.CharField(max_length=50, unique=True)
+	url = models.TextField(validators=[URLValidator()])
+	# A material has a many-to-many relationship with lessons (DEFINED IN LESSON)
+
+	def __unicode__(self):
+		return self.name + ": " + self.url
+
+class Resource(models.Model):
+	"""
+	Resources are documents that may be useful to complete an activity or for further reading.
 	"""
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
