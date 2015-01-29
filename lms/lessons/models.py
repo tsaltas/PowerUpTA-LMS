@@ -62,6 +62,10 @@ class Tag(models.Model):
 	def __unicode__(self):
 		return self.name + " (" + self.get_category_display() + ")"
 
+	def tag_logo(self):
+		return '<img src="{}" alt="{}" height="40" width="40">'.format(self.logo.url, self.name + " logo")
+	tag_logo.allow_tags = True
+
 class Material(models.Model):
 	"""
 	Materials are documents required to complete an activity.
