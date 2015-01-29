@@ -37,7 +37,7 @@ class Curriculum(models.Model):
 		verbose_name_plural = "curricula"
 
 	def __unicode__(self):
-		return self.name + ": " + self.tagline
+		return self.name
 
 class Tag(models.Model):
 	"""
@@ -211,7 +211,7 @@ class CurriculumActivityRelationship(models.Model):
 
 	class Meta:
 		unique_together = (('curriculum', 'activity'),('curriculum', 'number'),)
-		ordering = ['number']
+		ordering = ['curriculum', 'number']
 		verbose_name = "curriculum relationship"
 		verbose_name_plural = "curriculum relationships"
 

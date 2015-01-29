@@ -2,9 +2,6 @@ from django.contrib import admin
 
 from lessons.models import Curriculum, Tag, Material, Resource, Activity, ActivityRelationship, CurriculumActivityRelationship
 
-
-admin.site.register(CurriculumActivityRelationship)
-
 class ActivityRelationshipInline(admin.TabularInline):
     model = ActivityRelationship
     fk_name = 'from_activity'
@@ -12,10 +9,18 @@ class ActivityRelationshipInline(admin.TabularInline):
 class CurriculumRelationshipInline(admin.TabularInline):
     model = CurriculumActivityRelationship
 
+@admin.register(CurriculumActivityRelationship)
+class CurriculumRelationshipAdmin(admin.ModelAdmin):
+	list_display = ('curriculum', 'activity', 'number')
+	list_editable = ('curriculum', 'activity', 'number')
+	list_filter = ('curriculum',)
+	list_display_links = None
+
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
 	inlines = [ActivityRelationshipInline, CurriculumRelationshipInline]
 	list_display = ('name', 'category')
+	list_filter = ('category',)
 
 	fieldsets = (
         ("Required:", {
@@ -38,6 +43,7 @@ class ActivityAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
 	fields = (('name', 'category'), 'logo')
 	list_display = ('name', 'category', 'tag_logo')
+	list_filter = ('category',)
 
 @admin.register(Material)
 class MaterialAdmin(admin.ModelAdmin):
