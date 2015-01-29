@@ -14,7 +14,6 @@ class CurriculumForm(ModelForm):
 		fields = '__all__'
 
 # New tag form
-
 class TagForm(ModelForm):
 	class Meta:
 		model = Tag
