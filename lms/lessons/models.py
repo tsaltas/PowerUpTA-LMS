@@ -27,12 +27,10 @@ class Curriculum(models.Model):
 	# REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	description = models.TextField()
-	# A curriculum has a many-to-many relationship with lessons
-	# Curriculum will inherit tags from the lessons
-	lessons = models.ManyToManyField('Lesson', related_name="curricula")
 	lower_grade = models.IntegerField(choices = GRADES)
 	upper_grade = models.IntegerField(choices = GRADES)
 	length_hours = models.IntegerField()
+	activities = models.ManyToManyField('Activity', related_name="curriculums")
 	# OPTIONAL
 	tagline = models.CharField(max_length=100, blank=True)
 
@@ -41,7 +39,7 @@ class Curriculum(models.Model):
 
 class Tag(models.Model):
 	"""
-	Tags are short strings used to label and categorize lessons and curricula.
+	Tags are short strings used to label and categorize activities and curricula.
 	Examples: "front-end", "recursion", "html", "30 minutes", "beginner"
 	Tags are organized into categories
 	"""
@@ -59,7 +57,7 @@ class Tag(models.Model):
 	name = models.CharField(max_length=50, unique=True)
 	logo = models.ImageField(upload_to='tag_logos')
 	category = models.CharField(choices=CATEGORIES)
-	# A tag has a many-to-many relationship with lessons (DEFINED IN LESSON)
+	# A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 	
 	def __unicode__(self):
 		return self.category + ": " + self.name
@@ -71,7 +69,7 @@ class Material(models.Model):
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	url = models.TextField(validators=[URLValidator()])
-	# A material has a many-to-many relationship with lessons (DEFINED IN LESSON)
+	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 
 	def __unicode__(self):
 		return self.name + ": " + self.url
@@ -83,33 +81,46 @@ class Resource(models.Model):
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	url = models.TextField(validators=[URLValidator()])
-	# A material has a many-to-many relationship with lessons (DEFINED IN LESSON)
+	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 
 	def __unicode__(self):
 		return self.name + ": " + self.url
 
-class Lesson(models.Model):
+class Activity(models.Model):
 	"""
-	A lesson is a single exercise for a student.
+	An activity is a single exercise for a student.
 	"""
+	CATEGORIES = (
+		# First element of tuple is the value stored in the DB
+		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
+		# Given an instance of an Activity object called "a", the display value can be accessed like this: a.get_category_display()
+		('OFF', 'Offline'),
+		('ONL', 'Online'),
+		('DIS', 'Discussion'),
+	)
+
+	# REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	description = models.TextField()
-	
-	# TODO: Add videos to lessons
-
-	# A lesson has a recursive many-to-many relationship with itself
-	# A lesson can be broken down in to components, and can have extensions, which are themselves lessons
-	relationships = models.ManyToManyField('self',
-		through='LessonRelationship',
-		symmetrical=False)
-	# A lesson has a many-to-many relationship with tags
 	tags = models.ManyToManyField(Tag)
-	# A lesson has a many-to-many relationship with curricula (defined ABOVE)
+	# OPTIONAL
+	category = models.CharField(choices=CATEGORIES, blank=True)
+	teaching_notes = models.TextField(blank=True)
+	video = models.TextField(validators=[URLValidator()], blank=True) # Assuming link to YouTube
+	image = models.ImageField(upload_to='activity_images', blank=True)
+	relationships = models.ManyToManyField('self',
+		through='ActivityRelationship',
+		symmetrical=False
+		blank=True
+	)
+	materials = models.ManyToManyField(Material, blank=True)
+	resources = models.ManyToManyField(Resource, blank=True)
+	# An activity has a many-to-many relationship with Curriculum (defined ABOVE)
 
 	def __unicode__(self):
-		return self.name
+		return self.category + ": " + self.name
 
-	# TODO: Write methods that create symmetric relationships between lessons
+	# TODO: Write methods that create symmetric relationships between activities
 	"""
 	# Add a relationship with another lesson
 	def add_relationship(self, lesson, style, symm=True):
@@ -164,15 +175,15 @@ class RelationshipType(models.Model):
 		# TODO: Fix this, kind of hackish right now
 		return self.RELATIONSHIP_STYLES[self.relationship_type-1][1]
 
-# Relationships to model many-to-many relationships that lessons have with each other
-class LessonRelationship(models.Model):
-	style = models.ManyToManyField(RelationshipType, blank=True, related_name='lesson_relationships')
-	from_lesson = models.ForeignKey(Lesson, related_name='from_lessons')
-	to_lesson = models.ForeignKey(Lesson, related_name='to_lessons')
+# Relationships to model many-to-many relationships that activities have with each other
+class ActivityRelationship(models.Model):
+	style = models.ManyToManyField(RelationshipType, blank=True, related_name='activity_relationships')
+	from_activity = models.ForeignKey(Activity, related_name='from_activities')
+	to_activity = models.ForeignKey(Activity, related_name='to_activities')
 
 	class Meta:
-		unique_together = ('from_lesson', 'to_lesson')
+		unique_together = ('from_activity', 'to_activity')
 
 	def __unicode__(self):
 		# TODO: Make this print the type of relationship as well
-		return "Relationship from " + self.from_lesson.name + " to " + self.to_lesson.name
+		return "Relationship from " + self.from_activity.name + " to " + self.to_activity.name
