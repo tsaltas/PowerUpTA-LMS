@@ -1,6 +1,6 @@
-+from django.db import models
-
 from django.conf import settings
+from django.core.validators import URLValidator
+from django.db import models
 
 class Curriculum(models.Model):
 	"""
@@ -63,6 +63,18 @@ class Tag(models.Model):
 	
 	def __unicode__(self):
 		return self.category + ": " + self.name
+
+class Material(models.Model):
+	"""
+	Materials are documents or items required to complete an activity.
+	"""
+	# ALL REQUIRED
+	name = models.CharField(max_length=50, unique=True)
+	url = models.TextField(validators=[URLValidator()])
+	# A material has a many-to-many relationship with lessons (DEFINED IN LESSON)
+
+	def __unicode__(self):
+		return self.name + ": " + self.url
 
 class Lesson(models.Model):
 	"""
