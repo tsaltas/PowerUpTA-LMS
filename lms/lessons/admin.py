@@ -24,6 +24,12 @@ class MaterialAdmin(admin.ModelAdmin):
 	list_editable = ('name', 'url',)
 	list_display_links = None
 
+@admin.register(Resource)
+class ResourceAdmin(admin.ModelAdmin):
+	fields = (('name', 'url'),)
+	list_display = ('name', 'url',)
+	list_editable = ('name', 'url',)
+	list_display_links = None
+
 admin.site.register(Curriculum)
-admin.site.register(Resource)
 admin.site.register(ActivityRelationship)

@@ -72,7 +72,7 @@ class Material(models.Model):
 	"""
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
-	url = models.TextField(validators=[URLValidator()])
+	url = models.URLField()
 	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 
 	def __unicode__(self):
@@ -84,7 +84,7 @@ class Resource(models.Model):
 	"""
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
-	url = models.TextField(validators=[URLValidator()])
+	url = models.URLField()
 	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 
 	def __unicode__(self):
@@ -110,7 +110,7 @@ class Activity(models.Model):
 	# OPTIONAL
 	category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
 	teaching_notes = models.TextField(blank=True)
-	video = models.TextField(validators=[URLValidator()], blank=True) # Assuming link to YouTube
+	video = models.URLField(blank=True) # Assuming link to YouTube
 	image = models.ImageField(upload_to='activity_images', blank=True)
 	relationships = models.ManyToManyField('self',
 		through='ActivityRelationship',
