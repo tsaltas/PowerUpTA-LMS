@@ -1,17 +1,20 @@
 from django.contrib import admin
 
-from lessons.models import Curriculum, Tag, Material, Resource, Activity, ActivityRelationship
+from lessons.models import Curriculum, Tag, Material, Resource, Activity, ActivityRelationship, CurriculumActivityRelationship
 
-class RelationshipInline(admin.TabularInline):
+
+admin.site.register(CurriculumActivityRelationship)
+
+class ActivityRelationshipInline(admin.TabularInline):
     model = ActivityRelationship
     fk_name = 'from_activity'
 
-class ActivityCurriculumInline(admin.TabularInline):
-    model = Curriculum.activities.through
+class CurriculumRelationshipInline(admin.TabularInline):
+    model = CurriculumActivityRelationship
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-	inlines = [RelationshipInline, ActivityCurriculumInline]
+	inlines = [ActivityRelationshipInline, CurriculumRelationshipInline]
 	list_display = ('name', 'category')
 
 	fieldsets = (
@@ -52,7 +55,7 @@ class ResourceAdmin(admin.ModelAdmin):
 
 @admin.register(Curriculum)
 class CurriculumAdmin(admin.ModelAdmin):
-	inlines = [ActivityCurriculumInline]
+	inlines = [CurriculumRelationshipInline]
 	exclude = ('activities',)
 	list_display = ('name', 'tagline','lower_grade', 'upper_grade', 'length_hours')
 

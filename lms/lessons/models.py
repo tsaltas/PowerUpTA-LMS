@@ -30,7 +30,6 @@ class Curriculum(models.Model):
 	lower_grade = models.IntegerField(choices = GRADES)
 	upper_grade = models.IntegerField(choices = GRADES)
 	length_hours = models.IntegerField(verbose_name = "length (hours)")
-	activities = models.ManyToManyField('Activity', related_name="curriculums")
 	# OPTIONAL
 	tagline = models.CharField(max_length=100, blank=True)
 
@@ -194,8 +193,31 @@ class ActivityRelationship(models.Model):
 
 	class Meta:
 		unique_together = ('from_activity', 'to_activity')
-		verbose_name = "relationship"
-		verbose_name_plural = "relationships"
+		verbose_name = "activity relationship"
+		verbose_name_plural = "activity relationships"
 
 	def __unicode__(self):
 		return self.from_activity.name + " is a " + self.get_rel_type_display() + " of " + self.to_activity.name
+
+
+class CurriculumActivityRelationship(models.Model):
+	"""
+	Relationship to capture the ordering of activities within a curriculum.
+	"""
+	# ALL REQUIRED
+	curriculum = models.ForeignKey(Curriculum, related_name='activity_relationships')
+	activity = models.ForeignKey(Activity, related_name='curriculum_relationships')
+	number = models.IntegerField()
+
+	class Meta:
+		unique_together = (('curriculum', 'activity'),('curriculum', 'number'),)
+		ordering = ['number']
+		verbose_name = "curriculum relationship"
+		verbose_name_plural = "curriculum relationships"
+
+	def __unicode__(self):
+		return "\"{}\" is activity number {} of \"{}\" curriculum.".format(
+			self.activity.name,
+			self.number,
+			self.curriculum.name
+		)
