@@ -2,6 +2,59 @@ from django.conf import settings
 from django.core.validators import URLValidator
 from django.db import models
 
+class Tag(models.Model):
+	"""
+	Tags are short strings used to label and categorize activities and curricula.
+	Examples: "front-end", "recursion", "html", "30 minutes", "beginner"
+	Tags are organized into categories
+	"""
+	CATEGORIES = (
+		# First element of tuple is the value stored in the DB
+		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
+		# Given an instance of a Tag object called "t", the display value can be accessed like this: t.get_category_display()
+		('LAN', 'Language'),
+		('TEC', 'Technology'),
+		('DIF', 'Difficulty'),
+		('LEN', 'Length'),
+		('CON', 'Concept'),
+	)
+	# ALL REQUIRED
+	name = models.CharField(max_length=50, unique=True)
+	logo = models.ImageField(upload_to='tag_logos')
+	category = models.CharField(max_length=3, choices=CATEGORIES)
+	# A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
+	
+	def __unicode__(self):
+		return self.name + " (" + self.get_category_display() + ")"
+
+	def tag_logo(self):
+		return '<img src="{}" alt="{}" height="40" width="40">'.format(self.logo.url, self.name + " logo")
+	tag_logo.allow_tags = True
+
+class Material(models.Model):
+	"""
+	Materials are documents required to complete an activity.
+	"""
+	# ALL REQUIRED
+	name = models.CharField(max_length=50, unique=True)
+	url = models.URLField()
+	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
+
+	def __unicode__(self):
+		return self.name + ": " + self.url
+
+class Resource(models.Model):
+	"""
+	Resources are documents that may be useful to complete an activity or for further reading.
+	"""
+	# ALL REQUIRED
+	name = models.CharField(max_length=50, unique=True)
+	url = models.URLField()
+	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
+
+	def __unicode__(self):
+		return self.name + ": " + self.url
+
 class Activity(models.Model):
 	"""
 	An activity is a single exercise for a student.
@@ -119,59 +172,6 @@ class Curriculum(models.Model):
 
 	def __unicode__(self):
 		return self.name
-
-class Tag(models.Model):
-	"""
-	Tags are short strings used to label and categorize activities and curricula.
-	Examples: "front-end", "recursion", "html", "30 minutes", "beginner"
-	Tags are organized into categories
-	"""
-	CATEGORIES = (
-		# First element of tuple is the value stored in the DB
-		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
-		# Given an instance of a Tag object called "t", the display value can be accessed like this: t.get_category_display()
-		('LAN', 'Language'),
-		('TEC', 'Technology'),
-		('DIF', 'Difficulty'),
-		('LEN', 'Length'),
-		('CON', 'Concept'),
-	)
-	# ALL REQUIRED
-	name = models.CharField(max_length=50, unique=True)
-	logo = models.ImageField(upload_to='tag_logos')
-	category = models.CharField(max_length=3, choices=CATEGORIES)
-	# A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
-	
-	def __unicode__(self):
-		return self.name + " (" + self.get_category_display() + ")"
-
-	def tag_logo(self):
-		return '<img src="{}" alt="{}" height="40" width="40">'.format(self.logo.url, self.name + " logo")
-	tag_logo.allow_tags = True
-
-class Material(models.Model):
-	"""
-	Materials are documents required to complete an activity.
-	"""
-	# ALL REQUIRED
-	name = models.CharField(max_length=50, unique=True)
-	url = models.URLField()
-	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
-
-	def __unicode__(self):
-		return self.name + ": " + self.url
-
-class Resource(models.Model):
-	"""
-	Resources are documents that may be useful to complete an activity or for further reading.
-	"""
-	# ALL REQUIRED
-	name = models.CharField(max_length=50, unique=True)
-	url = models.URLField()
-	# A material has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
-
-	def __unicode__(self):
-		return self.name + ": " + self.url
 
 class ActivityRelationship(models.Model):
 	"""
