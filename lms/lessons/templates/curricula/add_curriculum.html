@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Add a Curriculum</h1>
 
-<form class="form-inline" id="curriculum_form" method="post" action="{% url 'lessons:add-curriculum' %}">
+<form class="form-inline" id="curriculum_form" method="post" action="/lessons/curricula/new/">
     {% csrf_token %}
 
     {% for field in form.visible_fields %}

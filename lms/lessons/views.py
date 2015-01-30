@@ -79,11 +79,11 @@ class CurriculumDetailView(DetailView):
 		# Get the current curriculum object
 		curriculum = context['curriculum']
 		# Add in a QuerySet of all the lessons
-		context['lessons'] = curriculum.lessons.all()
+		context['activities'] = [rel.activity for rel in curriculum.activity_relationships.all()]
 		# Add in a QuerySet of all the tags from associated lessons
 		context['tags'] = set()
-		for lesson in curriculum.lessons.all():
-			context['tags'] = context['tags'] | set(lesson.tags.all())
+		for activity in context['activities']:
+			context['tags'] = context['tags'] | set(activity.tags.all())
 		return context
 
 # Create a new curriculum
@@ -101,7 +101,7 @@ def add_curriculum(request):
             form.save(commit=True)
 
             # The user will be shown the list of curricula
-            return CurriculaIndexView.as_view()
+            return HttpResponseRedirect(reverse('lessons:curricula'))
         else:
             # The supplied form contained errors - just print them to the terminal.
             print form.errors

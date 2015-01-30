@@ -1,9 +1,13 @@
+{% extends 'lessons_base.html' %}
+
+{% block content %}
+
 <h3>Index of all curricula</h3>
 
 {% if curricula %}
     <ul>
     {% for curriculum in curricula %}
-        <li><a href="{% url 'lessons:curriculum-detail' curriculum.id %}">{{ curriculum.name }}</a></li>
+        <li><a href="{% url 'lessons:curriculum-detail' curriculum.id %}">{{ curriculum.name }}: {{ curriculum.tagline }} (Grades {{ curriculum.lower_grade }}-{{ curriculum.upper_grade }})</a></li>
     {% endfor %}
     <br>
     <li><a href="{% url 'lessons:add-curriculum' %}">New curriculum</a></li>
@@ -11,3 +15,5 @@
 {% else %}
     <p>No curricula are available.</p>
 {% endif %}
+
+{% endblock content %}

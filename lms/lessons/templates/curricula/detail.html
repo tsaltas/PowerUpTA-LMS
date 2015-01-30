@@ -1,3 +1,7 @@
+{% extends 'lessons_base.html' %}
+
+{% block content %}
+
 <h2>{{ curriculum.name }}</h2>
 <h5>{{ curriculum.description }}</h5>
 
@@ -5,19 +9,25 @@ Tags:
 {% if tags %}    
     <ul>
     {% for tag in tags %}
-        <li> <img src="{{ tag.logo.url }}" height="16" width="16"> {{ tag.name }} </li>
+        {% if tag.category == 'DIF' or tag.cateogry == 'LEN' %}
+            <li> {{ tag.name }} </li>
+        {% else %}
+            <li> <img src="{{ tag.logo.url }}" height="40" width="40"> {{ tag.name }} </li>
+        {% endif %}
     {% endfor %}
     </ul>
 {% else %}
     <p>No tags for this curriculum.</p>
 {% endif %}
 
-{% if lessons %}
+{% if activities %}
     <ul>
-    {% for lesson in lessons %}
-        <li><a href="{% url 'lessons:lesson-detail' lesson.id %}">{{ lesson.name }}</a></li>
+    {% for activity in activities %}
+        <li><a href="{% url 'lessons:activity-detail' activity.id %}">{{ activity.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No lessons currently available for this curriculum.</p>
+    <p>No activities currently available for this curriculum.</p>
 {% endif %}
+
+{% endblock content %}
