@@ -66,6 +66,7 @@ class Activity(models.Model):
 		('OFF', 'Offline'),
 		('ONL', 'Online'),
 		('DIS', 'Discussion'),
+		('EXT', 'Extension'),
 	)
 
 	# REQUIRED
@@ -187,8 +188,8 @@ class ActivityRelationship(models.Model):
 	)
 	# ALL REQUIRED
 	rel_type = models.CharField(max_length=3, choices=RELATIONSHIP_TYPES, verbose_name="Relationship Type")
-	from_activity = models.ForeignKey(Activity, related_name='relationships_to')
-	to_activity = models.ForeignKey(Activity, related_name='relationships_from')
+	from_activity = models.ForeignKey(Activity, related_name='relationships_from')
+	to_activity = models.ForeignKey(Activity, related_name='relationships_to')
 
 	class Meta:
 		unique_together = ('from_activity', 'to_activity')

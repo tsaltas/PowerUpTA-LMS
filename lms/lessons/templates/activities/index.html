@@ -1,13 +1,19 @@
-<h3>Index of all lessons</h3>
+{% extends 'lessons_base.html' %}
 
-{% if lessons %}
+{% block content %}
+
+<h3>Index of all activities</h3>
+
+{% if activities %}
     <ul>
-    {% for lesson in lessons %}
-        <li><a href="{% url 'lessons:lesson-detail' lesson.id %}">{{ lesson.name }}</a></li>
+    {% for activity in activities %}
+        <li><a href="{% url 'lessons:activity-detail' activity.id %}">{{ activity.name }}</a></li>
     {% endfor %}
     <br>
-    <li><a href="{% url 'lessons:add-lesson' %}">New lesson</a></li>
+    <li><a href="{% url 'lessons:add-activity' %}">New activity</a></li>
     </ul>
 {% else %}
-    <p>No lessons are available.</p>
+    <p>No activities are available.</p>
 {% endif %}
+
+{% endblock content %}

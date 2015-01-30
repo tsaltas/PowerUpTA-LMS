@@ -6,6 +6,7 @@ class ActivityForm(ModelForm):
 	class Meta:
 		model = Activity
 		fields = '__all__'
+		exclude = ['relationships']
 
 # New curriculum form
 class CurriculumForm(ModelForm):

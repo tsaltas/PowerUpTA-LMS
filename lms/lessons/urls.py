@@ -4,7 +4,7 @@ from lessons import views
 
 urlpatterns = patterns('',
 	# ex: lessons/activities/
-	url(r'^actvities$', views.ActivitiesIndexView.as_view(), name='activities'),
+	url(r'^activities/$', views.ActivitiesIndexView.as_view(), name='activities'),
 	# ex: /lessons/activities/5/
 	# note: pk stands for primary key
 	url(r'^activities/(?P<pk>\d+)/$', views.ActivityDetailView.as_view(), name='activity-detail'),

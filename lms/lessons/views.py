@@ -10,27 +10,32 @@ from lessons.models import Curriculum, Activity, Tag, ActivityRelationship
 
 class ActivitiesIndexView(ListView):
 	model = Activity
-	template_name = 'activity/index.html'
+	template_name = 'activities/index.html'
 	context_object_name = 'activities'
 
 class ActivityDetailView(DetailView):
-	model = Activity
-	template_name = 'activities/detail.html'
+    model = Activity
+    template_name = 'activities/detail.html'
 
-	def get_context_data(self, **kwargs):
-		# Call the base implementation first to get a context
-		context = super(ActivityDetailView, self).get_context_data(**kwargs)
-		# Get the current activity object
-		activity = context['activity']
-		# Add in a QuerySet of all the tags
-		context['tags'] = activity.tags.all()
-		# Add in a QuerySet of all the components
-		context['components'] = [rel.to_activity for rel in activity.from_activities.filter(style=RelationshipType.EXTENSION)]
-		# Add in a QuerySet of all the extensions
-		context['extensions'] = [rel.from_lesson for rel in lesson.to_lessons.filter(style=RelationshipType.EXTENSION)]
-		# Add in a QuerySet of all the curricula
-		context['curricula'] = lesson.curricula.all()
-		return context
+    def get_context_data(self, **kwargs):
+        context = super(ActivityDetailView, self).get_context_data(**kwargs)
+        # Get the current activity object
+        activity = context['activity']
+        # Add in a QuerySet of all the tags
+        context['tags'] = activity.tags.all()
+        # Add in a QuerySet of all the sub-activities
+        subs = activity.relationships_to.filter(rel_type='SUB')
+        context['subs'] = [rel.from_activity for rel in subs]
+        # Add in a QuerySet of all the super-activities
+        supers = activity.relationships_to.filter(rel_type='SUP')
+        context['supers'] = [rel.from_activity for rel in supers]
+        # context['components'] = [rel.to_activity for rel in activity.from_activities.filter(style=RelationshipType.EXTENSION)]
+        # Add in a QuerySet of all the extensions
+        extensions = activity.relationships_to.filter(rel_type='EXT')
+        context['extensions'] = [rel.from_activity for rel in extensions]
+        # Add in a QuerySet of all the curricula
+        context['curricula'] = [relationship.curriculum for relationship in activity.curriculum_relationships.all()]
+        return context
 
 # Create a new lesson
 def add_activity(request):
@@ -39,27 +44,25 @@ def add_activity(request):
 
     # A HTTP POST?
     if request.method == 'POST':
-        form = LessonForm(request.POST)
+        form = ActivityForm(request.POST)
 
         # Have we been provided with a valid form?
         if form.is_valid():
             # Save the new lesson to the database.
             form.save(commit=True)
-            print "we're returning the lessons page"
 
             # The user will be shown the list of lessons
-            return HttpResponseRedirect('/lessons/')
+            return HttpResponseRedirect(reverse('lessons:activities'))
         else:
             # The supplied form contained errors - just print them to the terminal.
             print form.errors
     else:
-        print "it's not a post request"
         # If the request was not a POST, display the form to enter details.
-        form = LessonForm()
+        form = ActivityForm()
 
     # Bad form (or form details), no form supplied...
     # Render the form with error messages (if any).
-    return render_to_response('lessons/add_lesson.html', {'form': form}, context)
+    return render_to_response('activities/add_activity.html', {'form': form}, context)
 
 class CurriculaIndexView(ListView):
 	model = Curriculum

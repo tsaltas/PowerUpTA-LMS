@@ -1,9 +1,9 @@
 {% extends 'lessons_base.html' %}
 
 {% block content %}
-<h1>Add a Lesson</h1>
+<h1>Add an Activity</h1>
 
-<form class="form-inline" id="lesson_form" method="post" action="/lessons/new/">
+<form class="form-inline" id="activity_form" method="post" action="/lessons/activities/new/" enctype="multipart/form-data">
     {% csrf_token %}
 
     {% for field in form.visible_fields %}
@@ -16,6 +16,6 @@
 	</fieldset>
     {% endfor %}
 
-    <input type="submit" name="submit" value="Create Lesson" />
+    <input type="submit" name="submit" value="Create Activity" />
 </form>
 {% endblock content %}
