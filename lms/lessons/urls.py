@@ -17,6 +17,8 @@ urlpatterns = patterns('',
 	url(r'^curricula/(?P<pk>\d+)/$', views.CurriculumDetailView.as_view(), name='curriculum-detail'),
 	# ex: /lessons/curricula/new/
 	url(r'^curricula/new/$', views.add_curriculum, name='add-curriculum'),
+	# ex: /lessons/tags/
+	url(r'^tags/$', views.TagsIndexView.as_view(), name='tags'),
 	# ex: /lessons/tags/new/
 	url(r'^tags/new/$', views.add_tag, name='add-tag'),
 )

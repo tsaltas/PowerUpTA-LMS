@@ -1,0 +1,18 @@
+{% extends 'lessons_base.html' %}
+
+{% block content %}
+<h3>Index of all tags</h3>
+
+{% if tags %}
+    <ul>
+    {% for tag in tags %}
+        <li>{{ tag.name }} ({{ tag.category }}): <img src="{{ tag.logo.url }}" width="40", height="40"</li>
+    {% endfor %}
+    <br>
+    <li><a href="{% url 'lessons:add-tag' %}">New tag</a></li>
+    </ul>
+{% else %}
+    <p>No tags are available.</p>
+{% endif %}
+
+{% endblock content %}

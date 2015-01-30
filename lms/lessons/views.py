@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, render_to_response, redirect
@@ -109,6 +110,12 @@ def add_curriculum(request):
     # Render the form with error messages (if any).
     return render_to_response('curricula/add_curriculum.html', {'form': form}, context)
 
+
+class TagsIndexView(ListView):
+    model = Tag
+    template_name = 'tags/index.html'
+    context_object_name = 'tags'
+
 # Create a new tag
 def add_tag(request):
 	# Get the context from the request
@@ -123,8 +130,8 @@ def add_tag(request):
             # Save the new lesson to the database.
             form.save(commit=True)
 
-            # The user will be shown the list of lessons
-            return HttpResponseRedirect('/lessons/')
+            # The user will be shown the list of tags
+            return HttpResponseRedirect(reverse('lessons:tags'))
         else:
             # The supplied form contained errors - just print them to the terminal.
             print form.errors
@@ -134,4 +141,4 @@ def add_tag(request):
 
     # Bad form (or form details), no form supplied...
     # Render the form with error messages (if any).
-    return render_to_response('add_tag.html', {'form': form}, context)
+    return render_to_response('tags/add_tag.html', {'form': form}, context)
