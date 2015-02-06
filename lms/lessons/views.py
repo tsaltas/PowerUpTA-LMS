@@ -5,9 +5,9 @@ from django.shortcuts import get_object_or_404, render, render_to_response, redi
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
 
-from lessons.models import Curriculum, Activity, Tag, Material, Resource, ActivityRelationship
+from lessons.models import Curriculum, Activity, Tag, Material, Resource
 
-from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer, ActivityRelationshipSerializer
+from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer
 
 from rest_framework import viewsets
 
@@ -45,13 +45,6 @@ class CurriculumViewSet(viewsets.ModelViewSet):
     """
     queryset = Curriculum.objects.all()
     serializer_class = CurriculumSerializer
-
-class ActivityRelationshipViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    queryset = ActivityRelationship.objects.all()
-    serializer_class = ActivityRelationshipSerializer
 
 
 """

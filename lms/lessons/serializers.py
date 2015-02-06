@@ -5,7 +5,12 @@ from lessons.models import Tag, Resource, Material, Activity, Curriculum, Activi
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'logo', 'get_category_display')
+        fields = ('id', 'name', 'logo', 'category')
+
+    def to_representation(self, instance):
+      ret = super(TagSerializer, self).to_representation(instance)
+      ret['category'] = instance.get_category_display()
+      return ret
 
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +34,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'name',
                   'description',
                   'tags',
-                  'get_category_display',
+                  'category',
                   'teaching_notes',
                   'video_url',
                   'image',
@@ -37,6 +42,11 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'materials',
                   'resources',
                  )
+    
+    def to_representation(self, instance):
+        ret = super(ActivitySerializer, self).to_representation(instance)
+        ret['category'] = instance.get_category_display()
+        return ret    
 
 class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
     activities = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:activity-detail')
@@ -45,25 +55,15 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
         model = Curriculum
         fields = ('name',
                   'description',
-                  'get_lower_grade_display',
-                  'get_upper_grade_display',
+                  'lower_grade',
+                  'upper_grade',
                   'length_hours',
                   'activities',
                   'tagline',
                  )
-
-class ActivityRelationshipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ActivityRelationship
-        fields = ('get_rel_type_display',
-                  'from_activity',
-                  'to_activity',
-                 )
-
-class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CurriculumActivityRelationship
-        fields = ('curriculum',
-                  'activity',
-                  'number',
-                 )
+    
+    def to_representation(self, instance):
+        ret = super(CurriculumSerializer, self).to_representation(instance)
+        ret['lower_grade'] = instance.get_lower_grade_display()
+        ret['upper_grade'] = instance.get_upper_grade_display()
+        return ret 
