@@ -17,7 +17,12 @@ class MaterialSerializer(serializers.ModelSerializer):
         model = Material
         fields = ('id', 'name', 'url')
 
-class ActivitySerializer(serializers.ModelSerializer):
+class ActivitySerializer(serializers.HyperlinkedModelSerializer):
+    tags = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:tag-detail')
+    relationships = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:activity-detail')
+    materials = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:material-detail')
+    resources = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:resource-detail')
+
     class Meta:
         model = Activity
         fields = ('id',
@@ -33,7 +38,9 @@ class ActivitySerializer(serializers.ModelSerializer):
                   'resources',
                  )
 
-class CurriculumSerializer(serializers.ModelSerializer):
+class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
+    activities = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:activity-detail')
+    
     class Meta:
         model = Curriculum
         fields = ('name',

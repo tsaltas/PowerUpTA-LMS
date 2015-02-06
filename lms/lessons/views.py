@@ -5,8 +5,56 @@ from django.shortcuts import get_object_or_404, render, render_to_response, redi
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
 
-from lessons.forms import ActivityForm, TagForm, CurriculumForm
-from lessons.models import Curriculum, Activity, Tag, ActivityRelationship
+from lessons.models import Curriculum, Activity, Tag, Material, Resource, ActivityRelationship
+
+from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer, ActivityRelationshipSerializer
+
+from rest_framework import viewsets
+
+class TagViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
+class MaterialViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Material.objects.all()
+    serializer_class = MaterialSerializer
+
+class ResourceViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Resource.objects.all()
+    serializer_class = ResourceSerializer
+
+class ActivityViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
+
+class CurriculumViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Curriculum.objects.all()
+    serializer_class = CurriculumSerializer
+
+class ActivityRelationshipViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = ActivityRelationship.objects.all()
+    serializer_class = ActivityRelationshipSerializer
+
+
+"""
 
 class ActivitiesIndexView(ListView):
 	model = Activity
@@ -145,3 +193,4 @@ def add_tag(request):
     # Bad form (or form details), no form supplied...
     # Render the form with error messages (if any).
     return render_to_response('tags/add_tag.html', {'form': form}, context)
+"""
