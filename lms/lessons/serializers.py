@@ -1,6 +1,6 @@
 from django.forms import widgets
 from rest_framework import serializers
-from lessons.models import Tag, Resource, Material, Activity, Curriculum
+from lessons.models import Tag, Resource, Material, Activity, Curriculum, ActivityRelationship, CurriculumActivityRelationship
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,5 +41,22 @@ class CurriculumSerializer(serializers.ModelSerializer):
                   'get_lower_grade_display',
                   'get_upper_grade_display',
                   'length_hours',
+                  'activities',
                   'tagline',
+                 )
+
+class ActivityRelationshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ActivityRelationship
+        fields = ('get_rel_type_display',
+                  'from_activity',
+                  'to_activity',
+                 )
+
+class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CurriculumActivityRelationship
+        fields = ('curriculum',
+                  'activity',
+                  'number',
                  )
