@@ -1,23 +1,10 @@
 from django.conf.urls import patterns, url
-
 from lessons import views
+from rest_framework.routers import DefaultRouter
 
-# note: pk in URL regex stands for primary key
-urlpatterns = patterns('',
-	# ex: lessons/activities/
-	url(r'^activities/$', views.ActivitiesIndexView.as_view(), name='activities'),
-	# ex: /lessons/activities/5/
-	url(r'^activities/(?P<pk>\d+)/$', views.ActivityDetailView.as_view(), name='activity-detail'),
-	# ex: /lessons/activities/new/
-	url(r'^activities/new/$', views.add_activity, name='add-activity'),
-	# ex: /lessons/curricula
-	url(r'^curricula/$', views.CurriculaIndexView.as_view(), name='curricula'),
-	# ex: /lessons/curricula/5/
-	url(r'^curricula/(?P<pk>\d+)/$', views.CurriculumDetailView.as_view(), name='curriculum-detail'),
-	# ex: /lessons/curricula/new/
-	url(r'^curricula/new/$', views.add_curriculum, name='add-curriculum'),
-	# ex: /lessons/tags/
-	url(r'^tags/$', views.TagsIndexView.as_view(), name='tags'),
-	# ex: /lessons/tags/new/
-	url(r'^tags/new/$', views.add_tag, name='add-tag'),
-)
+# API URLs determined automatically by the rest framework router
+# Include URLs for the browsable API
+urlpatterns = [
+	url(r'^', include(router.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+]
