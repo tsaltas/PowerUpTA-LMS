@@ -4,11 +4,11 @@ from rest_framework.routers import DefaultRouter
 
 # Create a router and register viewsets
 router = DefaultRouter()
-router.register(r'tags', views.TagViewSet)
-router.register(r'materials', views.MaterialViewSet)
-router.register(r'resources', views.ResourceViewSet)
-router.register(r'activities', views.ActivityViewSet)
-router.register(r'curricula', views.CurriculumViewSet)
+router.register(r'/tags', views.TagViewSet)
+router.register(r'/materials', views.MaterialViewSet)
+router.register(r'/resources', views.ResourceViewSet)
+router.register(r'/activities', views.ActivityViewSet)
+router.register(r'/curricula', views.CurriculumViewSet)
 #router.register(r'curr-act-relationships', views.CurriculumActivityViewSet)
 #router.register(r'activity-relationships', views.ActivityRelationshipViewSet)
 
