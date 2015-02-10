@@ -38,6 +38,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'teaching_notes',
                   'video_url',
                   'image',
+                  'get_curricula',
                   'relationships',
                   'materials',
                   'resources',

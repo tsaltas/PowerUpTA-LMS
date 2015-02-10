@@ -96,6 +96,9 @@ class Activity(models.Model):
 		else:
 			return self.name
 
+	def get_curricula(self):
+		return [relationship.curriculum.id for relationship in self.curriculum_relationships.all()]
+
 	# TODO: Write methods that create symmetric relationships between activities
 	"""
 	# Add a relationship with another lesson
