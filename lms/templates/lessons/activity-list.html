@@ -4,7 +4,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.css" %}">
 </head>
-<body ng-app="{% block ng_app %}lms.app.basic{% endblock %}">
+<body ng-app="{% block ng_app %}lms.app.resource{% endblock %}">
 	<h1>List of activities:</h1>
 	<div class="content" ng-controller="{% block ng_controller %}AppController{% endblock %}">
 	{% block content %}
@@ -12,14 +12,18 @@
 	    <div class="panel" ng-repeat="activity in activities">
 	        <div class="panel-heading clearfix">
 	            <h3 class="panel-name">{{ activity.name }}</h3>
+	            <author class="pull-right">{{ activity.category }}</author>
 	        </div>
-	        <p class="well">{{ activity.description }}</p>
+	        <p class="well"><em>Description: </em>{{ activity.description }}</p>
 	    </div>
 	{% endverbatim %}
 	{% endblock %}
 	</div>
 	<script src="{% static "js/angular/angular.js" %}"></script>
 	<script src="{% static "js/angular/angular-resource.js" %}"></script>
-	<script src="{% static "js/app-basic.js" %}"></script>
+
+	<script src="{% static "js/app.basic.js" %}"></script>
+	<script src="{% static "js/app.resource.js" %}"></script>
+	<script src="{% static "js/api.js" %}"></script>
 </body>
 </html>

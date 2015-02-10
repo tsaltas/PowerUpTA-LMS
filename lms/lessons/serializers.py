@@ -53,7 +53,8 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Curriculum
-        fields = ('name',
+        fields = ('id',
+                  'name',
                   'description',
                   'lower_grade',
                   'upper_grade',
