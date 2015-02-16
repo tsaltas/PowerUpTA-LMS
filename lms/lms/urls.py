@@ -30,5 +30,5 @@ urlpatterns = patterns('',
     url(r'^api', include('lessons.urls', namespace='lessons')),
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^(?P<template_name>\w+)$', SimpleStaticView.as_view(), name='example'),
-    url(r'^$', TemplateView.as_view(template_name='lessons/curriculum-list-basic.html')),
+    url(r'^$', TemplateView.as_view(template_name='lessons/curriculum-list-editor.html')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

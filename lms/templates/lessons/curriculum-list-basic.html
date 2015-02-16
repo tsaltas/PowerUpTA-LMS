@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-{% load staticfiles %}
-<html>
-<head>
-	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.css" %}">
-</head>
-<body ng-app="{% block ng_app %}lms.app.editor{% endblock %}">
-	<h1>List of curricula:</h1>
-	<div class="content" ng-controller="{% block ng_controller %}CurriculumCtrl{% endblock %}">
-	{% block content %}
+{% extends 'base.html' %}
+
+{% block ng_app %}lms.app.curricula{% endblock %}
+
+{% block content %}
+	<div ng-controller="CurriculumCtrl">
+	
 	{% verbatim %}
 	    <div class="panel" ng-repeat="curriculum in curricula">
 	        <div class="panel-heading clearfix">
@@ -17,21 +14,11 @@
 	        <p class="well"><em>Description: </em>{{ curriculum.description }}</p>
 	    </div>
 	{% endverbatim %}
-	{% endblock %}
-	</div>
-	<script src="{% static "js/angular/angular.js" %}"></script>
-	<script src="{% static "js/angular/angular-resource.js" %}"></script>
-	<script src="{% static "js/angular/angular-route.js" %}"></script>
 
-	<script src="{% static "js/app.editor.js" %}"></script>
-	<script src="{% static "js/api.js" %}"></script>
+{% endblock %}
 
-	<script>
-		// Add the CSRF token
-		var app = angular.module('lms.app.editor');
-		app.config(['$httpProvider', function($httpProvider) {
-    		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
-		}]);
-	</script>
-</body>
-</html>
+{% block js %}
+{{ block.super }}
+	{% load staticfiles%}
+	<script src="{% static "js/app.curricula.js" %}"></script>
+{% endblock %}

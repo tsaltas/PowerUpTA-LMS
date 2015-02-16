@@ -2,6 +2,10 @@
 // Allows us to avoid hard-coding aspects of the API including constructing URLs
 app = angular.module('lms.api', ['ngResource']);
 
+app.config(function($resourceProvider) {
+  $resourceProvider.defaults.stripTrailingSlashes = false;
+});
+
 app.factory('Activity', ['$resource', function($resource) {
 	return $resource('/api/activities/:id', {id:'@id'});
 }]);

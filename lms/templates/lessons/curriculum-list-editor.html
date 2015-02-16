@@ -1,0 +1,63 @@
+{% extends 'lessons/curriculum-list-basic.html' %}
+
+{% block ng_app %}lms.app.editor{% endblock %}
+
+{% block content %}
+	
+	{% verbatim %}
+	    <div ng-controller="EditorCtrl">
+	    	<h5>Create New Curriculum</h5>
+	    	<form class="form-inline">
+	    		<div class="form-group block-level">
+	    			<input type="text" class="form-control" ng-model="newCurriculum.name" placeholder="Name">
+	    		</div>
+				<div class="form-group">
+	    			<input type="text" class="form-control" ng-model="newCurriculum.tagline" placeholder="Tagline (optional)">
+	    		</div>
+	    		<div class="form-group">
+	    			<textarea class="form-control" ng-model="newCurriculum.description" placeholder="Description"></textarea>
+	    		</div>
+	    		<div class="form-group">
+	    			<select class="form-control" ng-model="newCurriculum.lower_grade"
+	    			     ng-options="grade.id as grade.value for grade in grades">
+	    				<option value=''>Lower Grade</option>
+                    </select>
+	    		</div>
+	    		<div class="form-group">
+	    			<select class="form-control" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
+	    				<option value=''>Upper Grade</option>
+                    </select>
+	    		</div>
+				<div class="form-group">
+	    			<input type="number" min="1" max="200" step="1" class="form-control" ng-model="newCurriculum.length_hours" placeholder="Length (in hours)">
+	    		</div>
+	    	    <div class="form-group">
+	    			<select class="form-control" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
+	    				<option value=''>Activities (optional)</option>
+                    </select>
+	    		</div>
+	    		<div class="form-group">
+	    			<button class="btn btn-default" ng-click="save()">Add Curriculum</button>
+	    		</div>
+	    	</form>
+	    </div>
+	{% endverbatim %}
+
+	{{ block.super }}
+
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+	{% load staticfiles%}
+	<script src="{% static "js/app.editor.js" %}"></script>
+	<script src="{% static "js/app.activities.js" %}"></script>
+
+	<script>
+		// Add the CSRF token
+		var app = angular.module('lms.app.editor');
+		app.config(['$httpProvider', function($httpProvider) {
+    		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+		}]);
+	</script>
+{% endblock %}
