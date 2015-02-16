@@ -1,4 +1,4 @@
-app = angular.module('lms.app.resource', ['lms.api']);
+app = angular.module('lms.app.editor', ['lms.api']);
 
 app.controller('ActivityCtrl', ['$scope', 'Activity', function($scope, Activity){
 	return $scope.activities = Activity.query();
