@@ -8,37 +8,53 @@
 	    <div ng-controller="EditorCtrl">
 	    	<h5>Create New Curriculum</h5>
 	    	<form class="form-inline">
-	    		<div class="form-group block-level">
+	    		<div class="form-group">
 	    			<input type="text" class="form-control" ng-model="newCurriculum.name" placeholder="Name">
 	    		</div>
+	    		<br>
+	    		<br>
 				<div class="form-group">
 	    			<input type="text" class="form-control" ng-model="newCurriculum.tagline" placeholder="Tagline (optional)">
 	    		</div>
+	    		<br>
+	    		<br>
 	    		<div class="form-group">
 	    			<textarea class="form-control" ng-model="newCurriculum.description" placeholder="Description"></textarea>
 	    		</div>
+	    		<br>
+	    		<br>
 	    		<div class="form-group">
 	    			<select class="form-control" ng-model="newCurriculum.lower_grade"
 	    			     ng-options="grade.id as grade.value for grade in grades">
 	    				<option value=''>Lower Grade</option>
                     </select>
 	    		</div>
+	    		<br>
+	    		<br>
 	    		<div class="form-group">
 	    			<select class="form-control" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
 	    				<option value=''>Upper Grade</option>
                     </select>
 	    		</div>
+	    		<br>
+	    		<br>
 				<div class="form-group">
 	    			<input type="number" min="1" max="200" step="1" class="form-control" ng-model="newCurriculum.length_hours" placeholder="Length (in hours)">
 	    		</div>
+	    		<br>
+	    		<br>
 	    	    <div class="form-group">
 	    			<select class="form-control" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
 	    				<option value=''>Activities (optional)</option>
                     </select>
 	    		</div>
+	    		<br>
+	    		<br>
 	    		<div class="form-group">
 	    			<button class="btn btn-default" ng-click="save()">Add Curriculum</button>
 	    		</div>
+	    		<br>
+	    		<p ng-repeat="(name, errs) in errors" class="alert alert-danger"><strong>{{ name }}</strong>: {{ errs.join(', ') }}</p>
 	    	</form>
 	    </div>
 	{% endverbatim %}
@@ -51,7 +67,6 @@
 {{ block.super }}
 	{% load staticfiles%}
 	<script src="{% static "js/app.editor.js" %}"></script>
-	<script src="{% static "js/app.activities.js" %}"></script>
 
 	<script>
 		// Add the CSRF token

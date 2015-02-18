@@ -1,4 +1,4 @@
-app = angular.module('lms.app.editor', ['lms.api', 'lms.app.curricula', 'lms.app.activities']);
+app = angular.module('lms.app.editor', ['lms.api', 'lms.app.curricula']);
 
 app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scope, Curriculum, Activity) {
     // TODO: Make this pull options from Django model instead of hard-coding them
@@ -43,7 +43,8 @@ app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scop
         value: "Twelfth",
     }]; 
 
-    $scope.activities = []
+    // TODO: Initialize activities to empty list and make sure HTML does not render until the data is fetched
+    // Otherwise while loading you see some empty template tags flash
     $scope.activities = Activity.query();
 
     $scope.newCurriculum = new Curriculum();
