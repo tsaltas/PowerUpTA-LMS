@@ -49,6 +49,9 @@ app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scop
 
     $scope.newCurriculum = new Curriculum();
     return $scope.save = function() {
+      // whatever activity the user selects in the input form, let's assign it as the 1st activity in the curriculum
+      $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
+
       return $scope.newCurriculum.$save().then(function(result) {
         return $scope.curricula.push(result);
       }).then(function() {
