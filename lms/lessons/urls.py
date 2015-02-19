@@ -9,7 +9,7 @@ router.register(r'/materials', views.MaterialViewSet)
 router.register(r'/resources', views.ResourceViewSet)
 router.register(r'/activities', views.ActivityViewSet)
 router.register(r'/curricula', views.CurriculumViewSet)
-#router.register(r'curr-act-relationships', views.CurriculumActivityViewSet)
+router.register(r'/curriculumactivityrelationships', views.CurriculumActivityRelationshipViewSet)
 #router.register(r'activity-relationships', views.ActivityRelationshipViewSet)
 
 # API URLs determined automatically by the rest framework router

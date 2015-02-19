@@ -23,10 +23,26 @@ class MaterialSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'url')
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
-    tags = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:tag-detail')
-    relationships = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:activity-detail')
-    materials = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:material-detail')
-    resources = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:resource-detail')
+    tags = serializers.HyperlinkedRelatedField(
+      many=True
+      , view_name='lessons:tag-detail'
+      , queryset=Tag.objects.all()
+    )
+    relationships = serializers.HyperlinkedRelatedField(
+      many=True
+      , view_name='lessons:activity-detail'
+      , queryset=ActivityRelationship.objects.all()
+    )
+    materials = serializers.HyperlinkedRelatedField(
+      many=True
+      , view_name='lessons:material-detail'
+      , queryset=Material.objects.all()
+    )
+    resources = serializers.HyperlinkedRelatedField(
+      many=True
+      , view_name='lessons:resource-detail'
+      , queryset=Resource.objects.all()
+    )
 
     class Meta:
         model = Activity
@@ -49,8 +65,22 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
         ret['category'] = instance.get_category_display()
         return ret    
 
+class CurriculumActivityRelationshipSerializer(serializers.HyperlinkedModelSerializer):
+  activity = serializers.HyperlinkedRelatedField(
+      view_name='lessons:activity-detail'
+      , queryset=Activity.objects.all()
+  )
+  curriculum = serializers.HyperlinkedRelatedField(
+      view_name='lessons:curriculum-detail'
+      , queryset=Curriculum.objects.all()
+  )
+
+  class Meta:
+    model = CurriculumActivityRelationship
+    fields = ('id', 'curriculum', 'activity', 'number')
+
 class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
-    activities = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='lessons:activity-detail')
+    activities = CurriculumActivityRelationshipSerializer(source='activity_relationships', many=True)
     
     class Meta:
         model = Curriculum

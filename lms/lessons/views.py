@@ -1,3 +1,5 @@
+import sys
+
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
@@ -5,11 +7,12 @@ from django.shortcuts import get_object_or_404, render, render_to_response, redi
 from django.template import RequestContext
 from django.views.generic import ListView, DetailView
 
-from lessons.models import Curriculum, Activity, Tag, Material, Resource
+from lessons.models import Curriculum, Activity, Tag, Material, Resource, CurriculumActivityRelationship
 
-from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer
+from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer, CurriculumActivityRelationshipSerializer
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 class TagViewSet(viewsets.ModelViewSet):
     """
@@ -46,9 +49,48 @@ class CurriculumViewSet(viewsets.ModelViewSet):
     queryset = Curriculum.objects.all()
     serializer_class = CurriculumSerializer
 
+    # TODO: Validate data before saving objects?
+    def create(self, request):
+        # first create the new curriculum
+        curriculum = Curriculum.objects.create(
+            name = request.data["name"],
+            tagline = request.data["tagline"],
+            description = request.data["description"],
+            upper_grade = request.data["upper_grade"],
+            lower_grade = request.data["lower_grade"],
+            length_hours = request.data["length_hours"]
+        )
+        # try to save curriculum
+        try :
+            curriculum.save()
+        except:
+            return Response("Error creating curriculum: " + str(sys.exc_info()[0]),
+                            status=status.HTTP_400_BAD_REQUEST)
+        # then try to create any activity-curriculum relationships
+        try:
+            for relationship in request.data["activities"]:
+                activity = get_object_or_404(Activity, pk=relationship["activity"])
+                relationship = CurriculumActivityRelationship.objects.create(
+                    curriculum = curriculum,
+                    activity = activity,
+                    number = relationship["number"]
+                )
+                relationship.save()
+             # on success, return Response object
+            return Response()
+        except:
+            return Response("Error adding curriculum-activity relationships: " + str(sys.exc_info()[0]),
+                            status=status.HTTP_400_BAD_REQUEST)
 
+class CurriculumActivityRelationshipViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = CurriculumActivityRelationship.objects.all()
+    serializer_class = CurriculumActivityRelationshipSerializer
+
+# old methods from original django model
 """
-
 class ActivitiesIndexView(ListView):
 	model = Activity
 	template_name = 'activities/index.html'
