@@ -3,3 +3,5 @@ env
 db_setup_script.sql
 local_urls.py
 local_settings.py
+media/tag_logos/*.png
+media/tag_logos/*.jpg
