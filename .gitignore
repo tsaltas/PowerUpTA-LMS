@@ -3,3 +3,7 @@ env
 db_setup_script.sql
 local_urls.py
 local_settings.py
+static/admin
+static/rest_framework
+media/tag_logos/*.png
+media/tag_logos/*.jpg
