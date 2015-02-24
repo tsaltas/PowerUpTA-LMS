@@ -1,10 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-#FOR LOCAL FILE SERVING:
-from django.conf import settings
-from django.conf.urls.static import static
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
@@ -28,7 +24,13 @@ urlpatterns = patterns('',
     # url(r'^$', 'lms.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^api', include('lessons.urls', namespace='lessons')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin', include(admin.site.urls)),
 	url(r'^(?P<template_name>\w+)$', SimpleStaticView.as_view(), name='example'),
     url(r'^$', TemplateView.as_view(template_name='lessons/curriculum-list-editor.html')),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)
+
+# Override production settings with local development settings (if necessary)
+try:
+    from local_urls import *
+except ImportError as e:
+    pass
