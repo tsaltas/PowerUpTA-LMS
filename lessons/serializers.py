@@ -95,6 +95,14 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
     
     def to_representation(self, instance):
         ret = super(CurriculumSerializer, self).to_representation(instance)
-        ret['lower_grade'] = instance.get_lower_grade_display()
-        ret['upper_grade'] = instance.get_upper_grade_display()
+        # Uncomment these to display grades as words ("sixth") instead of numbers ("6")
+        #ret['lower_grade'] = instance.get_lower_grade_display()
+        #ret['upper_grade'] = instance.get_upper_grade_display()
+
+        # Make grade 0 display as K
+        if instance.lower_grade == 0:
+          ret['lower_grade'] = "K"
+        if instance.upper_grade == 0:
+          ret['upper_grade'] = "K"
+        
         return ret 

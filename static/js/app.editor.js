@@ -7,40 +7,40 @@ app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scop
         value: "K",
     }, {
     	id: 1,
-        value: "First",
+        value: "1",
     }, {
         id: 2,
-        value: "Second",
+        value: "2",
     }, {
         id: 3,
-        value: "Third",
+        value: "3",
     },{
         id: 4,
-        value: "Fourth",
+        value: "4",
     },{
         id: 5,
-        value: "Fifth",
+        value: "5",
 	},{
         id: 6,
-        value: "Sixth",
+        value: "6",
     },{
         id: 7,
-        value: "Seventh",
+        value: "7",
     },{
         id: 8,
-        value: "Eighth",
+        value: "8",
 	},{
         id: 9,
-        value: "Ninth",
+        value: "9",
     },{
         id: 10,
-        value: "Tenth",
+        value: "10",
     },{
         id: 11,
-        value: "Eleventh",
+        value: "11",
     },{
         id: 12,
-        value: "Twelfth",
+        value: "12",
     }]; 
 
     // TODO: Initialize activities to empty list and make sure HTML does not render until the data is fetched
