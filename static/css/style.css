@@ -1,0 +1,55 @@
+.curr-list {
+	background-color: #fff;
+}
+
+body {
+	background-color: #eeeeee;
+}
+
+hr {
+	padding-left: -15px;
+	padding-right: -15px;
+}
+
+.row {
+	padding-top: 10px;
+}
+
+.col-sm-1 {
+	padding: 0px;
+}
+
+.col-xs-1 {
+	padding: 0px;
+}
+
+.fa-md {
+	font-size: 2.0rem;
+	color: #bbbbbb;
+}
+
+.fa-lg {
+	font-size: 3.0rem;
+	color: #0099cc;
+}
+
+.col-sm-3 {
+}
+
+.no-pad {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
+.no-margin {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.col-center {
+	text-align: center;
+}
+
+.icon-pad-top {
+	padding-top: 10px;
+}
