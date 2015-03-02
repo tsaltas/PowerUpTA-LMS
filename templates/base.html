@@ -4,14 +4,11 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.css" %}">
 	<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
-	<link rel="stylesheet" type="text/css" href="{% static "css/font-awesome.css" %}">
+	<link rel="stylesheet" href="{% static "css/font-awesome.css" %}">
 </head>
 <body ng-app="{% block ng_app %}{% endblock %}">
-	<div class="container">
-			{% block content %}		
-			{% endblock %}
-		</div>
-	</div>
+	{% block content %}		
+	{% endblock %}
 
 	{% block js %}
 	<script src="{% static "js/angular/angular.js" %}"></script>
