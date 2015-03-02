@@ -24,12 +24,12 @@ hr {
 }
 
 .fa-md {
-	font-size: 2.0rem;
+	font-size: 2.0rem !important;
 	color: #bbbbbb;
 }
 
 .fa-lg {
-	font-size: 3.0rem;
+	font-size: 3.0rem !important;
 	color: #0099cc;
 }
 
