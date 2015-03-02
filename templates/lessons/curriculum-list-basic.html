@@ -6,13 +6,35 @@
 	<div ng-controller="CurriculumCtrl">
 	
 	{% verbatim %}
-	    <div class="panel" ng-repeat="curriculum in curricula">
-	        <div class="panel-heading clearfix">
-	            <h3 class="panel-name">{{ curriculum.name }}</h3>
-	            <author class="pull-right">{{ curriculum.tagline }}</author>
-	        </div>
-	        <p class="well"><em>Description: </em>{{ curriculum.description }}</p>
-	    </div>
+
+	<div class="container">
+		<h1>Curriculum list</h1>
+	</div>
+
+	<div class="container curr-list">
+		<div class="" ng-repeat="curriculum in curricula">
+			<div class="row">
+				<div class="col-xs-1 col-center icon-pad-top">
+					<i class="fa fa-globe fa-lg"></i>
+				</div>
+				<div class="col-sm-3">
+					<h5 class="">{{curriculum.name}}</h5>
+				</div>
+				<div class="col-sm-8">
+					<span class="pull-right icon-pad-top">
+						<i class="fa fa-pencil fa-md"></i>
+						<i class="fa fa-file-text-o fa-md"></i>
+					</span>
+					<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
+					<p class="">{{curriculum.description}}</p>
+				</div>
+			</div>
+			<div class="row no-pad">
+				<hr class="no-margin">
+			</div>	
+		</div>
+	</div>
+
 	{% endverbatim %}
 
 {% endblock %}
