@@ -167,7 +167,6 @@ class Curriculum(models.Model):
 	description = models.TextField()
 	lower_grade = models.IntegerField(choices = GRADES)
 	upper_grade = models.IntegerField(choices = GRADES)
-	length_hours = models.IntegerField(verbose_name = "length (hours)")
 	# OPTIONAL
 	tagline = models.CharField(max_length=100, blank=True)
 	activities = models.ManyToManyField(Activity, through="CurriculumActivityRelationship", blank=True)

@@ -89,7 +89,6 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
                   'description',
                   'lower_grade',
                   'upper_grade',
-                  'length_hours',
                   'activities',
                   'tagline',
                  )
