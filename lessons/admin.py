@@ -36,7 +36,7 @@ class ActivityAdmin(admin.ModelAdmin):
 class CurriculumAdmin(admin.ModelAdmin):
 	inlines = [CurriculumRelationshipInline]
 	exclude = ('activities',)
-	list_display = ('name', 'tagline','lower_grade', 'upper_grade', 'length_hours')
+	list_display = ('name', 'tagline','lower_grade', 'upper_grade')
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
