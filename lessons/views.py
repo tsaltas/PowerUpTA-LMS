@@ -57,8 +57,7 @@ class CurriculumViewSet(viewsets.ModelViewSet):
             tagline = request.data["tagline"],
             description = request.data["description"],
             upper_grade = request.data["upper_grade"],
-            lower_grade = request.data["lower_grade"],
-            length_hours = request.data["length_hours"]
+            lower_grade = request.data["lower_grade"]
         )
         # try to save curriculum
         try :
@@ -66,21 +65,23 @@ class CurriculumViewSet(viewsets.ModelViewSet):
         except:
             return Response("Error creating curriculum: " + str(sys.exc_info()[0]),
                             status=status.HTTP_400_BAD_REQUEST)
-        # then try to create any activity-curriculum relationships
-        try:
-            for relationship in request.data["activities"]:
-                activity = get_object_or_404(Activity, pk=relationship["activity"])
-                relationship = CurriculumActivityRelationship.objects.create(
-                    curriculum = curriculum,
-                    activity = activity,
-                    number = relationship["number"]
-                )
-                relationship.save()
-             # on success, return Response object
-            return Response()
-        except:
-            return Response("Error adding curriculum-activity relationships: " + str(sys.exc_info()[0]),
-                            status=status.HTTP_400_BAD_REQUEST)
+
+        # if user specified an activity, then try to create any activity-curriculum relationships
+        if "activities" in request.data:
+            try:
+                for relationship in request.data["activities"]:
+                    activity = get_object_or_404(Activity, pk=relationship["activity"])
+                    relationship = CurriculumActivityRelationship.objects.create(
+                        curriculum = curriculum,
+                        activity = activity,
+                        number = relationship["number"]
+                    )
+                    relationship.save()
+            except:
+                return Response("Error adding curriculum-activity relationships: " + str(sys.exc_info()[0]),
+                                status=status.HTTP_400_BAD_REQUEST)
+        # on success, return Response object
+        return Response()
 
 class CurriculumActivityRelationshipViewSet(viewsets.ModelViewSet):
     """

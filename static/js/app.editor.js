@@ -49,18 +49,19 @@ app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scop
 
     $scope.newCurriculum = new Curriculum();
     return $scope.save = function() {
-      // whatever activity the user selects in the input form, let's assign it as the 1st activity in the curriculum
-      $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
+        // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
+        if ($scope.newCurriculum.activities) {
+            $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
+        }
 
-      return $scope.newCurriculum.$save().then(function(result) {
-        return $scope.curricula.push(result);
-      }).then(function() {
-        return $scope.newCurriculum = new Curriculum();
-      }).then(function() {
-        return $scope.errors = null;
-      }, function(rejection) {
-        return $scope.errors = rejection.data;
-      });
+        return $scope.newCurriculum.$save().then(function(result) {
+            return $scope.curricula.push(result);
+        }).then(function() {
+            return $scope.newCurriculum = new Curriculum();
+        }).then(function() {
+            return $scope.errors = null;
+        }, function(rejection) {
+            return $scope.errors = rejection.data;
+        });
     };
-  }
-]);
+}]);
