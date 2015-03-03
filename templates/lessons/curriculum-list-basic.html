@@ -3,7 +3,6 @@
 {% block ng_app %}lms.app.curricula{% endblock %}
 
 {% block content %}
-	<div ng-controller="CurriculumCtrl">
 	
 	{% verbatim %}
 
@@ -11,7 +10,7 @@
 		<h1>Curriculum list</h1>
 	</div>
 
-	<div class="container curr-list">
+	<div class="container curr-list" ng-controller="CurriculumCtrl">
 		<div class="" ng-repeat="curriculum in curricula">
 			<div class="row">
 				<div class="col-xs-1 col-center icon-pad-top">
@@ -35,12 +34,63 @@
 		</div>
 	</div>
 	
-	<div class="container">
-		<span class="pull-right icon-pad-top">
-			<a href= 
-				<i class="fa fa-plus-circle fa-lg"></i>
-			</a>
-		</span>
+	<div class="container no-pad" class="stposition">
+		<div ng-controller="CurriculumCtrl">
+			<script type="text/ng-template" id="myModalContent.html">
+				<div class="modal-header">
+					<h3 class="modal-title">Create New Curriculum</h3>
+				</div>
+				<div class="modal-body">
+	    	<form class="form-inline">
+	    		<div class="form-group">
+	    			<input type="text" class="form-control" ng-model="newCurriculum.name" placeholder="Name">
+	    		</div>
+	    		<br>
+	    		<br>
+					<div class="form-group">
+	    			<input type="text" class="form-control" ng-model="newCurriculum.tagline" placeholder="Tagline (optional)">
+	    		</div>
+	    		<br>
+	    		<br>
+	    		<div class="form-group">
+	    			<textarea class="form-control" ng-model="newCurriculum.description" placeholder="Description"></textarea>
+	    		</div>
+	    		<br>
+	    		<br>
+	    		<div class="form-group">
+	    			<select class="form-control" ng-model="newCurriculum.lower_grade"
+	    			     ng-options="grade.id as grade.value for grade in grades">
+	    				<option value=''>Lower Grade</option>
+                    </select>
+	    		</div>
+	    		<br>
+	    		<br>
+	    		<div class="form-group">
+	    			<select class="form-control" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
+	    				<option value=''>Upper Grade</option>
+                    </select>
+	    		</div>
+	    		<br>
+	    		<br>
+	    	  <div class="form-group">
+	    			<select class="form-control" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
+	    				<option value=''>Add Activity (Optional)</option>
+                    </select>
+	    		</div>
+	    		<br>
+	    		<br>
+					<div class="form-group">
+	    			<button class="btn btn-primary" ng-click="save()">Add Curriculum</button>
+	    			<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+	    		</div>
+	    		<br>
+	    		<p ng-repeat="(name, errs) in errors" class="alert alert-danger"><strong>{{ name }}</strong>: {{ errs.join(', ') }}</p>
+	    	</form>
+			</script>
+			<span class="pull-right icon-pad-top">
+				<i class="btn fa fa-plus-circle fa-lg" ng-click="open()"></i>
+			</span>
+		</div>
 	</div>
 
 	{% endverbatim %}
@@ -51,4 +101,13 @@
 {{ block.super }}
 	{% load staticfiles%}
 	<script src="{% static "js/app.curricula.js" %}"></script>
+	<script src="{% static "js/app.editor.js" %}"></script>
+
+		<script>
+		// Add the CSRF token
+		var app = angular.module('lms.app.curricula');
+		app.config(['$httpProvider', function($httpProvider) {
+    		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+		}]);
+	</script>
 {% endblock %}

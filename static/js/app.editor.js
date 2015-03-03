@@ -1,61 +1,64 @@
-app = angular.module('lms.app.editor', ['lms.api', 'lms.app.curricula']);
+app = angular.module('lms.app.editor', ['lms.api', 'ui.bootstrap']);
 
-app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scope, Curriculum, Activity) {
-    // TODO: Make this pull options from Django model instead of hard-coding them
+app.controller('NewCurrCtrl', ['$scope', '$modal', '$log', 'Activity', function ($scope, $modal, $log, Activity) {
+
+    // list of possible grades for new curriculum form
     $scope.grades = [{
         id: 0,
-        value: "K",
-    }, {
-    	id: 1,
-        value: "1",
-    }, {
-        id: 2,
-        value: "2",
-    }, {
-        id: 3,
-        value: "3",
-    },{
-        id: 4,
-        value: "4",
-    },{
-        id: 5,
-        value: "5",
-	},{
-        id: 6,
-        value: "6",
-    },{
-        id: 7,
-        value: "7",
-    },{
-        id: 8,
-        value: "8",
-	},{
-        id: 9,
-        value: "9",
-    },{
-        id: 10,
-        value: "10",
-    },{
-        id: 11,
-        value: "11",
-    },{
-        id: 12,
-        value: "12",
-    }]; 
+        value: "K"
+    }];
+    for (i = 1; i <= 12; i++) { 
+        newGrade = {
+            id: i,
+            value: i.toString()
+        };
+        $scope.grades.push(newGrade);
+    };
 
-    // TODO: Initialize activities to empty list and make sure HTML does not render until the data is fetched
-    // Otherwise while loading you see some empty template tags flash
+    // list of activities for new curriculum form
+    $scope.activities = [];
     $scope.activities = Activity.query();
 
+    $scope.open = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'myModalContent.html',
+            controller: 'NewCurrModalCtrl',
+            size: size,
+            resolve: {
+                activities: function () {
+                    return $scope.activities;
+                },
+                grades: function () {
+                    return $scope.grades;
+                },
+                curricula: function () {
+                    return $scope.curricula;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (curricula) {
+            $scope.curricula = curricula;
+        });
+    };
+}]);
+
+app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'activities', 'grades', 'curricula', function ($scope, $modalInstance, Curriculum, activities, grades, curricula) {
+    
+    $scope.activities = activities;
+    $scope.grades = grades;
+    $scope.curricula = curricula;
+    
     $scope.newCurriculum = new Curriculum();
-    return $scope.save = function() {
+
+    $scope.save = function() {
         // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
         if ($scope.newCurriculum.activities) {
             $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
-        }
+        };
 
         return $scope.newCurriculum.$save().then(function(result) {
-            return $scope.curricula.push(result);
+            $modalInstance.close($scope.curricula.push(result));
         }).then(function() {
             return $scope.newCurriculum = new Curriculum();
         }).then(function() {
@@ -63,5 +66,9 @@ app.controller('EditorCtrl', ['$scope', 'Curriculum', 'Activity', function($scop
         }, function(rejection) {
             return $scope.errors = rejection.data;
         });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
     };
 }]);

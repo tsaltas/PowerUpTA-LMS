@@ -39,6 +39,8 @@ hr {
 .no-pad {
 	padding-top: 0px;
 	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .no-margin {
@@ -53,3 +55,7 @@ hr {
 .icon-pad-top {
 	padding-top: 10px;
 }
+
+
+/* Styling for AngularUI Bootstrap */
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
