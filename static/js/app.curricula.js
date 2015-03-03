@@ -40,9 +40,9 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
             }
         });
 
+        // add newly created curriculum to list on the page (without refresh)
         modalInstance.result.then(function (newCurriculum) {
             $scope.curricula.push(newCurriculum);
-            console.log($scope.curricula);
         });
     };
 }]);

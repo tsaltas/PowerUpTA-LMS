@@ -6,11 +6,13 @@
 	
 	{% verbatim %}
 
+<div ng-controller="CurriculumCtrl">
+	
 	<div class="container">
 		<h1>Curriculum list</h1>
 	</div>
 
-	<div class="container curr-list" ng-controller="CurriculumCtrl">
+	<div class="container curr-list">
 		<div class="" ng-repeat="curriculum in curricula">
 			<div class="row">
 				<div class="col-xs-1 col-center icon-pad-top">
@@ -35,7 +37,6 @@
 	</div>
 	
 	<div class="container no-pad" class="stposition">
-		<div ng-controller="CurriculumCtrl">
 			<script type="text/ng-template" id="myModalContent.html">
 				<div class="modal-header">
 					<h3 class="modal-title">Create New Curriculum</h3>
@@ -91,7 +92,8 @@
 				<i class="btn fa fa-plus-circle fa-lg" ng-click="open()"></i>
 			</span>
 		</div>
-	</div>
+
+</div>
 
 	{% endverbatim %}
 
