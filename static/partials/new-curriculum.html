@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+
+<body>
+	<div class="no-pad fixed">
+		<div class="modal-header">
+			<h3 class="modal-title">
+				Create New Curriculum
+				<button class="btn btn-warning pull-right" ng-click="cancel()">Cancel</button>
+			</h3>
+
+		</div>
+		<div class="modal-body">
+			<form class="form-inline">
+				<div class="form-group">
+					<label class="sr-only" for="newCurriculumName">Name</label>
+					<input type="text" class="form-control" id="newCurriculumName" ng-model="newCurriculum.name" placeholder="Name">
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newCurriculumTagline">Tagline</label>
+					<input type="text" class="form-control" id="newCurriculumTagline" ng-model="newCurriculum.tagline" placeholder="Tagline (Optional)">
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newCurriculumDesc">Description</label>
+					<textarea class="form-control" id="newCurriculumDesc" ng-model="newCurriculum.description" placeholder="Description"></textarea>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newCurriculumLowerGrade">Lower Grade</label>
+					<select class="form-control" id="newCurriculumLowerGrade" ng-model="newCurriculum.lower_grade" ng-options="grade.id as grade.value for grade in grades">
+						<option value=''>Lower Grade</option>
+					</select>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newCurriculumUpperGrade">Upper Grade</label>
+					<select class="form-control" id="newCurriculumUpperGrade" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
+						<option value=''>Upper Grade</option>
+					</select>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newCurriculumActivities">Activities</label>
+					<select class="form-control" id="newCurriculumActivities" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
+						<option value=''>Add Activity (Optional)</option>
+					</select>
+				</div>
+				<br>
+				<br>
+				<button class="btn btn-primary pull-right" ng-click="save()">Add Curriculum</button>
+				<br>
+				<br>
+				<p ng-repeat="(name, errs) in errors" class="alert alert-danger"><strong>{{ name }}</strong>: {{ errs.join(', ') }}</p>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>
