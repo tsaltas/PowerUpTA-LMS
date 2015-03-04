@@ -1,7 +1,13 @@
-	
-	{% verbatim %}
-	<div class="container no-pad" class="stposition">
-		<script type="text/ng-template" id="myModalContent.html">
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+
+<body>
+<div class="container no-pad" class="stposition">
 			<div class="modal-header">
 				<h3 class="modal-title">Create New Curriculum</h3>
 			</div>
@@ -52,11 +58,7 @@
 				<p ng-repeat="(name, errs) in errors" class="alert alert-danger"><strong>{{ name }}</strong>: {{ errs.join(', ') }}</p>
 			</form>
 		</script>
-		<span class="pull-right icon-pad-top">
-			<i class="btn fa fa-plus-circle fa-lg" ng-click="open()"></i>
-		</span>
 	</div>
-	{% endverbatim %}
 
 	<script>
 		// Add the CSRF token
@@ -65,3 +67,6 @@
     		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
 		}]);
 	</script>
+	</body>
+	
+</html>

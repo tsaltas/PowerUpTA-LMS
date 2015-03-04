@@ -27,7 +27,7 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
 
     $scope.open = function (size) {
         var modalInstance = $modal.open({
-            templateUrl: 'myModalContent.html',
+            templateUrl: 'static/partials/curriculum-list-new.html',
             controller: 'NewCurrModalCtrl',
             size: size,
             resolve: {
