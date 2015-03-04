@@ -33,6 +33,14 @@ hr {
 	color: #0099cc;
 }
 
+.modal-dialog {
+	position:fixed;
+	bottom:0%;
+	margin-bottom:0px;
+	right:0%;
+	margin-right:0px;
+}
+
 .col-sm-3 {
 }
 
