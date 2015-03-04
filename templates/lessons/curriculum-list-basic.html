@@ -41,7 +41,7 @@
 			<i class="btn fa fa-plus-circle fa-lg" ng-click="open()"></i>
 		</span>
 	</div>
-
+	
 </div>
 
 {% endverbatim %}
@@ -53,11 +53,11 @@
 	{% load staticfiles%}
 	<script src="{% static "js/app.curricula.js" %}"></script>
 
-		<script>
-		// Add the CSRF token
-		var app = angular.module('lms.app.curricula');
-		app.config(['$httpProvider', function($httpProvider) {
-    		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
-		}]);
+	<script>
+	// Add the CSRF token
+	var app = angular.module('lms.app.curricula');
+	app.config(['$httpProvider', function($httpProvider) {
+  		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+	}]);
 	</script>
 {% endblock %}
