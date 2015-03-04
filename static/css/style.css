@@ -39,21 +39,24 @@ hr {
 	margin-bottom:10px;
 	right:0%;
 	margin-right:10px;
+	max-height: 95%;
+	max-width: 95%;
+	overflow: auto;
 }
 
 .col-sm-3 {
 }
 
 .no-pad {
-	padding-top: 0px;
-	padding-bottom: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
+	padding: 0px;
+}
+
+.no-border {
+	border: 0px;
 }
 
 .no-margin {
-	margin-top: 0px;
-	margin-bottom: 0px;
+	margin: 0px;
 }
 
 .col-center {
@@ -64,6 +67,9 @@ hr {
 	padding-top: 10px;
 }
 
+#newCurriculumName, #newCurriculumDesc, #newCurriculumTagline, #newCurriculumLowerGrade, #newCurriculumUpperGrade, #newCurriculumActivities {
+	width: 570px;
+}
 
 /* Styling for AngularUI Bootstrap */
 .nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
