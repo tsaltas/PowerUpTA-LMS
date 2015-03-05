@@ -13,36 +13,58 @@
 	</div>
 
 	<div class="container curr-list">
-	<accordion close-others="oneAtATime">
-		<div class="" ng-repeat="curriculum in curricula">
+		<accordion id="curr-accordion" close-others="oneAtATime">
+			<div class="" ng-repeat="curriculum in curricula">
 
-			<div class="row">
-				<div class="col-xs-1 col-center icon-pad-top">
-					<i class="fa fa-globe fa-lg"></i>
-				</div>
-				<div class="col-sm-3">
-					<h5 class="">{{curriculum.name}}</h5>
-				</div>
-				<div class="col-sm-8">
-					<span class="pull-right icon-pad-top">
-						<i class="fa fa-pencil fa-md"></i>
-						<i class="fa fa-file-text-o fa-md"></i>
-					</span>
-					<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
-					<p class="">{{curriculum.description}}</p>
-				</div>
-				<accordion-group id="curr-accordion" heading="Click for details">
-				<div class="" ng-repeat="activity in curriculum.activities">
-					<div class="row">
-						{{activity}}
+				<div class="row">
+					<div class="col-xs-1 col-center icon-pad-top">
+						<i class="fa fa-globe fa-lg"></i>
 					</div>
-				</div>
-			</accordion-group>
-				<div class="row no-pad">
-					<hr class="no-margin">
-				</div>
-			</div>	
-		</div>
+					<div class="col-sm-3">
+						<h5 class="">{{curriculum.name}}</h5>
+					</div>
+					<div class="col-sm-8">
+						<span class="pull-right icon-pad-top">
+							<i class="fa fa-edit fa-md"></i>
+							<i class="fa fa-file-pdf-o fa-md"></i>
+						</span>
+						<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
+						<p class="">{{curriculum.description}}</p>
+					</div>
+					<accordion-group id="curr-accordion-group" heading="Click for details">
+					<div class="" ng-repeat="relationship in curriculum.activities">
+						<accordion id="activity-accordion" close-others="oneAtATime">
+							<div class="row">
+								<div class="col-xs-1"></div>
+								<div class="col-xs-1 col-center icon-pad-top">
+									<i class="fa fa-book fa-lg"></i>
+								</div>
+								<div class="col-xs-2">
+									<h5 class="">{{relationship.activity.name}}</h5>
+								</div>
+								<div class="col-xs-8">
+									<h5 class="">{{relationship.activity.category}}</h5>
+									<p>{{relationship.activity.description}}</p>
+								</div>
+									<accordion-group id="activity-accordion-group" heading="Click for details">
+										<ul>
+											<li><strong>Teaching notes:</strong> {{relationship.activity.teaching_notes}}</li>
+											<li><strong>Video:</strong> {{relationship.activity.video_url}}</li>
+											<li><strong>Image:</strong> {{relationship.activity.image}}</li>
+											<li><strong>Materials:</strong> {{relationship.activity.relationships}}</li>
+											<li><strong>Resources:</strong> {{relationship.activity.relationships}}</li>
+											<li><strong>Related:</strong> {{relationship.activity.relationships}}</li>
+										</ul>
+									</accordion-group>
+							</div>
+						</accordion>
+					</div>
+					</accordion-group>
+					<div class="row no-pad">
+						<hr class="no-margin">
+					</div>
+				</div>	
+			</div>
 		</accordion>
 	</div>
 	
@@ -51,6 +73,7 @@
 			<i class="btn btn-default fa fa-plus-circle fa-btn" ng-click="open()"></i>
 		</span>
 	</div>
+
 </div>
 
 

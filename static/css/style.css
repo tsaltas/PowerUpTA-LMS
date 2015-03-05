@@ -79,18 +79,27 @@ hr {
 	padding-top: 10px;
 }
 
-#curr-accordion .panel-heading {
+#curr-accordion-group .panel-heading {
 	background-color: #fff;
 	border-color: #fff;
 	color: #bbbbbb;
 }
 
-#curr-accordion.panel {
+#curr-accordion-group.panel {
+	border: 0px;
+}
+
+#activity-accordion-group.panel {
 	border: 0px;
 }
 
 .curr-list .panel-group {
 	margin-bottom: 0px;
+}
+
+.curr-list .panel-body {
+	padding-bottom: 0px;
+	padding-top: 0px;
 }
 
 #newCurriculumName, #newCurriculumDesc, #newCurriculumTagline, #newCurriculumLowerGrade, #newCurriculumUpperGrade, #newCurriculumActivities {
