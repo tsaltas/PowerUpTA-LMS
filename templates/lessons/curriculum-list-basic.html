@@ -9,12 +9,14 @@
 <div ng-controller="CurriculumCtrl">
 	
 	<div class="container">
-		<h1>Curriculum list</h1>
+		<h1>Curriculum list
+		<small class="pull-right">Filter: <input ng-model="query"></small>
+		</h1>
 	</div>
 
 	<div class="container curr-list">
 		<accordion id="curr-accordion" close-others="oneAtATime">
-			<div class="" ng-repeat="curriculum in curricula">
+			<div class="" ng-repeat="curriculum in curricula | filter:query">
 
 				<div class="row">
 					<div class="col-xs-1 col-center icon-pad-top">
