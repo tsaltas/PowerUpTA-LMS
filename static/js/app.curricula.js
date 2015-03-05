@@ -6,7 +6,29 @@ app.config(function($resourceProvider) {
 
 app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', function($scope, $modal, Curriculum, Activity){
 	$scope.curricula = [];
-	$scope.curricula = Curriculum.query();
+
+	$scope.curricula = Curriculum.query(function() {
+        // curriculum inherits tags from activities
+        for (i = 0; i < $scope.curricula.length; i++) {
+            $scope.curricula[i].tags = [];
+            curr = $scope.curricula[i];
+            for (j = 0; j < curr.activities.length; j++) {
+                activity = curr.activities[j].activity;
+                for (k = 0; k < activity.tags.length; k++) {
+                    tag = activity.tags[k];
+                    category = tag.category;
+                    // only inherit language and technology tags
+                    if (category == "Language" | category == "Technology") {
+                        if ( $scope.curricula[i].tags.indexOf(tag) == -1) {
+                            $scope.curricula[i].tags.push(tag);
+                        }
+                    }
+                }
+            }
+        } 
+    });
+
+    // TODO: remove duplicate tags in curriculum
 
     // list of possible grades for new curriculum form
     $scope.grades = [{

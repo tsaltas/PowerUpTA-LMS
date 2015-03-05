@@ -34,6 +34,9 @@
 						<p class="">{{curriculum.description}}</p>
 					</div>
 					<accordion-group id="curr-accordion-group" heading="Lessons">
+					<div class="" ng-repeat="tag in curriculum.tags">
+						<img src = "{{tag.logo}}">
+					</div>
 					<div class="" ng-repeat="relationship in curriculum.activities">
 						<accordion id="activity-accordion" close-others="oneAtATime">
 							<div class="row no-pad">
