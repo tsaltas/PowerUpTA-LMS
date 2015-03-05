@@ -33,6 +33,18 @@ hr {
 	color: #0099cc;
 }
 
+.fa-btn,
+.fa-btn:focus,
+.fa-btn.focus,
+.fa-btn:active,
+.fa-btn.active,
+.fa-btn:hover
+{
+	font-size: 3.0rem !important;
+	color: #0099cc !important;
+	line-height: 1;
+}
+
 .modal-dialog {
 	position:fixed;
 	bottom:0%;
