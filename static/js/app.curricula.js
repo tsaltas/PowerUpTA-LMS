@@ -25,6 +25,7 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
     $scope.activities = [];
     $scope.activities = Activity.query();
 
+    // open modal window to create new curriculum
     $scope.open = function (size) {
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/new-curriculum.html',
@@ -45,6 +46,9 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
             $scope.curricula.push(newCurriculum);
         });
     };
+
+    // accordion interface options for expanding curricula
+    $scope.oneAtATime = true;
 }]);
 
 app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'activities', 'grades', function ($scope, $modalInstance, Curriculum, activities, grades) {

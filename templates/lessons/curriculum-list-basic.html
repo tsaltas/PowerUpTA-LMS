@@ -13,7 +13,9 @@
 	</div>
 
 	<div class="container curr-list">
+	<accordion close-others="oneAtATime">
 		<div class="" ng-repeat="curriculum in curricula">
+
 			<div class="row">
 				<div class="col-xs-1 col-center icon-pad-top">
 					<i class="fa fa-globe fa-lg"></i>
@@ -29,11 +31,15 @@
 					<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
 					<p class="">{{curriculum.description}}</p>
 				</div>
-			</div>
-			<div class="row no-pad">
-				<hr class="no-margin">
+				<accordion-group id="curr-accordion" heading="Click for details">
+				{{curriculum.activities}}
+				</accordion-group>
+				<div class="row no-pad">
+					<hr class="no-margin">
+				</div>
 			</div>	
 		</div>
+		</accordion>
 	</div>
 	
 	<div class="container no-pad" class="stposition">
@@ -41,8 +47,9 @@
 			<i class="btn btn-default fa fa-plus-circle fa-btn" ng-click="open()"></i>
 		</span>
 	</div>
-	
 </div>
+
+
 
 {% endverbatim %}
 
