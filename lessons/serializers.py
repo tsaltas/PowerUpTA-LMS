@@ -66,7 +66,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
         return ret    
 
 class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
-  activity = serializers.PrimaryKeyRelatedField(queryset=Activity.objects.all())
+  activity = ActivitySerializer()
   curriculum = serializers.PrimaryKeyRelatedField(queryset=Curriculum.objects.all())
 
   class Meta:
