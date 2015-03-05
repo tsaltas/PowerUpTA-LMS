@@ -32,8 +32,12 @@
 					<p class="">{{curriculum.description}}</p>
 				</div>
 				<accordion-group id="curr-accordion" heading="Click for details">
-				{{curriculum.activities}}
-				</accordion-group>
+				<div class="" ng-repeat="activity in curriculum.activities">
+					<div class="row">
+						{{activity}}
+					</div>
+				</div>
+			</accordion-group>
 				<div class="row no-pad">
 					<hr class="no-margin">
 				</div>

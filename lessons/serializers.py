@@ -65,15 +65,9 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
         ret['category'] = instance.get_category_display()
         return ret    
 
-class CurriculumActivityRelationshipSerializer(serializers.HyperlinkedModelSerializer):
-  activity = serializers.HyperlinkedRelatedField(
-      view_name='lessons:activity-detail'
-      , queryset=Activity.objects.all()
-  )
-  curriculum = serializers.HyperlinkedRelatedField(
-      view_name='lessons:curriculum-detail'
-      , queryset=Curriculum.objects.all()
-  )
+class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
+  activity = serializers.PrimaryKeyRelatedField(queryset=Activity.objects.all())
+  curriculum = serializers.PrimaryKeyRelatedField(queryset=Curriculum.objects.all())
 
   class Meta:
     model = CurriculumActivityRelationship
