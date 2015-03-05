@@ -5,7 +5,7 @@ from lessons.models import Tag, Resource, Material, Activity, Curriculum, Activi
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'logo', 'category')
+        fields = ('name', 'logo', 'category')
 
     def to_representation(self, instance):
       ret = super(TagSerializer, self).to_representation(instance)
@@ -15,33 +15,22 @@ class TagSerializer(serializers.ModelSerializer):
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
-        fields = ('id', 'name', 'url')
+        fields = ('name', 'url')
 
 class MaterialSerializer(serializers.ModelSerializer):
     class Meta:
         model = Material
-        fields = ('id', 'name', 'url')
+        fields = ('name', 'url')
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
-    tags = serializers.HyperlinkedRelatedField(
-      many=True
-      , view_name='lessons:tag-detail'
-      , queryset=Tag.objects.all()
-    )
+    tags = TagSerializer(many = True)
+    materials = MaterialSerializer(many = True)
+    resources = ResourceSerializer(many = True)
+
     relationships = serializers.HyperlinkedRelatedField(
       many=True
       , view_name='lessons:activity-detail'
       , queryset=ActivityRelationship.objects.all()
-    )
-    materials = serializers.HyperlinkedRelatedField(
-      many=True
-      , view_name='lessons:material-detail'
-      , queryset=Material.objects.all()
-    )
-    resources = serializers.HyperlinkedRelatedField(
-      many=True
-      , view_name='lessons:resource-detail'
-      , queryset=Resource.objects.all()
     )
 
     class Meta:
