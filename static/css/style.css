@@ -89,8 +89,13 @@ hr {
 	border: 0px;
 }
 
+#activity-accordion-group .panel-heading {
+	background-color: #e4eef2;
+	color: #bbbbbb;
+}
+
 #activity-accordion-group.panel {
-	border: 0px;
+	border-color: #fff;
 }
 
 .curr-list .panel-group {

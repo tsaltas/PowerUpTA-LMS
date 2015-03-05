@@ -31,10 +31,10 @@
 						<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
 						<p class="">{{curriculum.description}}</p>
 					</div>
-					<accordion-group id="curr-accordion-group" heading="Click for details">
+					<accordion-group id="curr-accordion-group" heading="Lessons">
 					<div class="" ng-repeat="relationship in curriculum.activities">
 						<accordion id="activity-accordion" close-others="oneAtATime">
-							<div class="row">
+							<div class="row no-pad">
 								<div class="col-xs-1"></div>
 								<div class="col-xs-1 col-center icon-pad-top">
 									<i class="fa fa-book fa-lg"></i>
@@ -46,7 +46,7 @@
 									<h5 class="">{{relationship.activity.category}}</h5>
 									<p>{{relationship.activity.description}}</p>
 								</div>
-									<accordion-group id="activity-accordion-group" heading="Click for details">
+									<accordion-group id="activity-accordion-group" heading="Details">
 										<ul>
 											<li><strong>Teaching notes:</strong> {{relationship.activity.teaching_notes}}</li>
 											<li><strong>Video:</strong> {{relationship.activity.video_url}}</li>
