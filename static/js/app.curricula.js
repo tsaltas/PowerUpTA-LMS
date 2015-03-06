@@ -1,3 +1,4 @@
+
 app = angular.module('lms.app.curricula', ['lms.api', 'ui.bootstrap']);
 
 app.config(function($resourceProvider) {
@@ -100,4 +101,18 @@ app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'a
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
+}]);
+
+app.controller('DropdownCtrl', ['$scope', function ($scope) {
+  
+  $scope.status = {
+    isopen: false,
+  };
+
+  $scope.toggleDropdown = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.status.isopen = !$scope.status.isopen;
+  };
+  
 }]);

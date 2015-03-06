@@ -159,6 +159,10 @@ hr {
   text-align: center;
 }
 
+.navbar li,a {
+  text-align: left !important;
+}
+
 .navbar img {
   width: 110px; 
 }
