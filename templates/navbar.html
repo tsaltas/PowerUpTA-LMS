@@ -1,36 +1,50 @@
 {% load staticfiles %}	
-	<header class="header-main">
-		<nav class="navbar navbar-default navbar-fixed-top">
-		  <div class="container">
+<header class="header-main">
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
 			<div class="navbar-header">
-			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			  </button>
-			  <a class="navbar-brand" href="index.html"><img src="{% static "img/powerup_small.png" %}" class="nav-logo"></a>
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href={% url 'home' %}><img src="{% static "img/powerup_small.png" %}" class="nav-logo"></a>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
-			  <ul class="nav navbar-nav">
-				<li id="menu-home"><a href="index.html">Home</a></li>
-				<li id="menu-approach" class="dropdown">
-				  <a href="whycoding.html" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">About <span class="caret"></span></a>
-				  <ul class="dropdown-menu">
-					<li id="menu-why"><a href="whycoding.html">Why coding?</a></li>
-					<li id="menu-approach"><a href="approach.html">Approach</a></li>
-					<li id="menu-about"><a href="about.html">Team</a></li>
-					<li id="menu-contact"><a href="contact.html">Contact</a></li>
-				  </ul>
-				</li>
-				<li id="menu-classes"><a href="classes.html">Weekly Classes</a></li>
-				<li id="menu-classes"><a href="summercamps.html">Summer Camps</a></li>
-				<li id="menu-blog"><a href="blog.html">Blog</a></li>
-			  </ul>
-			  <ul class="nav navbar-nav pull-right">
-				<li id="menu-register"><a href="register.html" class="nav-highlight">Register</a></li>
-			  </ul>
+				<ul class="nav navbar-nav">
+					<li id="menu-home"><a href={% url 'home' %}>LMS Home</a></li>
+					<li id="menu-tools" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li id="menu-tools-scratch"><a href="http://scratch.mit.edu/">Scratch</a></li>
+							<li id="menu-tools-scratchjr"><a href="http://www.scratchjr.org/">Scratch Jr.</a></li>
+							<li id="menu-tools-python"><a href="https://www.python.org/">Python</a></li>
+							<li id="menu-tools-bootstrap"><a href="http://getbootstrap.com/">Bootstrap</a></li>
+						</ul>
+					</li>
+					<li id="menu-powerup" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Power Up TA<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li id="menu-powerup-home"><a href="http://powerupta.com/">Power Up TA</a></li>
+							<li id="menu-powerup-resources"><a href="http://powerupta.com/resources.html">Resources</a></li>
+							<li id="menu-powerup-projects"><a>Project Ideas</a></li>
+							<li id="menu-powerup-register"><a href="http://powerupta.com/register.html">Class Registration</a></li>
+						</ul>
+					</li>
+					<li id="menu-lms" class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">LMS Tools<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li id="menu-lms-"><a>Student Dashboard</a></li>
+							<li id="menu-lms-"><a>Student Account Manager</a></li>
+							<li id="menu-lms-"><a>DevLog</a></li>
+							<li id="menu-lms-"><a>Instructor Dashboard</a></li>
+							<li id="menu-lms-"><a>Lessons</a></li>
+							<li id="menu-lms-"><a>Sessions</a></li>
+						</ul>
+					</li>
+				</ul>
 			</div><!--/.nav-collapse -->
-		  </div>
-		</nav>
-    </header>
+		</div>
+	</nav>
+</header>
