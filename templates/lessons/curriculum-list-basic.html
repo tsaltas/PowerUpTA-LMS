@@ -3,7 +3,7 @@
 {% block ng_app %}lms.app.curricula{% endblock %}
 
 {% block content %}
-	
+
 {% verbatim %}
 
 <div ng-controller="CurriculumCtrl">
@@ -12,7 +12,7 @@
 	
 	<div class="container">
 		<h1>Curriculum list
-		<small class="pull-right">Filter: <input ng-model="query"></small>
+			<small class="pull-right">Filter: <input ng-model="query"></small>
 		</h1>
 	</div>
 
@@ -34,52 +34,67 @@
 						</span>
 						<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
 						<p class="">{{curriculum.description}}</p>
+						<div ng-show="{{curriculum.tags[0]}}">
+							<img ng-src="{{curriculum.tags[0].logo}}" alt="curriculum.tags[0].name" class="img-thumbnail img-responsive">
+						</div>
 					</div>
 					<accordion-group id="curr-accordion-group" heading="Lessons">
+					<!--
 					<div class="" ng-repeat="tag in curriculum.tags">
 						<img ng-src = "{{tag.logo}}">
 					</div>
-					<div class="" ng-repeat="relationship in curriculum.activities">
-						<accordion id="activity-accordion" close-others="oneAtATime">
-							<div class="row no-pad">
-								<div class="col-xs-1"></div>
-								<div class="col-xs-1 col-center icon-pad-top">
-									<i class="fa fa-book fa-lg"></i>
+				-->
+
+				<div class="" ng-repeat="relationship in curriculum.activities">
+					<accordion id="activity-accordion" close-others="oneAtATime">
+						<div class="row no-pad">
+							<div class="col-xs-offset-1 col-xs-1 col-center icon-pad-top">
+								<div ng-show="{{relationship.activity.category == 'Offline'}}">
+									<i class="fa fa-pencil fa-lg"></i>
 								</div>
-								<div class="col-xs-2">
-									<h5 class="">{{relationship.activity.name}}</h5>
+								<div ng-show="{{relationship.activity.category == 'Online'}}">
+									<i class="fa fa-laptop fa-lg"></i>
 								</div>
-								<div class="col-xs-8">
-									<h5 class="">{{relationship.activity.category}}</h5>
-									<p>{{relationship.activity.description}}</p>
+								<div ng-show="{{relationship.activity.category == 'Discussion'}}">
+									<i class="fa fa-users fa-lg"></i>
 								</div>
-									<accordion-group id="activity-accordion-group" heading="Details">
-										<ul>
-											<li><strong>Teaching notes:</strong> {{relationship.activity.teaching_notes}}</li>
-											<li><strong>Video:</strong> {{relationship.activity.video_url}}</li>
-											<li><strong>Image:</strong> {{relationship.activity.image}}</li>
-											<li><strong>Materials:</strong> {{relationship.activity.relationships}}</li>
-											<li><strong>Resources:</strong> {{relationship.activity.relationships}}</li>
-											<li><strong>Related:</strong> {{relationship.activity.relationships}}</li>
-										</ul>
-									</accordion-group>
 							</div>
-						</accordion>
+							<div class="col-xs-2">
+								<h5>{{relationship.activity.category}}</h5>
+							</div>
+							<div class="col-xs-7">
+							<h5 class="">{{relationship.activity.name}}</h5>
+								<p>{{relationship.activity.description}}</p>
+							</div>
+							<div class="col-xs-1">
+							<accordion-group id="activity-accordion-group" heading="Details">
+							<ul>
+								<li><strong>Teaching notes:</strong> {{relationship.activity.teaching_notes}}</li>
+								<li><strong>Video:</strong> {{relationship.activity.video_url}}</li>
+								<li><strong>Image:</strong> {{relationship.activity.image[0]}}</li>
+								<li><strong>Materials:</strong> {{relationship.activity.relationships}}</li>
+								<li><strong>Resources:</strong> {{relationship.activity.relationships}}</li>
+								<li><strong>Related:</strong> {{relationship.activity.relationships}}</li>
+							</ul>
+						</accordion-group>
+						</div>
 					</div>
-					</accordion-group>
-					<div class="row no-pad">
-						<hr class="no-margin">
-					</div>
-				</div>	
+				</accordion>
 			</div>
-		</accordion>
-	</div>
-	
-	<div class="container no-pad" class="stposition">
-		<span class="pull-right icon-pad-top">
-			<i class="btn btn-default fa fa-plus-circle fa-btn" ng-click="open()"></i>
-		</span>
-	</div>
+		</accordion-group>
+		<div class="row no-pad">
+			<hr class="no-margin">
+		</div>
+	</div>	
+</div>
+</accordion>
+</div>
+
+<div class="container no-pad" class="stposition">
+	<span class="pull-right icon-pad-top">
+		<i class="btn btn-default fa fa-plus-circle fa-btn" ng-click="open()"></i>
+	</span>
+</div>
 
 </div>
 
@@ -91,14 +106,14 @@
 
 {% block js %}
 {{ block.super }}
-	{% load staticfiles%}
-	<script src="{% static "js/app.curricula.js" %}"></script>
+{% load staticfiles%}
+<script src="{% static "js/app.curricula.js" %}"></script>
 
-	<script>
+<script>
 	// Add the CSRF token
 	var app = angular.module('lms.app.curricula');
 	app.config(['$httpProvider', function($httpProvider) {
-  		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+		$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
 	}]);
-	</script>
+</script>
 {% endblock %}

@@ -83,6 +83,11 @@ hr {
 	padding-top: 10px;
 }
 
+.img-thumbnail {
+	width: 42px;
+	height: 42px;
+}
+
 #curr-accordion-group .panel-heading {
 	background-color: #fff;
 	border-color: #fff;
@@ -93,7 +98,7 @@ hr {
 	border: 0px;
 }
 
-#activity-accordion-group .panel-heading {
+#activity-accordion-group .panel-group {
 	background-color: #e4eef2;
 	color: #bbbbbb;
 }
