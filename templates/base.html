@@ -2,11 +2,24 @@
 {% load staticfiles %}
 <html>
 <head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<link rel="stylesheet" type="text/css" href="{% static "bootstrap/css/bootstrap.css" %}">
 	<link rel="stylesheet" href="{% static "css/font-awesome.css" %}">
+
+	<!--Google Fonts -->
+	<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Great%20Vibes' rel='stylesheet' type='text/css'>
+
+	<!-- Custom styles for this template -->
 	<link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}">
 </head>
 <body ng-app="{% block ng_app %}{% endblock %}">
+	{% include "navbar.html" %}
 	{% block content %}		
 	{% endblock %}
 
@@ -18,5 +31,6 @@
 
 	<script src="{% static "js/api.js" %}"></script>
 	{% endblock %}
+	{% include "footer.html" %}
 </body>
 </html>
