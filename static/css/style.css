@@ -15,6 +15,16 @@
 
 body {
 	background-color: #eeeeee;
+  font-family: "Montserrat", sans-serif; 
+  color: #666666; 
+}
+
+a {
+  color: #0099cc;
+}
+
+ul, li {
+  list-style: none;
 }
 
 hr {
@@ -70,8 +80,39 @@ hr {
 .col-sm-3 {
 }
 
+/* Padding */
+.no-pad-top {
+  padding-top: 0px;
+}
+
 .no-pad {
-	padding: 0px;
+  padding: 0px;
+}
+
+.all-pad {
+  padding: 30px;
+}
+
+.extra-pad {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.pad-top {
+  padding-top: 30px;
+}
+
+.pad-top-heavy {
+  padding-top: 40px;
+  padding-bottom: 10px;
+}
+
+.extra-pad-top {
+  padding-top: 50px;
+}
+
+.pad-right {
+  padding-right: 40px;
 }
 
 .no-border {
@@ -138,6 +179,39 @@ hr {
 ** Tamasin's original CSS **
 ***************************/
 
+
+/* FONTS */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Montserrat", sans-serif; }
+
+html {
+  font-size: 14px; }
+
+h2 {
+  font-size: 1.8rem; }
+
+h3 {
+  font-size: 1.5rem; }
+
+h4 {
+  font-size: 1.2rem; }
+
+@media (max-width: 640px) {
+  body {
+    font-size: 1rem; }
+
+  h2 {
+    font-size: 1.8rem; } }
+@media (min-width: 640px) {
+  body {
+    font-size: 1rem; } }
+@media (min-width: 960px) {
+  body {
+    font-size: 1rem; } }
+@media (min-width: 1100px) {
+  body {
+    font-size: 1rem; } }
+
 /* NAV BAR */
 .navbar {
   width: 100%;
@@ -179,7 +253,9 @@ hr {
   background: rgba(255, 255, 255, 0.85);
 }
 
+/* Footer */
 .footer-main {
+  font-family: "Raleway", "Segoe UI", "Segoe WP", "Segoe Regular", sans-serif;
   background: #2b5464;
   color: #fff;
   border-top: 5px solid #cc0000;
@@ -188,12 +264,20 @@ hr {
   z-index: 100;
 }
 
-ul footer-main {
-	list-style: none;
+.footer-main a {
+  color: #fff;
 }
-
-li {
-	list-style: none;
+.footer-main ul {
+  margin: 0px;
+  padding: 0px;
+}
+.footer-main li {
+  line-height: 1.8em;
+  list-style: none;
+}
+.footer-main .copyright {
+  text-align: center;
+  font-size: 1.1rem;
 }
 
 .navbar-default .navbar-nav > li > a:hover,
