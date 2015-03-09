@@ -16,23 +16,24 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
         for (i = 0; i < $scope.curricula.length; i++) {
             $scope.curricula[i].tags = [];
             curr = $scope.curricula[i];
+            tagNames = []
             for (j = 0; j < curr.activities.length; j++) {
                 activity = curr.activities[j].activity;
                 for (k = 0; k < activity.tags.length; k++) {
                     tag = activity.tags[k];
-                    category = tag.category;
                     // only inherit language and technology tags
-                    if (category == "Language" | category == "Technology") {
-                        if ( $scope.curricula[i].tags.indexOf(tag) == -1) {
+                    if (tag.category == "Language" | tag.category == "Technology") {
+                        // do not add duplicates to list
+                        // tag names should be unique (enforced by API)
+                        if (tagNames.indexOf(tag.name) == -1) {
                             $scope.curricula[i].tags.push(tag);
+                            tagNames.push(tag.name);
                         }
                     }
                 }
             }
         } 
     });
-
-    // TODO: remove duplicate tags in curriculum
 
     // list of possible grades for new curriculum form
     $scope.grades = [{
