@@ -24,16 +24,16 @@
 					<div class="col-xs-1 col-center icon-pad-top">
 						<i class="fa fa-globe fa-lg"></i>
 					</div>
-					<div class="col-sm-3 light-pad-top">
-						<h5 class="">{{curriculum.name}}</h5>
+					<div class="col-sm-3">
+						<h3 class="no-margin">{{curriculum.name}}</h3>
 					</div>
 					<div class="col-sm-8">
 						<span class="pull-right icon-pad-top">
 							<i class="fa fa-edit fa-md"></i>
 							<i class="fa fa-file-pdf-o fa-md"></i>
 						</span>
-						<h5 class="">Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h5>
-						<p class="">{{curriculum.description}}</p>
+						<h4>Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h4>
+						<p>{{curriculum.description}}</p>
 						<span ng-show="notEmpty({{curriculum.tags}})" ng-repeat="tag in curriculum.tags">
 							<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
 						</span>
@@ -62,10 +62,10 @@
 								<div class="col-xs-7">
 									<h4>{{relationship.activity.name}}</h4>
 									<p>{{relationship.activity.description}}</p>
-									<p>{{relationship.activity.teaching_notes}}</p>
-									<span ng-show="notEmpty({{relationship.activity.tags}})" ng-repeat="tag in relationship.activity.tags">
+									<p class="notes">{{relationship.activity.teaching_notes}}<p>
+									<p ng-show="notEmpty({{relationship.activity.tags}})" ng-repeat="tag in relationship.activity.tags">
 										<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
-									</span>
+									</p>
 								</div>
 								<div class="col-xs-1">
 									<span class="pull-right icon-pad-top">
