@@ -72,6 +72,13 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
 
     // accordion interface options for expanding curricula
     $scope.oneAtATime = true;
+
+    // function to check whether objects in the HTML template are defined
+    // we are checking URLS as strings to avoid javascript parse errors
+    // also checking lists
+    $scope.notEmpty = function(x) {
+      return (x.length > 0);
+    };
 }]);
 
 app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'activities', 'grades', function ($scope, $modalInstance, Curriculum, activities, grades) {

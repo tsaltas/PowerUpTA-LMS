@@ -8,7 +8,7 @@
  *  LIGHT BLUE / TORQUOISE: #4db8db
  *  DARK GREY: #666666
  **/
- 
+
 .curr-list {
 	background-color: #fff;
 }
@@ -36,14 +36,6 @@ hr {
 	padding-top: 10px;
 }
 
-.col-sm-1 {
-	padding: 0px;
-}
-
-.col-xs-1 {
-	padding: 0px;
-}
-
 .fa-md {
 	font-size: 2.0rem !important;
 	color: #bbbbbb;
@@ -52,6 +44,10 @@ hr {
 .fa-lg {
 	font-size: 3.0rem !important;
 	color: #0099cc;
+}
+
+.icon-label {
+  color: #bbbbbb;
 }
 
 .fa-btn,
@@ -75,9 +71,6 @@ hr {
 	max-height: 95%;
 	max-width: 95%;
 	overflow: auto;
-}
-
-.col-sm-3 {
 }
 
 /* Padding */
@@ -111,6 +104,10 @@ hr {
   padding-top: 50px;
 }
 
+.light-pad-top {
+  padding-top: 5px;
+}
+
 .pad-right {
   padding-right: 40px;
 }
@@ -131,7 +128,7 @@ hr {
 	text-align: center;
 }
 
-.icon-pad-top {
+.icon-pad {
 	padding-top: 10px;
 }
 
