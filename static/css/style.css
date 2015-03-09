@@ -42,6 +42,25 @@ hr {
   font-weight: 100;
 }
 
+#activity-group .panel-heading {
+  background-color: #fff;
+  border-color: #fff;
+  color: #bbbbbb;
+}
+
+#activity-group.panel {
+  border: 0px;
+}
+
+.curr-list .panel-group {
+  margin-bottom: 0px;
+}
+
+.curr-list .panel-body {
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
 /* Icons */
 .fa-md {
 	font-size: 2.0rem !important;
@@ -79,6 +98,11 @@ hr {
 	max-height: 95%;
 	max-width: 95%;
 	overflow: auto;
+}
+
+/* Forms */
+#newCurriculumName, #newCurriculumDesc, #newCurriculumTagline, #newCurriculumLowerGrade, #newCurriculumUpperGrade, #newCurriculumActivities {
+  width: 570px;
 }
 
 /* Padding */
@@ -143,38 +167,6 @@ hr {
 .img-thumbnail {
 	width: 42px;
 	height: 42px;
-}
-
-#curr-accordion-group .panel-heading {
-	background-color: #fff;
-	border-color: #fff;
-	color: #bbbbbb;
-}
-
-#curr-accordion-group.panel {
-	border: 0px;
-}
-
-#activity-accordion-group .panel-group {
-	background-color: #e4eef2;
-	color: #bbbbbb;
-}
-
-#activity-accordion-group.panel {
-	border-color: #fff;
-}
-
-.curr-list .panel-group {
-	margin-bottom: 0px;
-}
-
-.curr-list .panel-body {
-	padding-bottom: 0px;
-	padding-top: 0px;
-}
-
-#newCurriculumName, #newCurriculumDesc, #newCurriculumTagline, #newCurriculumLowerGrade, #newCurriculumUpperGrade, #newCurriculumActivities {
-	width: 570px;
 }
 
 /* Styling for AngularUI Bootstrap */
