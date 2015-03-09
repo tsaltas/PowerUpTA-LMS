@@ -8,6 +8,9 @@ app.config(function($resourceProvider) {
 app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', function($scope, $modal, Curriculum, Activity){
 	$scope.curricula = [];
 
+    // curricula accordion expands to display one curriculum at a time
+    $scope.oneAtATime = true;
+
 	$scope.curricula = Curriculum.query(function() {
         // curriculum inherits tags from activities
         for (i = 0; i < $scope.curricula.length; i++) {
@@ -70,9 +73,6 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
         });
     };
 
-    // accordion interface options for expanding curricula
-    $scope.oneAtATime = true;
-
     // function to check whether objects in the HTML template are defined
     // we are checking URLS as strings to avoid javascript parse errors
     // also checking lists
@@ -112,6 +112,9 @@ app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'a
 
 app.controller('DropdownCtrl', ['$scope', function ($scope) {
   
+  // initialize navbar to collapsed state
+  $scope.navbarCollapsed = true;
+
   $scope.status = {
     isopen: false,
   };
