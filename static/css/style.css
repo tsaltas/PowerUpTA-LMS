@@ -9,6 +9,12 @@
  *  DARK GREY: #666666
  **/
 
+/* help see all boxes on page 
+* {
+   border: 1px dotted silver !important;
+}
+*/
+
 body {
 	background-color: #eeeeee;
   font-family: "Montserrat", sans-serif; 
