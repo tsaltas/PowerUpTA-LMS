@@ -53,7 +53,7 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
     $scope.activities = Activity.query();
 
     // open modal window to create new curriculum
-    $scope.open = function (size) {
+    $scope.newCurriculum = function (size) {
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/new-curriculum.html',
             controller: 'NewCurrModalCtrl',

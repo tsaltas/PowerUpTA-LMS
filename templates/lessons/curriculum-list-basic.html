@@ -39,30 +39,30 @@
 						</span>
 					</div>
 					<accordion-group id="activity-group" heading="Lessons">
-						<div class="" ng-repeat="relationship in curriculum.activities">
-							<div class="row">
-								<div class="col-xs-offset-1 col-xs-2" ng-switch on="relationship.activity.category">
-									<!-- Show appropriate logo for curriculum type -->
-									<span ng-switch-when="Offline">
-										<i class="fa fa-pencil fa-fw fa-md icon-pad-top"></i>
-									</span>
-									<span ng-switch-when="Online">
-										<i class="fa fa-laptop fa-fw fa-md icon-pad-top"></i>
-									</span>
-									<span ng-switch-when="Discussion">
-										<i class="fa fa-users fa-fw fa-md icon-pad-top"></i>
-									</span>
-									<span class="icon-label">{{relationship.activity.category}}</span>
-								</div>
-								<div class="col-xs-1 col-center">
-									<span ng-show="notEmpty('{{relationship.activity.image}}')">
-										<img ng-src="{{relationship.activity.image}}" class="icon-pad-top img-thumbnail img-responsive">
-									</span>
-								</div>
-								<div class="col-xs-7">
-									<h4>{{relationship.activity.name}}</h4>
-									<p>{{relationship.activity.description}}</p>
-									<p class="notes">{{relationship.activity.teaching_notes}}<p>
+					<div ng-repeat="relationship in curriculum.activities">
+						<div class="row">
+							<div class="col-xs-offset-1 col-xs-2" ng-switch on="relationship.activity.category">
+								<!-- Show appropriate logo for curriculum type -->
+								<span ng-switch-when="Offline">
+									<i class="fa fa-pencil fa-fw fa-md icon-pad-top"></i>
+								</span>
+								<span ng-switch-when="Online">
+									<i class="fa fa-laptop fa-fw fa-md icon-pad-top"></i>
+								</span>
+								<span ng-switch-when="Discussion">
+									<i class="fa fa-users fa-fw fa-md icon-pad-top"></i>
+								</span>
+								<span class="icon-label">{{relationship.activity.category}}</span>
+							</div>
+							<div class="col-xs-1 col-center">
+								<span ng-show="notEmpty('{{relationship.activity.image}}')">
+									<img ng-src="{{relationship.activity.image}}" class="icon-pad-top img-thumbnail img-responsive">
+								</span>
+							</div>
+							<div class="col-xs-7">
+								<h4>{{relationship.activity.name}}</h4>
+								<p>{{relationship.activity.description}}</p>
+								<p class="notes">{{relationship.activity.teaching_notes}}<p>
 									<p ng-show="notEmpty({{relationship.activity.tags}})" ng-repeat="tag in relationship.activity.tags">
 										<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
 									</p>
@@ -86,20 +86,25 @@
 										</span>
 									</span>
 								</div>
-					</div>
+							</div>
+							<hr class="no-margin">
+						</div>
+						<div id="add-activity" class="container row">
+						<div class="col-xs-offset-10 col-xs-1">
+							<i class="pull-right btn fa fa-plus-circle fa-btn" ng-click="newActivity()"></i>
+						</div>
+						</div>
+					</accordion-group>
+					<div class="row no-pad">
 						<hr class="no-margin">
+					</div>
+				</div>	
 			</div>
-		</accordion-group>
-		<div class="row no-pad">
-			<hr class="no-margin">
-		</div>
-	</div>	
-</div>
-</accordion>
-</div>
+		</accordion>
+	</div>
 
-<div class="container no-pad" class="stposition">
-	<i class="pull-right btn fa fa-plus-circle fa-btn" ng-click="open()"></i>
+<div id="add-curriculum" class="container">
+	<i class="pull-right btn fa fa-plus-circle fa-btn" ng-click="newCurriculum()"></i>
 </div>
 
 </div>
