@@ -24,13 +24,14 @@ class MaterialSerializer(serializers.ModelSerializer):
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     tags = TagSerializer(many = True)
-    materials = MaterialSerializer(many = True)
-    resources = ResourceSerializer(many = True)
+    materials = MaterialSerializer(many = True, required=False)
+    resources = ResourceSerializer(many = True, required=False)
 
     relationships = serializers.HyperlinkedRelatedField(
       many=True
       , view_name='lessons:activity-detail'
       , queryset=ActivityRelationship.objects.all()
+      , required=False
     )
 
     class Meta:

@@ -42,6 +42,35 @@ class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
 
+    # TODO: Validate data before saving objects?
+    def create(self, request):
+        # Create the new activity with required fields
+        activity = Activity.objects.create(
+            name = request.data["name"],
+            description = request.data["description"],
+        )
+        # Add any tags
+        for tag_id in request.data["tags"]:
+            activity.tags.add(get_object_or_404(Tag, pk=tag_id))
+        # Add optional fields if provided by user
+        if "teaching_notes" in request.data:
+            activity.teaching_notes = request.data["teaching_notes"]
+        if "video_url" in request.data:
+            activity.video_url = request.data["video_url"]
+        if "category" in request.data:
+            activity.category = request.data["category"]
+        if "image" in request.data:
+            activity.image = request.data["image"]
+
+        # try to save curriculum
+        try :
+            activity.save()
+            # on success, return Response object
+            return Response()
+        except:
+            return Response("Error creating new activity: " + str(sys.exc_info()[0]),
+                            status=status.HTTP_400_BAD_REQUEST)
+
 class CurriculumViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -63,7 +92,7 @@ class CurriculumViewSet(viewsets.ModelViewSet):
         try :
             curriculum.save()
         except:
-            return Response("Error creating curriculum: " + str(sys.exc_info()[0]),
+            return Response("Error creating new curriculum: " + str(sys.exc_info()[0]),
                             status=status.HTTP_400_BAD_REQUEST)
 
         # if user specified an activity, then try to create any activity-curriculum relationships

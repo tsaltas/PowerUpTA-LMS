@@ -115,25 +115,33 @@ app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Activity', 
     $scope.tags = [];
     $scope.tags = Tag.query();
 
-    // list of activities for new activity form (sub-activities)
-    $scope.activities = [];
-    $scope.activities = Activity.query();
-
     // list of possible categories for new activity form
-    $scope.categories = ["Offline", "Online", "Discussion", "Extension"];
-    
+    $scope.categories = [
+        {
+            code: "OFF"
+            , type: "Offline"
+        }
+        , {
+            code: "ONL"
+          , type: "Online"  
+        }
+        , {
+            code: "DIS"
+            , type: "Discussion"
+        }
+        , {
+            code: "EXT"
+            , type: "Extension"
+        }
+    ];
+        
     $scope.newActivity = new Activity();
 
     $scope.save = function() {
-        // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
-        if ($scope.newCurriculum.activities) {
-            $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
-        };
-
-        return $scope.newCurriculum.$save().then(function(result) {
+        return $scope.newActivity.$save().then(function(result) {
             $modalInstance.close(result);
         }).then(function() {
-            return $scope.newCurriculum = new Curriculum();
+            return $scope.newActivity = new Activity();
         }).then(function() {
             return $scope.errors = null;
         }, function(rejection) {

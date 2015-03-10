@@ -31,8 +31,8 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newActivityTags">Tags</label>
-					<select class="form-control form-fixed-width" id="newActivityTags" ng-model="newActivity.tags" ng-options="tag.id as tag.name for tag in tags">
-						<option value=''>Add Tags</option>
+					Add Tags (Hold down "Control", or "Command" on a Mac, to select more than one.)
+					<select class="form-control form-fixed-width" id="newActivityTags" ng-model="newActivity.tags" ng-options="tag.id as tag.name for tag in tags" multiple>
 					</select>
 				</div>
 				<br>
@@ -51,7 +51,7 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newActivityCategory">Category</label>
-					<select class="form-control form-fixed-width" id="newActivityCategory" ng-model="newActivity.category" ng-options="cat for cat in categories">
+					<select class="form-control form-fixed-width" id="newActivityCategory" ng-model="newActivity.category" ng-options="cat.code as cat.type for cat in categories">
 						<option value=''>Category (Optional)</option>
 					</select>
 				</div>
@@ -66,7 +66,7 @@
 				<button class="btn btn-primary pull-right" ng-click="save()">Add Activity</button>
 				<br>
 				<br>
-				<p ng-repeat="(name, errs) in errors" class="alert alert-danger"><strong>{{ name }}</strong>: {{ errs.join(', ') }}</p>
+				<p> {{errors}}</p>
 			</form>
 		</div>
 	</div>
