@@ -118,7 +118,11 @@ button {
 }
 
 /* Forms */
-#newCurriculumName, #newCurriculumDesc, #newCurriculumTagline, #newCurriculumLowerGrade, #newCurriculumUpperGrade, #newCurriculumActivities {
+#new-curr-form .form-fixed-width {
+  width: 570px;
+}
+
+#new-activity-form .form-fixed-width {
   width: 570px;
 }
 

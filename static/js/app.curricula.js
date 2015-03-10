@@ -110,26 +110,25 @@ app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'A
     };
 }]);
 
-app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'Activity', function ($scope, $modalInstance, Curriculum, Activity) {
+app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Activity', 'Tag', 'Curriculum', function ($scope, $modalInstance, Activity, Tag, Curriculum) {
     
-    // list of activities for new curriculum form
+    // list of curricula for new activity form
+    $scope.curricula = [];
+    $scope.curricula = Curriculum.query();
+
+    // list of tags for new activity form
+    $scope.tags = [];
+    $scope.tags = Tag.query();
+
+    // list of activities for new activity form (sub-activities)
     $scope.activities = [];
     $scope.activities = Activity.query();
 
-    // list of possible grades for new curriculum form
-    $scope.grades = [{
-        id: 0,
-        value: "K"
-    }];
-    for (i = 1; i <= 12; i++) { 
-        newGrade = {
-            id: i,
-            value: i.toString()
-        };
-        $scope.grades.push(newGrade);
-    };
+    // list of possible categories for new activity form
+    $scope.categories = ["Offline", "Online", "Discussion", "Extension"];
     
-    $scope.newCurriculum = new Curriculum();
+    $scope.newActivity = new Activity();
+    console.log($scope.tags);
 
     $scope.save = function() {
         // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum

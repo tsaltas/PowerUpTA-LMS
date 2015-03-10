@@ -21,3 +21,7 @@ app.factory('Resource', ['$resource', function($resource) {
 app.factory('Material', ['$resource', function($resource) {
 	return $resource('/api/materials/:id', {id:'@id'});
 }]);
+
+app.factory('Tag', ['$resource', function($resource) {
+	return $resource('/api/tags/:id', {id:'@id'});
+}]);

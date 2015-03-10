@@ -5,7 +5,7 @@ from lessons.models import Tag, Resource, Material, Activity, Curriculum, Activi
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('name', 'logo', 'category')
+        fields = ('id', 'name', 'logo', 'category')
 
     def to_representation(self, instance):
       ret = super(TagSerializer, self).to_representation(instance)

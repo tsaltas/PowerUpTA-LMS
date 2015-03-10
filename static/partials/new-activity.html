@@ -16,46 +16,58 @@
 
 		</div>
 		<div class="modal-body">
-			<form class="form-inline">
+			<form id="new-activity-form" class="form-inline">
 				<div class="form-group">
-					<label class="sr-only" for="newCurriculumName">Name</label>
-					<input type="text" class="form-control" id="newCurriculumName" ng-model="newCurriculum.name" placeholder="Name">
+					<label class="sr-only" for="newActivityName">Name</label>
+					<input type="text" class="form-control form-fixed-width" id="newActivityName" ng-model="newActivity.name" placeholder="Name">
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
-					<label class="sr-only" for="newCurriculumTagline">Tagline</label>
-					<input type="text" class="form-control" id="newCurriculumTagline" ng-model="newCurriculum.tagline" placeholder="Tagline (Optional)">
+					<label class="sr-only" for="newActivityDesc">Description</label>
+					<textarea class="form-control form-fixed-width" id="newActivityDesc" ng-model="newActivity.description" placeholder="Description"></textarea>
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
-					<label class="sr-only" for="newCurriculumDesc">Description</label>
-					<textarea class="form-control" id="newCurriculumDesc" ng-model="newCurriculum.description" placeholder="Description"></textarea>
-				</div>
-				<br>
-				<br>
-				<div class="form-group">
-					<label class="sr-only" for="newCurriculumLowerGrade">Lower Grade</label>
-					<select class="form-control" id="newCurriculumLowerGrade" ng-model="newCurriculum.lower_grade" ng-options="grade.id as grade.value for grade in grades">
-						<option value=''>Lower Grade</option>
+					<label class="sr-only" for="newActivityTags">Tags</label>
+					<select class="form-control form-fixed-width" id="newActivityTags" ng-model="newActivity.tags" ng-options="tag.id as tag.name for tag in tags">
+						<option value=''>Add Tags</option>
 					</select>
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
-					<label class="sr-only" for="newCurriculumUpperGrade">Upper Grade</label>
-					<select class="form-control" id="newCurriculumUpperGrade" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
-						<option value=''>Upper Grade</option>
+					<label class="sr-only" for="newActivityNotes">Teaching Notes</label>
+					<textarea class="form-control form-fixed-width" id="newActivityNotes" ng-model="newActivity.teaching_notes" placeholder="Teaching Notes (Optional)"></textarea>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newActivityVideo">Video URL</label>
+					<input type="url" class="form-control form-fixed-width" id="newActivityVideo" ng-model="newActivity.video_url" placeholder="Video URL (Optional)">
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newActivityCurriculum">Curriculum</label>
+					<select class="form-control form-fixed-width" id="newActivityCurriculum" ng-model="newActivity.curricula" ng-options="curriculum.id as curriculum.name for curriculum in curricula">
+						<option value=''>Curriculum (Optional)</option>
 					</select>
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
-					<label class="sr-only" for="newCurriculumActivities">Activities</label>
-					<select class="form-control" id="newCurriculumActivities" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
-						<option value=''>Add Activity (Optional)</option>
+					<label class="sr-only" for="newActivityCategory">Category</label>
+					<select class="form-control form-fixed-width" id="newActivityCategory" ng-model="newActivity.category" ng-options="cat for cat in categories">
+						<option value=''>Category (Optional)</option>
 					</select>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="newActivityImage">Image</label>
+					<input type="file" accept="image/*" class="form-control form-fixed-width" id="newActivityImage" ng-model="newActivity.image">
 				</div>
 				<br>
 				<br>

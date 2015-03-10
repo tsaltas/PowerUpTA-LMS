@@ -16,28 +16,28 @@
 
 		</div>
 		<div class="modal-body">
-			<form class="form-inline">
+			<form id="new-curr-form" class="form-inline">
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumName">Name</label>
-					<input type="text" class="form-control" id="newCurriculumName" ng-model="newCurriculum.name" placeholder="Name">
+					<input type="text" class="form-control form-fixed-width" id="newCurriculumName" ng-model="newCurriculum.name" placeholder="Name">
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumTagline">Tagline</label>
-					<input type="text" class="form-control" id="newCurriculumTagline" ng-model="newCurriculum.tagline" placeholder="Tagline (Optional)">
+					<input type="text" class="form-control form-fixed-width" id="newCurriculumTagline" ng-model="newCurriculum.tagline" placeholder="Tagline (Optional)">
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumDesc">Description</label>
-					<textarea class="form-control" id="newCurriculumDesc" ng-model="newCurriculum.description" placeholder="Description"></textarea>
+					<textarea class="form-control form-fixed-width" id="newCurriculumDesc" ng-model="newCurriculum.description" placeholder="Description"></textarea>
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumLowerGrade">Lower Grade</label>
-					<select class="form-control" id="newCurriculumLowerGrade" ng-model="newCurriculum.lower_grade" ng-options="grade.id as grade.value for grade in grades">
+					<select class="form-control form-fixed-width" id="newCurriculumLowerGrade" ng-model="newCurriculum.lower_grade" ng-options="grade.id as grade.value for grade in grades">
 						<option value=''>Lower Grade</option>
 					</select>
 				</div>
@@ -45,7 +45,7 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumUpperGrade">Upper Grade</label>
-					<select class="form-control" id="newCurriculumUpperGrade" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
+					<select class="form-control form-fixed-width" id="newCurriculumUpperGrade" ng-model="newCurriculum.upper_grade" ng-options="grade.id as grade.value for grade in grades">
 						<option value=''>Upper Grade</option>
 					</select>
 				</div>
@@ -53,7 +53,7 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumActivities">Activities</label>
-					<select class="form-control" id="newCurriculumActivities" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
+					<select class="form-control form-fixed-width" id="newCurriculumActivities" ng-model="newCurriculum.activities" ng-options="activity.id as activity.name for activity in activities">
 						<option value=''>Add Activity (Optional)</option>
 					</select>
 				</div>
