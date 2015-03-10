@@ -5,12 +5,13 @@ app.config(function($resourceProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
 });
 
-app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', function($scope, $modal, Curriculum, Activity){
+app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($scope, $modal, Curriculum){
 	$scope.curricula = [];
 
     // curricula accordion expands to display one curriculum at a time
     $scope.oneAtATime = true;
 
+    // query API for curricula and inherit tags from nested activities
 	$scope.curricula = Curriculum.query(function() {
         // curriculum inherits tags from activities
         for (i = 0; i < $scope.curricula.length; i++) {
@@ -35,6 +36,43 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
         } 
     });
 
+    // function to check whether objects in the HTML template are defined
+    // we are checking URLS as strings to avoid javascript parse errors
+    // also checking lists
+    $scope.notEmpty = function(x) {
+      return (x.length > 0);
+    };
+
+    // open modal window to create new curriculum
+    $scope.newCurriculum = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/new-curriculum.html',
+            controller: 'NewCurrModalCtrl',
+            size: size
+        });
+
+        // add newly created curriculum to list on the page (without refresh)
+        modalInstance.result.then(function (newCurriculum) {
+            $scope.curricula.push(newCurriculum);
+        });
+    };
+
+    // open modal window to create new activity
+    $scope.newActivity = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/new-activity.html',
+            controller: 'NewActivityModalCtrl',
+            size: size
+        });
+    };
+}]);
+
+app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'Activity', function ($scope, $modalInstance, Curriculum, Activity) {
+    
+    // list of activities for new curriculum form
+    $scope.activities = [];
+    $scope.activities = Activity.query();
+
     // list of possible grades for new curriculum form
     $scope.grades = [{
         id: 0,
@@ -47,45 +85,49 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', 'Activity', 
         };
         $scope.grades.push(newGrade);
     };
+    
+    $scope.newCurriculum = new Curriculum();
 
+    $scope.save = function() {
+        // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
+        if ($scope.newCurriculum.activities) {
+            $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
+        };
+
+        return $scope.newCurriculum.$save().then(function(result) {
+            $modalInstance.close(result);
+        }).then(function() {
+            return $scope.newCurriculum = new Curriculum();
+        }).then(function() {
+            return $scope.errors = null;
+        }, function(rejection) {
+            return $scope.errors = rejection.data;
+        });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'Activity', function ($scope, $modalInstance, Curriculum, Activity) {
+    
     // list of activities for new curriculum form
     $scope.activities = [];
     $scope.activities = Activity.query();
 
-    // open modal window to create new curriculum
-    $scope.newCurriculum = function (size) {
-        var modalInstance = $modal.open({
-            templateUrl: 'static/partials/new-curriculum.html',
-            controller: 'NewCurrModalCtrl',
-            size: size,
-            resolve: {
-                activities: function () {
-                    return $scope.activities;
-                },
-                grades: function () {
-                    return $scope.grades;
-                }
-            }
-        });
-
-        // add newly created curriculum to list on the page (without refresh)
-        modalInstance.result.then(function (newCurriculum) {
-            $scope.curricula.push(newCurriculum);
-        });
+    // list of possible grades for new curriculum form
+    $scope.grades = [{
+        id: 0,
+        value: "K"
+    }];
+    for (i = 1; i <= 12; i++) { 
+        newGrade = {
+            id: i,
+            value: i.toString()
+        };
+        $scope.grades.push(newGrade);
     };
-
-    // function to check whether objects in the HTML template are defined
-    // we are checking URLS as strings to avoid javascript parse errors
-    // also checking lists
-    $scope.notEmpty = function(x) {
-      return (x.length > 0);
-    };
-}]);
-
-app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'activities', 'grades', function ($scope, $modalInstance, Curriculum, activities, grades) {
-    
-    $scope.activities = activities;
-    $scope.grades = grades;
     
     $scope.newCurriculum = new Curriculum();
 

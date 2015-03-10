@@ -90,6 +90,10 @@ hr {
   color: #0099cc;
 }
 
+button {
+    font-family: "Montserrat", sans-serif;
+}
+
 .fa-btn,
 .fa-btn:focus,
 .fa-btn.focus,
