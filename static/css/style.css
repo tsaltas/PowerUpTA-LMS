@@ -16,8 +16,8 @@
 */
 
 body {
-	background-color: #eeeeee;
-  font-family: "Montserrat", sans-serif; 
+  font-family: "Raleway", "Segoe UI", "Segoe WP", "Segoe Regular", sans-serif;
+  line-height: 1.7em;
   color: #666666; 
 }
 
@@ -188,7 +188,8 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Montserrat", sans-serif; }
 
 html {
-  font-size: 14px; }
+  font-size: 14px;
+}
 
 h2 {
   font-size: 1.8rem; }
