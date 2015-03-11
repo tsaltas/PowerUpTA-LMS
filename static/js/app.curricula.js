@@ -178,6 +178,24 @@ app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Activity', 
     };
 }]);
 
+app.controller('ActivityResourcesModalCtrl', ['$scope', '$modalInstance', 'Resource', function ($scope, $modalInstance, Resource) {
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+app.controller('ActivityMaterialsModalCtrl', ['$scope', '$modalInstance', 'Material', function ($scope, $modalInstance, Material) {
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+app.controller('RelatedActivitiesModalCtrl', ['$scope', '$modalInstance', 'Activity', function ($scope, $modalInstance, Activity) {
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
 app.controller('DropdownCtrl', ['$scope', function ($scope) {
   
   // initialize navbar to collapsed state
