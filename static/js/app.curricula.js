@@ -65,6 +65,30 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($sc
             size: size
         });
     };
+    // open modal window to view activity resources
+    $scope.activityResources = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/activity-resources.html',
+            controller: 'ActivityResourcesModalCtrl',
+            size: size
+        });
+    };
+    // open modal window to view activity materials
+    $scope.activityMaterials = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/activity-materials.html',
+            controller: 'ActivityMaterialsModalCtrl',
+            size: size
+        });
+    };
+    // open modal window to view related activities
+    $scope.relatedActivities = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/related-activities.html',
+            controller: 'RelatedActivitiesModalCtrl',
+            size: size
+        });
+    };
 }]);
 
 app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'Activity', function ($scope, $modalInstance, Curriculum, Activity) {

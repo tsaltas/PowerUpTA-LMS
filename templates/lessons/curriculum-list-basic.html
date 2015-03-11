@@ -29,9 +29,12 @@
 					</div>
 					<div class="col-sm-8">
 						<span class="pull-right icon-pad-top">
-							<i class="fa fa-edit fa-md"></i>
-							<i class="fa fa-file-pdf-o fa-md"></i>
+							<span ng-show="currEditLabel" >Edit Curriculum</span>
+							<span ng-show="currPDFLabel">Export to PDF</span>
+							<i class="fa fa-edit fa-md" ng-mouseenter="currEditLabel = true" ng-mouseleave="currEditLabel = false"></i>
+							<i class="fa fa-file-pdf-o fa-md" ng-mouseenter="currPDFLabel = true" ng-mouseleave="currPDFLabel = false"></i>
 						</span>
+
 						<h4>Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h4>
 						<p>{{curriculum.description}}</p>
 						<span ng-show="notEmpty({{curriculum.tags}})" ng-repeat="tag in curriculum.tags">
@@ -70,21 +73,25 @@
 								<div class="col-xs-1">
 									<span class="pull-right icon-pad-top">
 										<span ng-show="notEmpty('{{relationship.activity.video_url}}')">
-											<a href="{{relationship.activity.video_url}}" target="_blank" ><i class="fa fa-youtube-play fa-md"></i></a>
+											<a href="{{relationship.activity.video_url}}" target="_blank" ><i class="fa fa-youtube-play fa-md" ng-mouseenter="videoLabel = true" ng-mouseleave="videoLabel = false"></i></a>
 										</span>
 										<span ng-show="notEmpty({{relationship.activity.materials}})">
 											<!-- TODO: Modal window with materials-->
-											<a href="#materials" target="_blank" ><i class="fa fa-file-o fa-md"></i></a>
+											<i class="fa fa-file-o fa-md" ng-mouseenter="materialsLabel = true" ng-mouseleave="materialsLabel = false" ng-click="activityMaterials()"></i>
 										</span>
 										<span ng-show="notEmpty({{relationship.activity.resources}})">
 											<!-- TODO: Modal window with resources / helpful tips-->
-											<a href="#tips" target="_blank" ><i class="fa fa-question-circle fa-md"></i></a>
+											<i class="btn fa fa-question-circle fa-btn" ng-mouseenter="resourcesLabel = true" ng-mouseleave="resourcesLabel = false" ng-click="activityResources()"></i>
 										</span>
 										<span ng-show="notEmpty({{relationship.activity.relationships}})">
 											<!-- TODO: Modal window with related activities. Can open in new window or jump to appropriate section-->
-											<a href="#related" target="_blank" ><i class="fa fa-plus fa-md"></i></a>
+											<i class="fa fa-plus fa-md" ng-mouseenter="relatedLabel = true" ng-mouseleave="relatedLabel = false" ng-click="relatedActivities()"></i>
 										</span>
 									</span>
+									<span ng-show="materialsLabel">Materials</span>
+									<span ng-show="videoLabel">View video</span>
+									<span ng-show="resourcesLabel">Helpful Hints</span>
+									<span ng-show="relatedLabel">Related activities</span>
 								</div>
 							</div>
 							<hr class="no-margin">
