@@ -25,6 +25,10 @@ a {
   color: #0099cc;
 }
 
+.error {
+  color: #ff0033;
+}
+
 hr {
 	padding-left: -15px;
 	padding-right: -15px;
