@@ -65,8 +65,11 @@ app.controller('CurriculumCtrl', ['$scope'
         });
 
         // add newly created curriculum to list on the page (without refresh)
-        modalInstance.result.then(function (newCurriculum) {
-            $scope.curricula.push(newCurriculum);
+        modalInstance.result.then(function (newActivity) {
+            var newRelationship = {
+                activity: newActivity;
+            }
+            $scope.curricula.activities.push(newRelationship);
         });
     };
 
@@ -76,6 +79,11 @@ app.controller('CurriculumCtrl', ['$scope'
             templateUrl: 'static/partials/new-activity.html',
             controller: 'NewActivityModalCtrl',
             size: size
+        });
+
+        // add newly created activity to list on the page (without refresh)
+        modalInstance.result.then(function (newActivity) {
+            $scope.curricula.push(newActivity);
         });
     };
 
