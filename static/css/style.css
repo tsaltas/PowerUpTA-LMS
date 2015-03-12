@@ -118,6 +118,13 @@ button {
   width: 570px;
 }
 
+#new-resource-form .form-fixed-width {
+  width: 570px;
+}
+#new-material-form .form-fixed-width {
+  width: 570px;
+}
+
 /* Padding */
 .no-pad-top {
   padding-top: 0px;

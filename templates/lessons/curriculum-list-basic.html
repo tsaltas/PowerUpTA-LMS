@@ -76,11 +76,11 @@
 											<a href="{{relationship.activity.video_url}}" target="_blank" ><i class="btn fa fa-youtube-play fa-btn" ng-mouseenter="videoLabel = true" ng-mouseleave="videoLabel = false"></i></a>
 										</span>
 										<span ng-show="notEmpty({{relationship.activity.materials}})">
-											<!-- TODO: Modal window with materials-->
-											<a><i class="btn fa fa-file-o fa-btn" ng-mouseenter="materialsLabel = true" ng-mouseleave="materialsLabel = false" ng-click="activityMaterials(relationship.activity.materials, 'sm')"></i></a>
+											<!-- Open modal window with materials-->
+											<a><i class="btn fa fa-file-o fa-btn" ng-mouseenter="materialsLabel = true" ng-mouseleave="materialsLabel = false" ng-click="activityMaterials(relationship.activity.id, relationship.activity.materials, 'sm')"></i></a>
 										</span>
 										<span ng-show="notEmpty({{relationship.activity.resources}})">
-											<!-- TODO: Modal window with resources / helpful tips-->
+											<!-- Open modal window with resources / helpful tips-->
 											<a><i class="btn fa fa-question-circle fa-btn" ng-mouseenter="resourcesLabel = true" ng-mouseleave="resourcesLabel = false" ng-click="activityResources(relationship.activity.id, relationship.activity.resources, 'sm')"></i></a>
 										</span>
 										<span ng-show="notEmpty({{relationship.activity.relationships}})">

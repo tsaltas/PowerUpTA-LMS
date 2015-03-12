@@ -28,6 +28,26 @@ class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
 
+    def create(self, request):
+        # Create new material instance
+        material = Material.objects.create(
+            name = request.data["name"],
+            url = request.data["url"],
+        )
+
+        # If new material request includes activity number, associate the two together
+        if "activityID" in request.data:
+            material.activities.add(get_object_or_404(Activity, pk=request.data["activityID"]))
+
+        # Save or return errors
+        try :
+            material.save()
+            # on success, return Response object
+            return Response()
+        except:
+            return Response("Error creating new material: " + str(sys.exc_info()[0]),
+                            status=status.HTTP_400_BAD_REQUEST)
+
 class ResourceViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
