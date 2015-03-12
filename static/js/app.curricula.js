@@ -58,6 +58,9 @@ app.controller('CurriculumCtrl', ['$scope'
 
     // open modal window to create new curriculum
     $scope.newCurriculum = function (size) {
+        console.log("Inside new curriculum function.");
+        console.log("Creating new curriculum modal window.");
+
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/new-curriculum.html',
             controller: 'NewCurrModalCtrl',
@@ -66,27 +69,34 @@ app.controller('CurriculumCtrl', ['$scope'
 
         // add newly created curriculum to list on the page (without refresh)
         modalInstance.result.then(function (newCurriculum) {
+            console.log("Created new curriculum");
+            console.log("Adding new curriculum to list currently displayed on the page.");
             $scope.curricula.push(newCurriculum);
         });
     };
 
     // open modal window to create new activity
     $scope.newActivity = function (size) {
+        console.log("Inside new activity function.");
+        console.log("Creating new activity modal window.");
+
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/new-activity.html',
             controller: 'NewActivityModalCtrl',
             size: size
         });
-
-        /*
+        
         // TODO: add newly created curriculum to list on the page (without refresh)
         modalInstance.result.then(function (newActivity) {
+            console.log("Created new activity");
+            console.log("TODO: Associate activity with current curriculum (returning error).");
+            
             var newRelationship = {
                 activity: newActivity
             };
 
             $scope.curriculum.activities.push(newRelationship);
-        }); */
+        }); 
     };
 
     // open modal window to create new tag
@@ -173,7 +183,7 @@ app.controller('NewCurrModalCtrl', ['$scope'
         , Curriculum
         , Activity
     ) {
-    
+    console.log("Inside new curriculum modal window controller.");
     // list of activities for new curriculum form
     $scope.activities = [];
     $scope.activities = Activity.query();
@@ -194,8 +204,10 @@ app.controller('NewCurrModalCtrl', ['$scope'
     $scope.newCurriculum = new Curriculum();
 
     $scope.save = function() {
+        console.log("Saving new curriculum to database.");
         // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
         if ($scope.newCurriculum.activities) {
+            console.log("Associating first activity with new curriculum.");
             $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
         };
 
@@ -224,6 +236,8 @@ app.controller('NewActivityModalCtrl', ['$scope'
         , Activity
         , Tag
     ) {
+
+    console.log("Inside new activity modal window controller.");
     // list of tags for new activity form
     $scope.tags = [];
     $scope.tags = Tag.query();
@@ -251,6 +265,7 @@ app.controller('NewActivityModalCtrl', ['$scope'
     $scope.newActivity = new Activity();
 
     $scope.save = function() {
+        console.log("Saving new activity to database.")
         return $scope.newActivity.$save().then(function(result) {
             $modalInstance.close(result);
         }).then(function() {
