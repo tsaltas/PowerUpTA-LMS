@@ -35,6 +35,26 @@ class ResourceViewSet(viewsets.ModelViewSet):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
 
+    def create(self, request):
+        # Create new resource instance
+        resource = Resource.objects.create(
+            name = request.data["name"],
+            url = request.data["url"],
+        )
+
+        # If new resource request includes activity number, associate the two together
+        if "activityID" in request.data:
+            resource.activities.add(get_object_or_404(Activity, pk=request.data["activityID"]))
+
+        # Save or return errors
+        try :
+            resource.save()
+            # on success, return Response object
+            return Response()
+        except:
+            return Response("Error creating new resource: " + str(sys.exc_info()[0]),
+                            status=status.HTTP_400_BAD_REQUEST)
+
 class ActivityViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.
@@ -62,7 +82,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if "image" in request.data:
             activity.image = request.data["image"]
 
-        # try to save curriculum
+        # try to save activity
         try :
             activity.save()
             # on success, return Response object

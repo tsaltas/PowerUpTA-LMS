@@ -83,8 +83,8 @@ class Activity(models.Model):
 		symmetrical=False,
 		blank=True
 	)
-	materials = models.ManyToManyField(Material, blank=True)
-	resources = models.ManyToManyField(Resource, blank=True)
+	materials = models.ManyToManyField(Material, blank=True, related_name="activities")
+	resources = models.ManyToManyField(Resource, blank=True, related_name="activities")
 	# An activity has a many-to-many relationship with Curriculum (defined ABOVE)
 
 	class Meta:
