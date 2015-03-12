@@ -89,7 +89,7 @@ app.controller('CurriculumCtrl', ['$scope'
         // TODO: add newly created activity to list on the page (without refresh)
         modalInstance.result.then(function (newActivity) {
             console.log("Successfully created new activity");
-            console.log("TODO: Associate activity with current curriculum (returning error).");
+            console.log("TODO: Associate activity with current curriculum (currently returning error).");
             
             var newRelationship = {
                 activity: newActivity
