@@ -66,9 +66,16 @@
 								<h4>{{relationship.activity.name}}</h4>
 								<p>{{relationship.activity.description}}</p>
 								<p class="notes">{{relationship.activity.teaching_notes}}<p>
-									<p ng-show="notEmpty({{relationship.activity.tags}})" ng-repeat="tag in relationship.activity.tags">
+									<span ng-show="notEmpty({{relationship.activity.tags}})" ng-repeat="tag in relationship.activity.tags">
 										<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
-									</p>
+									</span>
+									<select class="form-control" id="add-tag" ng-model="addTag" ng-options="tag.name for tag in tags">
+										<option value=''>Create new tag</option>
+									</select>
+									<span>
+										<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(relationship.activity, addTag)"></i>
+										<span ng-show="newTagLabel">Add {{addTag.name || "New tag"}}</span>
+									</span>
 								</div>
 								<div class="col-xs-1">
 									<span class="pull-right icon-pad-top">

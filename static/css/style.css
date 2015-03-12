@@ -51,7 +51,8 @@ hr {
 }
 
 #activity-group.panel {
-  border: 0px;
+  border: none;
+  box-shadow: none;
 }
 
 .curr-list .panel-group {
@@ -97,6 +98,10 @@ button {
   line-height: 1.1;
 }
 
+#new-tag {
+  font-size: 2.0rem !important;
+}
+
 /* Modal window */
 .modal-dialog {
 	position:fixed;
@@ -121,8 +126,14 @@ button {
 #new-resource-form .form-fixed-width {
   width: 570px;
 }
+
 #new-material-form .form-fixed-width {
   width: 570px;
+}
+
+#add-tag {
+  width: initial;
+  display: inline;
 }
 
 /* Padding */

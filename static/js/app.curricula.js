@@ -5,7 +5,16 @@ app.config(function($resourceProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
 });
 
-app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($scope, $modal, Curriculum){
+app.controller('CurriculumCtrl', ['$scope'
+    , '$modal'
+    , 'Curriculum'
+    , 'Tag'
+    , function($scope
+        , $modal
+        , Curriculum
+        , Tag
+    ){
+
 	$scope.curricula = [];
 
     // curricula accordion expands to display one curriculum at a time
@@ -43,6 +52,10 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($sc
       return (x.length > 0);
     };
 
+    // list of tags to add tag to lesson
+    $scope.tags = [];
+    $scope.tags = Tag.query();
+
     // open modal window to create new curriculum
     $scope.newCurriculum = function (size) {
         var modalInstance = $modal.open({
@@ -65,6 +78,35 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($sc
             size: size
         });
     };
+
+    // open modal window to create new tag
+    $scope.newTag = function (activity, addTag, size) {
+        // if an existing tag was selected in drop-down menu (it's not undefined)
+        if (addTag) {
+            // TODO: add tag to lesson (API call)
+            // add to list of tags on page (without refresh)
+            activity.tags.push(addTag);
+        }
+        // if user selected "create new tag" (addTag was undefined) then open modal window with new tag form
+        else {
+            var modalInstance = $modal.open({
+                templateUrl: 'static/partials/new-tag.html',
+                controller: 'NewTagModalCtrl',
+                size: size,
+                resolve: {
+                    activityID: function () {
+                        return activity.id;
+                    }
+                }
+            });
+            
+            // add newly created tag to list on the page (without refresh)
+            modalInstance.result.then(function (newTag) {
+                $scope.tags.push(newTag);
+            });
+        }
+    };
+
     // open modal window to view activity resources
     $scope.activityResources = function (activityID, resources, size) {
         var modalInstance = $modal.open({
@@ -97,7 +139,7 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($sc
             }
         });
     };
-    // open modal window to view related activities
+    // TODO: open modal window to view related activities
     $scope.relatedActivities = function (relatedActivities, size) {
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/related-activities.html',
@@ -267,6 +309,62 @@ app.controller('NewMaterialModalCtrl', ['$scope'
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newMaterial = new Material();
+        }).then(function() {
+            return $scope.errors = null;
+        }, function(rejection) {
+            return $scope.errors = rejection.data;
+        });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+app.controller('NewTagModalCtrl', ['$scope'
+    , '$modalInstance'
+    , 'activityID'
+    , 'Tag'
+    , function ($scope
+        , $modalInstance
+        , activityID
+        , Tag
+    ) {
+
+    $scope.newTag = new Tag();
+
+    // list of possible categories for new tag form
+    $scope.categories = [
+        {
+            code: "LAN"
+            , type: "Language"
+        }
+        , {
+            code: "TEC"
+          , type: "Technology"  
+        }
+        , {
+            code: "DIF"
+            , type: "Difficulty"
+        }
+        , {
+            code: "LEN"
+            , type: "Length"
+        }
+        , {
+            code: "CON"
+            , type: "Concept"
+        }
+    ];
+
+    $scope.save = function() {
+        // assign correct activity to the new tag
+        $scope.newTag.activityID = activityID;
+
+        return $scope.newTag.$save().then(function(result) {
+            $modalInstance.close(result);
+        }).then(function() {
+            return $scope.newTag = new Tag();
         }).then(function() {
             return $scope.errors = null;
         }, function(rejection) {
