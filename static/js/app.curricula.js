@@ -81,8 +81,9 @@ app.controller('CurriculumCtrl', ['$scope'
         // add newly created curriculum to list on the page (without refresh)
         modalInstance.result.then(function (newActivity) {
             var newRelationship = {
-                activity: newActivity;
-            }
+                activity: newActivity
+            };
+            
             $scope.curricula.activities.push(newRelationship);
         });
     };
