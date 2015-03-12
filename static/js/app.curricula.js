@@ -83,8 +83,8 @@ app.controller('CurriculumCtrl', ['$scope'
             var newRelationship = {
                 activity: newActivity
             };
-            
-            $scope.curricula.activities.push(newRelationship);
+
+            $scope.curriculum.activities.push(newRelationship);
         });
     };
 
