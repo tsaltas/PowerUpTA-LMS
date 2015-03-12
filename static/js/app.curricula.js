@@ -66,32 +66,55 @@ app.controller('CurriculumCtrl', ['$scope', '$modal', 'Curriculum', function($sc
         });
     };
     // open modal window to view activity resources
-    $scope.activityResources = function (size) {
+    $scope.activityResources = function (resources, size) {
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/activity-resources.html',
             controller: 'ActivityResourcesModalCtrl',
-            size: size
+            size: size,
+            resolve: {
+                resources: function () {
+                    return resources;
+                }
+            }
         });
     };
     // open modal window to view activity materials
-    $scope.activityMaterials = function (size) {
+    $scope.activityMaterials = function (materials, size) {
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/activity-materials.html',
             controller: 'ActivityMaterialsModalCtrl',
-            size: size
+            size: size,
+            resolve: {
+                materials: function () {
+                    return materials;
+                }
+            }
         });
     };
     // open modal window to view related activities
-    $scope.relatedActivities = function (size) {
+    $scope.relatedActivities = function (relatedActivities, size) {
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/related-activities.html',
             controller: 'RelatedActivitiesModalCtrl',
-            size: size
+            size: size,
+            resolve: {
+                relatedActivities: function () {
+                    return relatedActivities;
+                }
+            }
         });
     };
 }]);
 
-app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'Activity', function ($scope, $modalInstance, Curriculum, Activity) {
+app.controller('NewCurrModalCtrl', ['$scope'
+    , '$modalInstance'
+    , 'Curriculum'
+    , 'Activity'
+    , function ($scope
+        , $modalInstance
+        , Curriculum
+        , Activity
+    ) {
     
     // list of activities for new curriculum form
     $scope.activities = [];
@@ -134,7 +157,15 @@ app.controller('NewCurrModalCtrl', ['$scope', '$modalInstance', 'Curriculum', 'A
     };
 }]);
 
-app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Activity', 'Tag', function ($scope, $modalInstance, Activity, Tag) {
+app.controller('NewActivityModalCtrl', ['$scope'
+    , '$modalInstance'
+    , 'Activity'
+    , 'Tag'
+    , function ($scope
+        , $modalInstance
+        , Activity
+        , Tag
+    ) {
     // list of tags for new activity form
     $scope.tags = [];
     $scope.tags = Tag.query();
@@ -178,7 +209,19 @@ app.controller('NewActivityModalCtrl', ['$scope', '$modalInstance', 'Activity', 
     };
 }]);
 
-app.controller('ActivityResourcesModalCtrl', ['$scope', '$modalInstance', 'Resource', function ($scope, $modalInstance, Resource) {
+app.controller('ActivityResourcesModalCtrl', ['$scope'
+    , '$modalInstance'
+    , 'Resource'
+    , 'resources'
+    , function ($scope
+        , $modalInstance
+        , Resource
+        , resources
+    ) {
+    
+    // resources associated with the appropriate activity
+    $scope.resources = resources;
+
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
