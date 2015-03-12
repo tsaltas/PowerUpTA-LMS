@@ -78,14 +78,15 @@ app.controller('CurriculumCtrl', ['$scope'
             size: size
         });
 
-        // add newly created curriculum to list on the page (without refresh)
+        /*
+        // TODO: add newly created curriculum to list on the page (without refresh)
         modalInstance.result.then(function (newActivity) {
             var newRelationship = {
                 activity: newActivity
             };
 
             $scope.curriculum.activities.push(newRelationship);
-        });
+        }); */
     };
 
     // open modal window to create new tag
