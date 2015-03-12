@@ -69,7 +69,8 @@ app.controller('CurriculumCtrl', ['$scope'
 
         // add newly created curriculum to list on the page (without refresh)
         modalInstance.result.then(function (newCurriculum) {
-            console.log("Successfully created new curriculum");
+            console.log("Successfully created new curriculum:");
+            console.log(newCurriculum);
             console.log("Adding new curriculum to list currently displayed on the page.");
             $scope.curricula.push(newCurriculum);
         });
@@ -88,7 +89,8 @@ app.controller('CurriculumCtrl', ['$scope'
         
         // TODO: add newly created activity to list on the page (without refresh)
         modalInstance.result.then(function (newActivity) {
-            console.log("Successfully created new activity");
+            console.log("Successfully created new activity:");
+            console.log(newActivity);
             console.log("TODO: Associate activity with current curriculum (currently returning error).");
             
             var newRelationship = {
