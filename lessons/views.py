@@ -123,11 +123,14 @@ class CurriculumViewSet(viewsets.ModelViewSet):
         # first create the new curriculum
         curriculum = Curriculum.objects.create(
             name = request.data["name"],
-            tagline = request.data["tagline"],
             description = request.data["description"],
             upper_grade = request.data["upper_grade"],
             lower_grade = request.data["lower_grade"]
         )
+        # Add optional fields if provided by user
+        if "tagline" in request.data:
+            curriculum.tagline = request.data["tagline"]
+        
         # try to save curriculum
         try :
             curriculum.save()

@@ -100,45 +100,6 @@ class Activity(models.Model):
 		return [relationship.curriculum.id for relationship in self.curriculum_relationships.all()]
 
 	# TODO: Write methods that create symmetric relationships between activities
-	"""
-	# Add a relationship with another lesson
-	def add_relationship(self, lesson, style, symm=True):
-		relationship, created = Relationship.objects.get_or_create(
-			from_person = self,
-			to_person = person,
-			style = style
-		)
-		# Need to create the symmetric relationship on the other lesson
-		# However this time we will pass in symm=False so it doesn't try to add a relationship back on self
-		if symm:
-			if style == COMPONENT:
-				person.add_relationship(self, EXTENSION, False)
-			else:
-				person.add_relationship(self, COMPONENT, False)
-		return relationship
-
-	# Remove a relationship with another lesson
-	def remove_relationship(self, lesson, style, symm=True):
-		Relationship.objects.filter(
-			from_person = self,
-			to_person = person,
-			style = style
-		).delete()
-		# Need to delete the symmetric relationship on the other lesson
-		# However this time we will pass in symm=False so it doesn't try remove the relationship on self again
-		if symm:
-			if style == COMPONENT:
-				person.remove_relationship(self, EXTENSION, False)
-			else:
-				person.remove_relationship(self, COMPONENT, False)
-
-	# Get all the components / extension lessons
-	def get_relationships(self, style):
-		return self.relationships.filter(
-			to_people__style = style,
-			to_people__from_person=self
-		)
-	"""
 
 class Curriculum(models.Model):
 	"""
