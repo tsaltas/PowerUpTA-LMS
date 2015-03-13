@@ -214,6 +214,10 @@ app.controller('NewCurrModalCtrl', ['$scope'
         };
 
         return $scope.newCurriculum.$save().then(function(result) {
+            // change grades on new curriculum from DB storage value to display value
+            result.lower_grade = $scope.grades[result.lower_grade].value;
+            result.upper_grade = $scope.grades[result.upper_grade].value;
+            // return new curriculum to main controller to update display on page and close the modal window
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newCurriculum = new Curriculum();
