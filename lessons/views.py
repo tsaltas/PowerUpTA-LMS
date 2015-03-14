@@ -102,14 +102,21 @@ class ActivityViewSet(viewsets.ModelViewSet):
         if "image" in request.data:
             activity.image = request.data["image"]
 
-        # try to save activity
-        try :
+        # Try to create the activity-curriculum relationship and save activity
+        try:
+            curriculum = get_object_or_404(Curriculum, pk=request.data["curriculum"])
+            relationship = CurriculumActivityRelationship.objects.create(
+                curriculum = curriculum,
+                activity = activity,
+                number = request.data["number"]
+            )
+            relationship.save()
             activity.save()
-            # on success, return Response object
-            return Response()
         except:
             return Response("Error creating new activity: " + str(sys.exc_info()[0]),
                             status=status.HTTP_400_BAD_REQUEST)
+        # on success, return Response object
+        return Response()
 
 class CurriculumViewSet(viewsets.ModelViewSet):
     """

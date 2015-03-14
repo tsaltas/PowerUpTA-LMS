@@ -1,6 +1,8 @@
 
 app = angular.module('lms.app.curricula', ['lms.api', 'ui.bootstrap']);
 
+// Don't strip trailing slashes from calculated URLs
+// The Django API expects slashes
 app.config(function($resourceProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
 });
@@ -77,27 +79,39 @@ app.controller('CurriculumCtrl', ['$scope'
     };
 
     // open modal window to create new activity
-    $scope.newActivity = function (size) {
+    $scope.newActivity = function (curriculum, size) {
         console.log("Inside new activity function.");
         console.log("Creating new activity modal window.");
 
         var modalInstance = $modal.open({
             templateUrl: 'static/partials/new-activity.html',
             controller: 'NewActivityModalCtrl',
-            size: size
+            size: size,
+            resolve: {
+                curriculumID: function () {
+                    return curriculum.id;
+                },
+                number: function() {
+                    return curriculum.activities.length + 1;
+                }
+            }
         });
         
-        // TODO: add newly created activity to list on the page (without refresh)
+        // Add newly created activity to list on the page (without refresh)
         modalInstance.result.then(function (newActivity) {
             console.log("Successfully created new activity:");
             console.log(newActivity);
-            console.log("TODO: Associate activity with current curriculum (currently returning error).");
-            
-            var newRelationship = {
-                activity: newActivity
-            };
 
-            $scope.curriculum.activities.push(newRelationship);
+            console.log("Querying for updated curriculum");
+            curriculum = Curriculum.get({ id:curriculum.id }, function() {
+                // update curriculum scope variable with new activity
+                console.log("Updating scope variable");
+                for (var i = 0; i < $scope.curricula.length; i++) {
+                    if ($scope.curricula[i].id == curriculum.id) {
+                        $scope.curricula[i].activities.push(curriculum.activities[curriculum.activities.length - 1]);
+                    }
+                }
+            });
         }); 
     };
 
@@ -237,10 +251,14 @@ app.controller('NewActivityModalCtrl', ['$scope'
     , '$modalInstance'
     , 'Activity'
     , 'Tag'
+    , 'curriculumID'
+    , 'number'
     , function ($scope
         , $modalInstance
         , Activity
         , Tag
+        , curriculumID
+        , number
     ) {
 
     console.log("Inside new activity modal window controller.");
@@ -271,6 +289,10 @@ app.controller('NewActivityModalCtrl', ['$scope'
     $scope.newActivity = new Activity();
 
     $scope.save = function() {
+        // Add curriculum and number to new activity object
+        $scope.newActivity.curriculum = curriculumID;
+        $scope.newActivity.number = number;
+        // Save new activity to DB
         console.log("Saving new activity to database.")
         return $scope.newActivity.$save().then(function(result) {
             $modalInstance.close(result);
