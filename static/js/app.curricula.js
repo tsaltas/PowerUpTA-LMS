@@ -500,7 +500,7 @@ app.controller('ActivityMaterialsModalCtrl', ['$scope'
 
     // open modal window to create new material
     $scope.newMaterial = function (size) {
-        var modalInstance = $modal.open({
+            var modalInstance = $modal.open({
             templateUrl: 'static/partials/new-material.html',
             controller: 'NewMaterialModalCtrl',
             size: size,

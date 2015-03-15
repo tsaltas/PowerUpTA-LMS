@@ -35,7 +35,6 @@ class MaterialViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             # Save new material instance and pass in list of activities to be associated with the material
             serializer.save(activities = request.data['activities'])
-            print serializer.data
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
