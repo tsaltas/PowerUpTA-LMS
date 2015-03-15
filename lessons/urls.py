@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 # Create a router and register viewsets
 router = DefaultRouter()
+
 router.register(r'/tags', views.TagViewSet)
 router.register(r'/materials', views.MaterialViewSet)
 router.register(r'/resources', views.ResourceViewSet)

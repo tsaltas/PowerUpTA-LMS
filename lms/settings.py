@@ -68,6 +68,11 @@ DATABASES = {
     }
 }
 
+# Configure Rest Framework to use JSON data by default
+REST_FRAMEWORK = {
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 LANGUAGE_CODE = 'en-us'
