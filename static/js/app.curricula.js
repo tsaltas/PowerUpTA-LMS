@@ -22,12 +22,12 @@ app.controller('CurriculumCtrl', ['$scope'
     // curricula accordion expands to display one curriculum at a time
     $scope.oneAtATime = true;
 
-    // query API for curricula and inherit tags from nested activities
-	$scope.curricula = Curriculum.query(function() {
+    // curriculum inherits tags from nested activities
+    var getCurriculumTags = function(curricula) {
         // curriculum inherits tags from activities
-        for (i = 0; i < $scope.curricula.length; i++) {
-            $scope.curricula[i].tags = [];
-            curr = $scope.curricula[i];
+        for (i = 0; i < curricula.length; i++) {
+            curricula[i].tags = [];
+            curr = curricula[i];
             tagNames = []
             for (j = 0; j < curr.activities.length; j++) {
                 activity = curr.activities[j].activity;
@@ -38,14 +38,17 @@ app.controller('CurriculumCtrl', ['$scope'
                         // do not add duplicates to list
                         // tag names should be unique (enforced by API)
                         if (tagNames.indexOf(tag.name) == -1) {
-                            $scope.curricula[i].tags.push(tag);
+                            curricula[i].tags.push(tag);
                             tagNames.push(tag.name);
                         }
                     }
                 }
             }
         } 
-    });
+    };
+
+    // query API for curricula
+	$scope.curricula = Curriculum.query(getCurriculumTags);
 
     // function to check whether objects in the HTML template are defined
     // we are checking URLS as strings to avoid javascript parse errors
@@ -73,8 +76,15 @@ app.controller('CurriculumCtrl', ['$scope'
         modalInstance.result.then(function (newCurriculum) {
             console.log("Successfully created new curriculum:");
             console.log(newCurriculum);
-            console.log("Adding new curriculum to list currently displayed on the page.");
-            $scope.curricula.push(newCurriculum);
+            console.log("Querying for updated curriculum");
+            updatedCurricula = Curriculum.query(function() {
+                console.log("Adding new activity to curriculum currently displayed on the page.");
+                for (var i = 0; i < $scope.curricula.length; i++) {
+                    if ($scope.curricula[i].id != updatedCurricula[i].id) {
+                        $scope.curricula.push(updatedCurricula[i]);
+                    }
+                }
+            });  
         });
     };
 
@@ -355,8 +365,8 @@ app.controller('NewMaterialModalCtrl', ['$scope'
     $scope.newMaterial = new Material();
 
     $scope.save = function() {
-        // assign correct activity to the new material
-        $scope.newMaterial.activityID = activityID;
+        // assign new material object to the correct activity
+        $scope.newMaterial.activities = [activityID];
 
         return $scope.newMaterial.$save().then(function(result) {
             $modalInstance.close(result);

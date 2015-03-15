@@ -29,24 +29,16 @@ class MaterialViewSet(viewsets.ModelViewSet):
     serializer_class = MaterialSerializer
 
     def create(self, request):
-        # Create new material instance
-        material = Material.objects.create(
-            name = request.data["name"],
-            url = request.data["url"],
-        )
 
-        # If new material request includes activity number, associate the two together
-        if "activityID" in request.data:
-            material.activities.add(get_object_or_404(Activity, pk=request.data["activityID"]))
+        serializer = MaterialSerializer(data = request.data)
 
-        # Save or return errors
-        try :
-            material.save()
-            # on success, return Response object
-            return Response()
-        except:
-            return Response("Error creating new material: " + str(sys.exc_info()[0]),
-                            status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid():
+            # Save new material instance and pass in list of activities to be associated with the material
+            serializer.save(activities = request.data['activities'])
+            print serializer.data
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ResourceViewSet(viewsets.ModelViewSet):
     """
@@ -127,6 +119,14 @@ class CurriculumViewSet(viewsets.ModelViewSet):
 
     # TODO: Validate data before saving objects?
     def create(self, request):
+        print "request is: "
+        print request
+        print "data: "
+        print request.data
+        print "post: "
+        print request.POST
+        print "get: "
+        print request.GET
         # first create the new curriculum
         curriculum = Curriculum.objects.create(
             name = request.data["name"],

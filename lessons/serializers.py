@@ -1,4 +1,6 @@
 from django.forms import widgets
+from django.shortcuts import get_object_or_404
+
 from rest_framework import serializers
 from lessons.models import Tag, Resource, Material, Activity, Curriculum, ActivityRelationship, CurriculumActivityRelationship
 
@@ -18,9 +20,24 @@ class ResourceSerializer(serializers.ModelSerializer):
         fields = ('name', 'url')
 
 class MaterialSerializer(serializers.ModelSerializer):
+    activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Material
-        fields = ('name', 'url')
+        fields = ('id', 'name', 'url', 'activities')
+
+    def create(self, validated_data):
+      # Get list of activities to be associated with the new material
+      activities = validated_data.pop('activities')
+
+      material = Material.objects.create(**validated_data)
+
+      # Add activity - material relationships
+      for activityID in activities:
+        material.activities.add(get_object_or_404(Activity, pk=activityID))
+
+      material.save()
+      return material
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     tags = TagSerializer(many = True)
