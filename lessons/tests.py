@@ -101,7 +101,6 @@ class MaterialTests(APITestCase):
 		Material.objects.all().delete()
 
 	""" GET REQUESTS """
-
 	def test_get_all_materials(self):
 		"""
 		Should be able to GET list of materials
@@ -141,7 +140,6 @@ class MaterialTests(APITestCase):
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
 	""" POST REQUESTS """
-
 	def test_create_material(self):
 		"""
 		Should be able to create a new material object with valid data.
@@ -277,10 +275,119 @@ class MaterialTests(APITestCase):
 
 		self.assertEqual(response.data, {'name': ['This field must be unique.']})
 
-	""" PUT REQUESTS """
-		# try PUT bad data
-	# try PUT good data
-	# try PUT on object that DNE
+	""" PATCH REQUESTS"""
+	def test_update_material(self):
+		"""
+		Should be able to update material with PATCH request
+		"""
+		url = reverse('lessons:material-list')
+
+		# Update name
+		response1 = self.client.patch(url + "1/", {'name': 'Updated'}, format='json')
+		data1 = {
+			'id': 1
+			, 'name': 'Updated'
+			, 'url': 'http://www.test1.com'
+			, 'activities': []
+		}
+		
+		# Update URL
+		response2 = self.client.patch(url + "2/", {'url': 'http://www.updated.com'}, format='json')
+		data2 = {
+			'id': 2
+			, 'name': 'Test2'
+			, 'url': 'http://www.updated.com'
+			, 'activities': [1]
+		}
+		
+		# Remove one activity
+		response3 = self.client.patch(url + "3/", {'activities': [1]}, format='json')
+		data3 = {
+			'id': 3
+			, 'name': 'Test3'
+			, 'url': 'http://www.test3.com'
+			, 'activities': [1]
+		}
+
+		# Remove all activities
+		response4 = self.client.patch(url + "3/", {'activities': []}, format='json')
+		data4 = {
+			'id': 3
+			, 'name': 'Test3'
+			, 'url': 'http://www.test3.com'
+			, 'activities': []
+		}
+
+		# Add first activity
+		response5 = self.client.patch(url + "3/", {'activities': [1]}, format='json')
+		data5 = {
+			'id': 3
+			, 'name': 'Test3'
+			, 'url': 'http://www.test3.com'
+			, 'activities': [1]
+		}
+
+		# Add additional activity
+		response6 = self.client.patch(url + "3/", {'activities': [1,2]}, format='json')
+		data6 = {
+			'id': 3
+			, 'name': 'Test3'
+			, 'url': 'http://www.test3.com'
+			, 'activities': [1,2]
+		}
+
+		self.assertEqual(response1.status_code, status.HTTP_200_OK)
+		self.assertEqual(response2.status_code, status.HTTP_200_OK)
+		self.assertEqual(response3.status_code, status.HTTP_200_OK)
+		self.assertEqual(response4.status_code, status.HTTP_200_OK)
+		self.assertEqual(response5.status_code, status.HTTP_200_OK)
+		self.assertEqual(response6.status_code, status.HTTP_200_OK)
+
+		self.assertEqual(response1.data, data1)
+		self.assertEqual(response2.data, data2)
+		self.assertEqual(response3.data, data3)
+		self.assertEqual(response4.data, data4)
+		self.assertEqual(response5.data, data5)
+		self.assertEqual(response6.data, data6)
+	
+	def test_update_material_invalid_data(self):
+		"""
+		Should NOT be able to update material with PATCH request using invalid data
+		"""
+		url = reverse('lessons:material-list')
+
+		# Remove name
+		response1 = self.client.patch(url + "1/", {'name': ''}, format='json')
+		
+		# Remove URL
+		response2 = self.client.patch(url + "2/", {'url': ''}, format='json')
+		
+		# Add activity that DNE
+		response3 = self.client.patch(url + "3/", {'activities': [4]}, format='json')
+
+		# Update to duplicate name
+		response4 = self.client.patch(url + "1/", {'name': 'Test2'}, format='json')
+
+		self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response3.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
+
+		self.assertEqual(response1.data, {'name': ['This field may not be blank.']})
+		self.assertEqual(response2.data, {'url': ['This field may not be blank.']})
+		self.assertEqual(response3.data, {'detail': 'Not found'})
+		self.assertEqual(response4.data, {'name': ['This field must be unique.']})
+
+	def test_update_material_that_DNE(self):
+		"""
+		Should NOT be able to update material with PATCH request if it does not exist
+		"""
+		url = reverse('lessons:material-list')
+
+		response = self.client.patch(url + "4/", {'name': 'Does not exist'}, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
 
 	""" DELETE REQUESTS """
 	def test_delete_material(self):
@@ -391,7 +498,6 @@ class ResourceTests(APITestCase):
 		Resource.objects.all().delete()
 
 	""" GET REQUESTS """
-
 	def test_get_all_resources(self):
 		"""
 		Should be able to GET list of resources
@@ -431,7 +537,6 @@ class ResourceTests(APITestCase):
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
 	""" POST REQUESTS """
-
 	def test_create_resource(self):
 		"""
 		Should be able to create a new resource object with valid data.

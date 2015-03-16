@@ -27,17 +27,34 @@ class MaterialSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'url', 'activities')
 
     def create(self, validated_data):
-      # Get list of activities to be associated with the new material
-      activities = validated_data.pop('activities')
+    	# Get list of activities to be associated with the new material
+    	activities = validated_data.pop('activities')
+    	 
+    	material = Material.objects.create(**validated_data)
 
-      material = Material.objects.create(**validated_data)
+    	# Add activity - material relationships
+    	for activityID in activities:
+    		material.activities.add(get_object_or_404(Activity, pk=activityID))
 
-      # Add activity - material relationships
-      for activityID in activities:
-        material.activities.add(get_object_or_404(Activity, pk=activityID))
+    	material.save()
+    	return material
 
-      material.save()
-      return material
+    def update(self, instance, validated_data):
+    	# Update any fields passed in
+    	instance.name = validated_data.get('name', instance.name)
+    	instance.url = validated_data.get('url', instance.url)
+
+    	# Add activity - material relationships if specified
+    	if 'activities' in validated_data:
+    		# Remove any existing relationships
+    		instance.activities.clear()
+    		# Add new relationships
+    		activities = validated_data.get('activities')
+    		for activityID in activities:
+    			instance.activities.add(get_object_or_404(Activity, pk=activityID))
+
+    	instance.save()
+    	return instance
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     tags = TagSerializer(many = True)

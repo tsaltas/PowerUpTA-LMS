@@ -28,14 +28,33 @@ class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
 
+    # Custom function to associate activities with materials
     def create(self, request):
-
         serializer = MaterialSerializer(data = request.data)
 
         if serializer.is_valid():
             # Save new material instance and pass in list of activities to be associated with the material
             serializer.save(activities = request.data['activities'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Custom function to remove activities from materials if specified
+    def partial_update(self, request, pk=None):
+        # Get the material object
+        material = get_object_or_404(Material, pk=pk)
+
+        # Get new activities list
+        if 'activities' in request.data:
+            activities = request.data["activities"]
+        else:
+            activities = [activity.id for activity in material.activities.all()]
+        
+        # Update `material` with partial data
+        serializer = MaterialSerializer(material, request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(activities=activities)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
