@@ -16,6 +16,20 @@ class TagSerializer(serializers.ModelSerializer):
       ret['category'] = instance.get_category_display()
       return ret
 
+    # Custom function to associate activities with tags
+    def create(self, validated_data):
+    	# Get list of activities to be associated with the new tag
+    	activities = validated_data.pop('activities')
+    	 
+    	tag = Tag.objects.create(**validated_data)
+
+    	# Add activity-tag relationships
+    	for activityID in activities:
+    		tag.activities.add(get_object_or_404(Activity, pk=activityID))
+
+    	tag.save()
+    	return tag
+
 class ResourceSerializer(serializers.ModelSerializer):
     activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
@@ -30,7 +44,7 @@ class ResourceSerializer(serializers.ModelSerializer):
     	 
     	resource = Resource.objects.create(**validated_data)
 
-    	# Add activity - resource relationships
+    	# Add activity-resource relationships
     	for activityID in activities:
     		resource.activities.add(get_object_or_404(Activity, pk=activityID))
 
@@ -80,7 +94,7 @@ class MaterialSerializer(serializers.ModelSerializer):
     	instance.name = validated_data.get('name', instance.name)
     	instance.url = validated_data.get('url', instance.url)
 
-    	# Add activity - material relationships if specified
+    	# Add activity-material relationships if specified
     	if 'activities' in validated_data:
     		# Remove any existing relationships
     		instance.activities.clear()

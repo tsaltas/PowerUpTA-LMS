@@ -21,6 +21,23 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+    # Custom function to associate activities with tag
+    def create(self, request):
+        print "inside the creation function"
+        print "data is"
+        print request.data
+        serializer = TagSerializer(data = request.data)
+
+        if serializer.is_valid():
+            print "serializer was valid!"
+            # Save new tag instance and pass in list of activities to be associated with the tag
+            serializer.save(activities = request.data['activities'])
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print "serializer not valid"
+            print serializer.errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class MaterialViewSet(viewsets.ModelViewSet):
     """
     This viewset automatically provides `list` and `detail` actions.

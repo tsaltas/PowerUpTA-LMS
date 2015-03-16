@@ -1,6 +1,7 @@
 import json
 
 from django.core.urlresolvers import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from django.shortcuts import get_object_or_404
 
@@ -42,6 +43,9 @@ class MaterialTests(APITestCase):
 		"""
 		Fake objects to be used across all tests in this class
 		"""
+		# Endpoint URL for all tests
+		cls.url = reverse('lessons:material-list')
+
 		# Create some activity objects to associate with materials
 		activity1 = Activity.objects.create(
 			name="TestActivity1"
@@ -108,9 +112,7 @@ class MaterialTests(APITestCase):
 		"""
 		Should be able to GET list of materials
 		"""
-		url = reverse('lessons:material-list')
-
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 3)
@@ -124,8 +126,7 @@ class MaterialTests(APITestCase):
 		"""
 		Should be able to GET a single material that exists
 		"""
-		url = reverse('lessons:material-list')
-		response = self.client.get(url + "1/")
+		response = self.client.get(self.url + "1/")
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		# Convert ordered dict objects into unordered dicts for comparison
@@ -135,20 +136,17 @@ class MaterialTests(APITestCase):
 		"""
 		Should fail to GET a single material that does not exist
 		"""
-		url = reverse('lessons:material-list')
-		response = self.client.get(url + "4/")
+		response = self.client.get(self.url + "4/")
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		# Convert ordered dict objects into unordered dicts for comparison
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
-	""" POST REQUESTS """
+	""" MATERIAL POST REQUESTS """
 	def test_create_material(self):
 		"""
 		Should be able to create a new material object with valid data.
 		"""
-		url = reverse('lessons:material-list')
-
 		# 0 activities
 		data4 = {
 			'name': 'Test4'
@@ -168,9 +166,9 @@ class MaterialTests(APITestCase):
 			, 'activities': [self.activity1.id, self.activity2.id]
 		}
 
-		response4 = self.client.post(url, data4, format='json')
-		response5 = self.client.post(url, data5, format='json')
-		response6 = self.client.post(url, data6, format='json')
+		response4 = self.client.post(self.url, data4, format='json')
+		response5 = self.client.post(self.url, data5, format='json')
+		response6 = self.client.post(self.url, data6, format='json')
 
 		self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
@@ -189,8 +187,6 @@ class MaterialTests(APITestCase):
 		"""
 		Should NOT be able to create a new material object with invalid data.
 		"""
-		url = reverse('lessons:material-list')
-
 		# name missing
 		data4 = {
 			'name': ''
@@ -228,12 +224,12 @@ class MaterialTests(APITestCase):
 			, 'activities': [100]
 		}
 
-		response4 = self.client.post(url, data4, format='json')
-		response5 = self.client.post(url, data5, format='json')
-		response6 = self.client.post(url, data6, format='json')
-		response7 = self.client.post(url, data7, format='json')
-		response8 = self.client.post(url, data8, format='json')
-		response9 = self.client.post(url, data9, format='json')
+		response4 = self.client.post(self.url, data4, format='json')
+		response5 = self.client.post(self.url, data5, format='json')
+		response6 = self.client.post(self.url, data6, format='json')
+		response7 = self.client.post(self.url, data7, format='json')
+		response8 = self.client.post(self.url, data8, format='json')
+		response9 = self.client.post(self.url, data9, format='json')
 
 		self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
@@ -263,8 +259,6 @@ class MaterialTests(APITestCase):
 		Should NOT be able to create a new material object with duplicate value
 		on unique-only field "name"
 		"""
-		url = reverse('lessons:material-list')
-
 		# Duplicate name
 		duplicate = {
 			'name': 'Test1'
@@ -272,7 +266,7 @@ class MaterialTests(APITestCase):
 			, 'activities': []
 		}
 	
-		response = self.client.post(url, duplicate, format='json')
+		response = self.client.post(self.url, duplicate, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -283,10 +277,8 @@ class MaterialTests(APITestCase):
 		"""
 		Should be able to update material with PATCH request
 		"""
-		url = reverse('lessons:material-list')
-
 		# Update name
-		response1 = self.client.patch(url + "1/", {'name': 'Updated'}, format='json')
+		response1 = self.client.patch(self.url + "1/", {'name': 'Updated'}, format='json')
 		data1 = {
 			'id': 1
 			, 'name': 'Updated'
@@ -295,7 +287,7 @@ class MaterialTests(APITestCase):
 		}
 		
 		# Update URL
-		response2 = self.client.patch(url + "2/", {'url': 'http://www.updated.com'}, format='json')
+		response2 = self.client.patch(self.url + "2/", {'url': 'http://www.updated.com'}, format='json')
 		data2 = {
 			'id': 2
 			, 'name': 'Test2'
@@ -304,7 +296,7 @@ class MaterialTests(APITestCase):
 		}
 		
 		# Remove one activity
-		response3 = self.client.patch(url + "3/", {'activities': [self.activity1.id]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [self.activity1.id]}, format='json')
 		data3 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -313,7 +305,7 @@ class MaterialTests(APITestCase):
 		}
 
 		# Remove all activities
-		response4 = self.client.patch(url + "3/", {'activities': []}, format='json')
+		response4 = self.client.patch(self.url + "3/", {'activities': []}, format='json')
 		data4 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -322,7 +314,11 @@ class MaterialTests(APITestCase):
 		}
 
 		# Add first activity
-		response5 = self.client.patch(url + "3/", {'activities': [self.activity1.id]}, format='json')
+		response5 = self.client.patch(
+			self.url + "3/"
+			, {'activities': [self.activity1.id]}
+			, format='json'
+		)
 		data5 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -332,7 +328,7 @@ class MaterialTests(APITestCase):
 
 		# Add additional activity
 		response6 = self.client.patch(
-			url + "3/"
+			self.url + "3/"
 			, {'activities': [self.activity1.id, self.activity2.id]}
 			, format='json'
 		)
@@ -361,19 +357,17 @@ class MaterialTests(APITestCase):
 		"""
 		Should NOT be able to update material with PATCH request using invalid data
 		"""
-		url = reverse('lessons:material-list')
-
 		# Remove name
-		response1 = self.client.patch(url + "1/", {'name': ''}, format='json')
+		response1 = self.client.patch(self.url + "1/", {'name': ''}, format='json')
 		
 		# Remove URL
-		response2 = self.client.patch(url + "2/", {'url': ''}, format='json')
+		response2 = self.client.patch(self.url + "2/", {'url': ''}, format='json')
 		
 		# Add activity that DNE
-		response3 = self.client.patch(url + "3/", {'activities': [100]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [100]}, format='json')
 
 		# Update to duplicate name
-		response4 = self.client.patch(url + "1/", {'name': 'Test2'}, format='json')
+		response4 = self.client.patch(self.url + "1/", {'name': 'Test2'}, format='json')
 
 		self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
@@ -389,9 +383,7 @@ class MaterialTests(APITestCase):
 		"""
 		Should NOT be able to update material with PATCH request if it does not exist
 		"""
-		url = reverse('lessons:material-list')
-
-		response = self.client.patch(url + "4/", {'name': 'Does not exist'}, format='json')
+		response = self.client.patch(self.url + "4/", {'name': 'Does not exist'}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
@@ -401,15 +393,14 @@ class MaterialTests(APITestCase):
 		"""
 		Should be able to DELETE a material object
 		"""
-		url = reverse('lessons:material-list')
-		response = self.client.delete(url + "1/")
+		response = self.client.delete(self.url + "1/")
 
 		# Verify object deletion
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 		self.assertEqual(response.data, None)
 
 		# Verify that other objects remain
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 2)
 
@@ -421,15 +412,14 @@ class MaterialTests(APITestCase):
 		"""
 		Should NOT be able to DELETE a material object that does not exist
 		"""
-		url = reverse('lessons:material-list')
-		response = self.client.delete(url + "4/")
+		response = self.client.delete(self.url + "4/")
 
 		# Verify object deletion
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
 		# Verify that all objects remain
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 3)
 
@@ -447,6 +437,9 @@ class ResourceTests(APITestCase):
 		"""
 		Fake objects to be used across all tests in this class
 		"""
+		# Endpoint URL for all tests
+		cls.url = reverse('lessons:resource-list')
+
 		# Create some activity objects to associate with resources
 		activity1 = Activity.objects.create(
 			name="TestActivity1"
@@ -513,9 +506,7 @@ class ResourceTests(APITestCase):
 		"""
 		Should be able to GET list of resources
 		"""
-		url = reverse('lessons:resource-list')
-
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 3)
@@ -529,8 +520,7 @@ class ResourceTests(APITestCase):
 		"""
 		Should be able to GET a single resource that exists
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.get(url + "1/")
+		response = self.client.get(self.url + "1/")
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		# Convert ordered dict objects into unordered dicts for comparison
@@ -540,20 +530,17 @@ class ResourceTests(APITestCase):
 		"""
 		Should fail to GET a single resource that does not exist
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.get(url + "4/")
+		response = self.client.get(self.url + "4/")
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		# Convert ordered dict objects into unordered dicts for comparison
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
-	""" POST REQUESTS """
+	""" RESOURCE POST REQUESTS """
 	def test_create_resource(self):
 		"""
 		Should be able to create a new resource object with valid data.
 		"""
-		url = reverse('lessons:resource-list')
-
 		# 0 activities
 		data4 = {
 			'name': 'Test4'
@@ -573,9 +560,9 @@ class ResourceTests(APITestCase):
 			, 'activities': [self.activity1.id, self.activity2.id]
 		}
 
-		response4 = self.client.post(url, data4, format='json')
-		response5 = self.client.post(url, data5, format='json')
-		response6 = self.client.post(url, data6, format='json')
+		response4 = self.client.post(self.url, data4, format='json')
+		response5 = self.client.post(self.url, data5, format='json')
+		response6 = self.client.post(self.url, data6, format='json')
 
 		self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
@@ -594,8 +581,6 @@ class ResourceTests(APITestCase):
 		"""
 		Should NOT be able to create a new resource object with invalid data.
 		"""
-		url = reverse('lessons:resource-list')
-
 		# name missing
 		data4 = {
 			'name': ''
@@ -633,12 +618,12 @@ class ResourceTests(APITestCase):
 			, 'activities': [100]
 		}
 
-		response4 = self.client.post(url, data4, format='json')
-		response5 = self.client.post(url, data5, format='json')
-		response6 = self.client.post(url, data6, format='json')
-		response7 = self.client.post(url, data7, format='json')
-		response8 = self.client.post(url, data8, format='json')
-		response9 = self.client.post(url, data9, format='json')
+		response4 = self.client.post(self.url, data4, format='json')
+		response5 = self.client.post(self.url, data5, format='json')
+		response6 = self.client.post(self.url, data6, format='json')
+		response7 = self.client.post(self.url, data7, format='json')
+		response8 = self.client.post(self.url, data8, format='json')
+		response9 = self.client.post(self.url, data9, format='json')
 
 		self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
@@ -668,7 +653,6 @@ class ResourceTests(APITestCase):
 		Should NOT be able to create a new resource object with duplicate value
 		on unique-only field "name"
 		"""
-		url = reverse('lessons:resource-list')
 
 		# Duplicate name
 		duplicate = {
@@ -677,7 +661,7 @@ class ResourceTests(APITestCase):
 			, 'activities': []
 		}
 	
-		response = self.client.post(url, duplicate, format='json')
+		response = self.client.post(self.url, duplicate, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -688,10 +672,9 @@ class ResourceTests(APITestCase):
 		"""
 		Should be able to update resource with PATCH request
 		"""
-		url = reverse('lessons:resource-list')
 
 		# Update name
-		response1 = self.client.patch(url + "1/", {'name': 'Updated'}, format='json')
+		response1 = self.client.patch(self.url + "1/", {'name': 'Updated'}, format='json')
 		data1 = {
 			'id': 1
 			, 'name': 'Updated'
@@ -700,7 +683,7 @@ class ResourceTests(APITestCase):
 		}
 		
 		# Update URL
-		response2 = self.client.patch(url + "2/", {'url': 'http://www.updated.com'}, format='json')
+		response2 = self.client.patch(self.url + "2/", {'url': 'http://www.updated.com'}, format='json')
 		data2 = {
 			'id': 2
 			, 'name': 'Test2'
@@ -709,7 +692,7 @@ class ResourceTests(APITestCase):
 		}
 		
 		# Remove one activity
-		response3 = self.client.patch(url + "3/", {'activities': [self.activity1.id]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [self.activity1.id]}, format='json')
 		data3 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -718,7 +701,7 @@ class ResourceTests(APITestCase):
 		}
 
 		# Remove all activities
-		response4 = self.client.patch(url + "3/", {'activities': []}, format='json')
+		response4 = self.client.patch(self.url + "3/", {'activities': []}, format='json')
 		data4 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -728,7 +711,7 @@ class ResourceTests(APITestCase):
 
 		# Add first activity
 		response5 = self.client.patch(
-			url + "3/"
+			self.url + "3/"
 			, {'activities': [self.activity1.id]}
 			, format='json'
 		)
@@ -741,7 +724,7 @@ class ResourceTests(APITestCase):
 
 		# Add additional activity
 		response6 = self.client.patch(
-			url + "3/"
+			self.url + "3/"
 			, {'activities': [self.activity1.id, self.activity2.id]}
 			, format='json'
 		)
@@ -770,19 +753,18 @@ class ResourceTests(APITestCase):
 		"""
 		Should NOT be able to update resource with PATCH request using invalid data
 		"""
-		url = reverse('lessons:resource-list')
 
 		# Remove name
-		response1 = self.client.patch(url + "1/", {'name': ''}, format='json')
+		response1 = self.client.patch(self.url + "1/", {'name': ''}, format='json')
 		
 		# Remove URL
-		response2 = self.client.patch(url + "2/", {'url': ''}, format='json')
+		response2 = self.client.patch(self.url + "2/", {'url': ''}, format='json')
 		
 		# Add activity that DNE
-		response3 = self.client.patch(url + "3/", {'activities': [100]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [100]}, format='json')
 
 		# Update to duplicate name
-		response4 = self.client.patch(url + "1/", {'name': 'Test2'}, format='json')
+		response4 = self.client.patch(self.url + "1/", {'name': 'Test2'}, format='json')
 
 		self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
@@ -798,9 +780,8 @@ class ResourceTests(APITestCase):
 		"""
 		Should NOT be able to update resource with PATCH request if it does not exist
 		"""
-		url = reverse('lessons:resource-list')
 
-		response = self.client.patch(url + "4/", {'name': 'Does not exist'}, format='json')
+		response = self.client.patch(self.url + "4/", {'name': 'Does not exist'}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
@@ -811,15 +792,14 @@ class ResourceTests(APITestCase):
 		"""
 		Should be able to DELETE a resource object
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.delete(url + "1/")
+		response = self.client.delete(self.url + "1/")
 
 		# Verify object deletion
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 		self.assertEqual(response.data, None)
 
 		# Verify that other objects remain
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 2)
 
@@ -831,15 +811,14 @@ class ResourceTests(APITestCase):
 		"""
 		Should NOT be able to DELETE a resource object that does not exist
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.delete(url + "4/")
+		response = self.client.delete(self.url + "4/")
 
 		# Verify object deletion
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
 		# Verify that all objects remain
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 3)
 
@@ -857,6 +836,9 @@ class TagTests(APITestCase):
 		"""
 		Fake objects to be used across all tests in this class
 		"""
+		# Endpoint URL for all tests
+		cls.url = reverse('lessons:tag-list')
+
 		# Create some activity objects to associate with tags
 		activity1 = Activity.objects.create(
 			name="TestActivity1"
@@ -868,52 +850,60 @@ class TagTests(APITestCase):
 			, description="This is another test activity."
 		)
 
+		# Load test logo to associate with tags
+		test_logo = SimpleUploadedFile(
+			name='test_img.jpg'
+			, content=open('lessons/tests/test_img.jpg', 'rb').read()
+			, content_type='image/jpeg'
+		)
+
 		# Create some tag objects
 		tag1 = Tag.objects.create(
 			name='Test1'
-			, logo=SimpleUploadedFile(
-				name='test_image.jpg'
-				, content=open(image_path, 'rb').read()
-				, content_type='image/jpeg'
-			)
+			, logo=test_logo
 			, category='LAN'
 		)
 		tag2 = Tag.objects.create(
 			name='Test2'
-			, logo='http://www.test2.com'
+			, logo=test_logo
 			, category='TEC'
 		)
 		tag2.activities.add(activity1)
 
-		tag3 = Resource.objects.create(
+		tag3 = Tag.objects.create(
 			name='Test3'
-			, url='http://www.test3.com'
+			, logo=test_logo
+			, category='CON'
 		)
 		tag3.activities.add(activity1)
 		tag3.activities.add(activity2)
 
-		# Add activities to the class object for reference in later tests
+		# Add objects to the class object for reference in later tests
 		cls.activity1 = activity1
 		cls.activity2 = activity2
+		cls.test_logo = test_logo
 
 		# Data to compare against objects returned from the API
 		cls.data1 = {
 			'id': 1
 			, 'name': 'Test1'
-			, 'url': 'http://www.test1.com'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'LAN'
 			, 'activities': []
 		}
 		cls.data2 = {
 			'id': 2
 			, 'name': 'Test2'
-			, 'url': 'http://www.test2.com'
-			, 'activities': [activity1.id]
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'TEC'
+			, 'activities': []
 		}
 		cls.data3 = {
-			'id': 3
-			, 'name': 'Test3'
-			, 'url': 'http://www.test3.com'
-			, 'activities': [activity1.id, activity2.id]
+			'id': 2
+			, 'name': 'Test2'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'CON'
+			, 'activities': []
 		}
 	
 	@classmethod
@@ -924,14 +914,12 @@ class TagTests(APITestCase):
 		Activity.objects.all().delete()
 		Tag.objects.all().delete()
 
-	""" RESOURCE GET REQUESTS """
-	def test_get_all_resources(self):
+	""" TAG GET REQUESTS """
+	def test_get_all_tags(self):
 		"""
-		Should be able to GET list of resources
+		Should be able to GET list of tags
 		"""
-		url = reverse('lessons:resource-list')
-
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 3)
@@ -942,57 +930,57 @@ class TagTests(APITestCase):
 		self.assertEqual(dict(response.data[2]), self.data3)
 
 	
-	def test_get_one_resource(self):
+	def test_get_one_tag(self):
 		"""
-		Should be able to GET a single resource that exists
+		Should be able to GET a single tag that exists
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.get(url + "1/")
+		response = self.client.get(self.url + "1/")
 
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		# Convert ordered dict objects into unordered dicts for comparison
 		self.assertEqual(response.data, self.data1)
 
-	def test_get_one_resource_that_DNE(self):
+	def test_get_one_tag_that_DNE(self):
 		"""
-		Should fail to GET a single resource that does not exist
+		Should fail to GET a single tag that does not exist
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.get(url + "4/")
+		response = self.client.get(self.url + "4/")
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		# Convert ordered dict objects into unordered dicts for comparison
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
-	""" POST REQUESTS """
-	def test_create_resource(self):
+	""" TAG POST REQUESTS """
+	def test_create_tag(self):
 		"""
-		Should be able to create a new resource object with valid data.
+		Should be able to create a new tag object with valid data.
 		"""
-		url = reverse('lessons:resource-list')
 
 		# 0 activities
 		data4 = {
 			'name': 'Test4'
-			, 'url': 'http://www.test4.com'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'LAN'
 			, 'activities': []
 		}
 		# 1 activity
 		data5 = {
 			'name': 'Test5'
-			, 'url': 'http://www.test5.com'
+			, 'logo': self.test_logo
+			, 'category': 'LEN'
 			, 'activities': [self.activity1.id]
 		}
 		# >1 activities
 		data6 = {
 			'name': 'Test6'
-			, 'url': 'http://www.test6.com'
+			, 'logo': self.test_logo
+			, 'category': 'DIF'
 			, 'activities': [self.activity1.id, self.activity2.id]
 		}
 
-		response4 = self.client.post(url, data4, format='json')
-		response5 = self.client.post(url, data5, format='json')
-		response6 = self.client.post(url, data6, format='json')
+		response4 = self.client.post(self.url, data4)
+		response5 = self.client.post(self.url, data5, format='json')
+		response6 = self.client.post(self.url, data6, format='json')
 
 		self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
@@ -1007,63 +995,77 @@ class TagTests(APITestCase):
 		self.assertEqual(response5.data, data5)
 		self.assertEqual(response6.data, data6)
 
-	def test_create_resource_invalid_data(self):
+	def test_create_tag_invalid_data(self):
 		"""
-		Should NOT be able to create a new resource object with invalid data.
+		Should NOT be able to create a new tag object with invalid data.
 		"""
-		url = reverse('lessons:resource-list')
 
 		# name missing
 		data4 = {
 			'name': ''
-			, 'url': 'http://www.test4.com'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'LAN'
 			, 'activities': [self.activity1.id]
 		}
-		# URL missing
+		# logo missing
 		data5 = {
 			'name': 'Test5'
-			, 'url': ''
+			, 'logo': ''
+			, 'category': 'CON'
 			, 'activities': []
 		}
-		# URL malformed
+		# logo not an image
 		data6 = {
 			'name': 'Test6'
-			, 'url': 'www.test6.com'
+			, 'logo': 'lessons/tests/test_img.pdf'
+			, 'category': 'LAN'
 			, 'activities': [self.activity2.id]
 		}
-		# URL malformed
+		# logo filepath incorrect
 		data7 = {
 			'name': 'Test7'
-			, 'url': 'test7.com'
+			, 'logo': 'tests/test_img.jpg'
+			, 'category': 'LEN'
 			, 'activities': []
 		}
-		# URL malformed
+		# category missing
 		data8 = {
 			'name': 'Test8'
-			, 'url': 'test8.co'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': ''
 			, 'activities': []
 		}
-		# Activity DNE
+		# category DNE
 		data9 = {
 			'name': 'Test9'
-			, 'url': 'http://www.test9.com'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'DNE'
+			, 'activities': [self.activity1.id, self.activity2.id]
+		}
+		# activity DNE
+		data10 = {
+			'name': 'Test10'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'DIF'
 			, 'activities': [100]
 		}
 
-		response4 = self.client.post(url, data4, format='json')
-		response5 = self.client.post(url, data5, format='json')
-		response6 = self.client.post(url, data6, format='json')
-		response7 = self.client.post(url, data7, format='json')
-		response8 = self.client.post(url, data8, format='json')
-		response9 = self.client.post(url, data9, format='json')
+		response4 = self.client.post(self.url, data4, format='json')
+		response5 = self.client.post(self.url, data5, format='json')
+		response6 = self.client.post(self.url, data6, format='json')
+		response7 = self.client.post(self.url, data7, format='json')
+		response8 = self.client.post(self.url, data8, format='json')
+		response9 = self.client.post(self.url, data9, format='json')
+		response10 = self.client.post(self.url, data10, format='json')
 
 		self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response6.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response7.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response8.status_code, status.HTTP_400_BAD_REQUEST)
-		# Activity DNE, so should return 404 not found
+		# Objects DNE, so should return 404 not found
 		self.assertEqual(response9.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response10.status_code, status.HTTP_404_NOT_FOUND)
 
 		# API should include new resource ID number in response
 		data4['id'] = 4
@@ -1072,6 +1074,7 @@ class TagTests(APITestCase):
 		data7['id'] = 7
 		data8['id'] = 8
 		data9['id'] = 9
+		data10['id'] = 10
 
 		self.assertEqual(response4.data, {'name': ['This field may not be blank.']})
 		self.assertEqual(response5.data, {'url': ['This field may not be blank.']})
@@ -1079,22 +1082,23 @@ class TagTests(APITestCase):
 		self.assertEqual(response7.data, {'url': ['Enter a valid URL.']})
 		self.assertEqual(response8.data, {'url': ['Enter a valid URL.']})
 		self.assertEqual(response9.data, {'detail': 'Not found'})
+		self.assertEqual(response10.data, {'detail': 'Not found'})
 
-	def test_create_resource_duplicate_name(self):
+	def test_create_tag_duplicate_name(self):
 		"""
-		Should NOT be able to create a new resource object with duplicate value
+		Should NOT be able to create a new tag object with duplicate value
 		on unique-only field "name"
 		"""
-		url = reverse('lessons:resource-list')
 
 		# Duplicate name
 		duplicate = {
 			'name': 'Test1'
-			, 'url': 'http://www.duplicate.com'
+			, 'logo': 'lessons/tests/test_img.jpg'
+			, 'category': 'LAN'
 			, 'activities': []
 		}
 	
-		response = self.client.post(url, duplicate, format='json')
+		response = self.client.post(self.url, duplicate, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -1105,10 +1109,9 @@ class TagTests(APITestCase):
 		"""
 		Should be able to update resource with PATCH request
 		"""
-		url = reverse('lessons:resource-list')
 
 		# Update name
-		response1 = self.client.patch(url + "1/", {'name': 'Updated'}, format='json')
+		response1 = self.client.patch(self.url + "1/", {'name': 'Updated'}, format='json')
 		data1 = {
 			'id': 1
 			, 'name': 'Updated'
@@ -1117,7 +1120,7 @@ class TagTests(APITestCase):
 		}
 		
 		# Update URL
-		response2 = self.client.patch(url + "2/", {'url': 'http://www.updated.com'}, format='json')
+		response2 = self.client.patch(self.url + "2/", {'url': 'http://www.updated.com'}, format='json')
 		data2 = {
 			'id': 2
 			, 'name': 'Test2'
@@ -1126,7 +1129,7 @@ class TagTests(APITestCase):
 		}
 		
 		# Remove one activity
-		response3 = self.client.patch(url + "3/", {'activities': [self.activity1.id]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [self.activity1.id]}, format='json')
 		data3 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -1135,7 +1138,7 @@ class TagTests(APITestCase):
 		}
 
 		# Remove all activities
-		response4 = self.client.patch(url + "3/", {'activities': []}, format='json')
+		response4 = self.client.patch(self.url + "3/", {'activities': []}, format='json')
 		data4 = {
 			'id': 3
 			, 'name': 'Test3'
@@ -1187,19 +1190,18 @@ class TagTests(APITestCase):
 		"""
 		Should NOT be able to update resource with PATCH request using invalid data
 		"""
-		url = reverse('lessons:resource-list')
 
 		# Remove name
-		response1 = self.client.patch(url + "1/", {'name': ''}, format='json')
+		response1 = self.client.patch(self.url + "1/", {'name': ''}, format='json')
 		
 		# Remove URL
-		response2 = self.client.patch(url + "2/", {'url': ''}, format='json')
+		response2 = self.client.patch(self.url + "2/", {'url': ''}, format='json')
 		
 		# Add activity that DNE
-		response3 = self.client.patch(url + "3/", {'activities': [100]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [100]}, format='json')
 
 		# Update to duplicate name
-		response4 = self.client.patch(url + "1/", {'name': 'Test2'}, format='json')
+		response4 = self.client.patch(self.url + "1/", {'name': 'Test2'}, format='json')
 
 		self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
@@ -1215,9 +1217,8 @@ class TagTests(APITestCase):
 		"""
 		Should NOT be able to update resource with PATCH request if it does not exist
 		"""
-		url = reverse('lessons:resource-list')
 
-		response = self.client.patch(url + "4/", {'name': 'Does not exist'}, format='json')
+		response = self.client.patch(self.url + "4/", {'name': 'Does not exist'}, format='json')
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
@@ -1228,15 +1229,14 @@ class TagTests(APITestCase):
 		"""
 		Should be able to DELETE a resource object
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.delete(url + "1/")
+		response = self.client.delete(self.url + "1/")
 
 		# Verify object deletion
 		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 		self.assertEqual(response.data, None)
 
 		# Verify that other objects remain
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 2)
 
@@ -1248,15 +1248,14 @@ class TagTests(APITestCase):
 		"""
 		Should NOT be able to DELETE a resource object that does not exist
 		"""
-		url = reverse('lessons:resource-list')
-		response = self.client.delete(url + "4/")
+		response = self.client.delete(self.url + "4/")
 
 		# Verify object deletion
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
 		# Verify that all objects remain
-		response = self.client.get(url)
+		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 3)
 
