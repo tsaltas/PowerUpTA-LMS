@@ -28,7 +28,7 @@ class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
 
-    # Custom function to associate activities with materials
+    # Custom function to associate activities with material
     def create(self, request):
         serializer = MaterialSerializer(data = request.data)
 
@@ -39,7 +39,7 @@ class MaterialViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # Custom function to remove activities from materials if specified
+    # Custom function to remove activities from material if specified
     def partial_update(self, request, pk=None):
         # Get the material object
         material = get_object_or_404(Material, pk=pk)
@@ -65,25 +65,35 @@ class ResourceViewSet(viewsets.ModelViewSet):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
 
+    # Custom function to associate activities with resource
     def create(self, request):
-        # Create new resource instance
-        resource = Resource.objects.create(
-            name = request.data["name"],
-            url = request.data["url"],
-        )
+        serializer = ResourceSerializer(data = request.data)
 
-        # If new resource request includes activity number, associate the two together
-        if "activityID" in request.data:
-            resource.activities.add(get_object_or_404(Activity, pk=request.data["activityID"]))
+        if serializer.is_valid():
+            # Save new resource instance and pass in list of activities to be associated with the resource
+            serializer.save(activities = request.data['activities'])
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Save or return errors
-        try :
-            resource.save()
-            # on success, return Response object
-            return Response()
-        except:
-            return Response("Error creating new resource: " + str(sys.exc_info()[0]),
-                            status=status.HTTP_400_BAD_REQUEST)
+    # Custom function to remove activities from resource if specified
+    def partial_update(self, request, pk=None):
+        # Get the resource object
+        resource = get_object_or_404(Resource, pk=pk)
+
+        # Get new activities list
+        if 'activities' in request.data:
+            activities = request.data["activities"]
+        else:
+            activities = [activity.id for activity in resource.activities.all()]
+        
+        # Update `resource` with partial data
+        serializer = ResourceSerializer(resource, request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(activities=activities)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ActivityViewSet(viewsets.ModelViewSet):
     """

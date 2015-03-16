@@ -15,9 +15,42 @@ class TagSerializer(serializers.ModelSerializer):
       return ret
 
 class ResourceSerializer(serializers.ModelSerializer):
+    activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Resource
-        fields = ('name', 'url')
+        fields = ('id', 'name', 'url', 'activities')
+
+    # Custom function to associate activities with resources
+    def create(self, validated_data):
+    	# Get list of activities to be associated with the new resource
+    	activities = validated_data.pop('activities')
+    	 
+    	resource = Resource.objects.create(**validated_data)
+
+    	# Add activity - resource relationships
+    	for activityID in activities:
+    		resource.activities.add(get_object_or_404(Activity, pk=activityID))
+
+    	resource.save()
+    	return resource
+
+    def update(self, instance, validated_data):
+    	# Update any fields passed in
+    	instance.name = validated_data.get('name', instance.name)
+    	instance.url = validated_data.get('url', instance.url)
+
+    	# Add activity-resource relationships if specified
+    	if 'activities' in validated_data:
+    		# Remove any existing relationships
+    		instance.activities.clear()
+    		# Add new relationships
+    		activities = validated_data.get('activities')
+    		for activityID in activities:
+    			instance.activities.add(get_object_or_404(Activity, pk=activityID))
+
+    	instance.save()
+    	return instance
 
 class MaterialSerializer(serializers.ModelSerializer):
     activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -26,13 +59,14 @@ class MaterialSerializer(serializers.ModelSerializer):
         model = Material
         fields = ('id', 'name', 'url', 'activities')
 
+    # Custom function to associate activities with materials
     def create(self, validated_data):
     	# Get list of activities to be associated with the new material
     	activities = validated_data.pop('activities')
     	 
     	material = Material.objects.create(**validated_data)
 
-    	# Add activity - material relationships
+    	# Add activity-material relationships
     	for activityID in activities:
     		material.activities.add(get_object_or_404(Activity, pk=activityID))
 
