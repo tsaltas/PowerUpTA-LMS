@@ -5,9 +5,11 @@ from rest_framework import serializers
 from lessons.models import Tag, Resource, Material, Activity, Curriculum, ActivityRelationship, CurriculumActivityRelationship
 
 class TagSerializer(serializers.ModelSerializer):
+    activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'logo', 'category')
+        fields = ('id', 'name', 'logo', 'category', 'activities')
 
     def to_representation(self, instance):
       ret = super(TagSerializer, self).to_representation(instance)
