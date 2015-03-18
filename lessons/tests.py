@@ -14,9 +14,8 @@ from rest_framework.test import APITestCase, APIClient, APIRequestFactory
 from rest_framework import status
 
 from lessons.models import Activity, Curriculum, Material, Resource, Tag
-from lessons.views import TagViewSet
-
-from lessons.serializers import CurriculumSerializer, MaterialSerializer, ResourceSerializer, TagSerializer
+from lessons.serializers import ActivitySerializer, CurriculumSerializer, MaterialSerializer, ResourceSerializer, TagSerializer
+from lessons.views import ActivityViewSet, TagViewSet
 
 """
 NOTE:
@@ -1417,20 +1416,7 @@ class ActivityTests(APITestCase):
 		activity3.materials.add(material1)
 
 		# Data to compare against objects returned from the API
-		cls.activity1 = {
-			'id': 1
-			, 'name': 'Test1'
-			, 'description': 'This is just a test activity.'
-			, 'tags': []
-			, 'category': ''
-			, 'teaching_notes': ''
-			, 'video_url': ''
-			, 'image': None
-			, 'get_curricula': []
-			, 'relationships': []
-			, 'materials': []
-			, 'resources': []
-		}
+		cls.activity1 = activity1
 		cls.activity2 = {
 			'id': 2
 			, 'name': 'Test2'
@@ -1516,7 +1502,7 @@ class ActivityTests(APITestCase):
 			, 'teaching_notes': ''
 			, 'video_url': ''
 			, 'curriculum_rels': []
-			, 'relationships': []
+			, 'activity_rels': []
 			, 'material_IDs': []
 			, 'resource_IDs': []
 		}
@@ -1531,7 +1517,7 @@ class ActivityTests(APITestCase):
 			, 'teaching_notes': ''
 			, 'video_url': ''
 			, 'curriculum_rels': []
-			, 'relationships': []
+			, 'activity_rels': []
 			, 'material_IDs': [self.material1.id]
 			, 'resource_IDs': []
 		}
@@ -1545,7 +1531,7 @@ class ActivityTests(APITestCase):
 			, 'teaching_notes': ''
 			, 'video_url': ''
 			, 'curriculum_rels': []
-			, 'relationships': []
+			, 'activity_rels': []
 			, 'material_IDs': []
 			, 'resource_IDs': [self.resource1.id]
 		}
@@ -1564,35 +1550,52 @@ class ActivityTests(APITestCase):
 					, "number": 1
 				}
 			]
-			, 'relationships': []
+			, 'activity_rels': []
 			, 'material_IDs': []
 			, 'resource_IDs': []
 		}
 
-		"""
-		# 1 activity relationship
+		# 1 activity relationship (Extension)
 		activity8 = {
 			'name': 'Test8'
-			, 'description': 'This is an additional test activity.'
-			, 'tags': [self.tag1.id]
+			, 'description': 'This is just a test activity.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': [
+				{
+					"activityID": self.activity1.id
+					, "type": 'EXT'
+				}
+			]
+			, 'material_IDs': []
+			, 'resource_IDs': []
 		}
-		# TODO: multiple object relationships
-		"""
 
-		response4 = self.client.post(self.url, activity4, format='json')
-		response5 = self.client.post(self.url, activity5, format='json')
-		response6 = self.client.post(self.url, activity6, format='json')
-		response7 = self.client.post(self.url, activity7, format='json')
-		#response8 = self.client.post(self.url, activity8, format='json')
+		# TODO: test creatin activities with multiple object relationships
+
+		response4 = self.client.post(self.url, activity4)
+		response5 = self.client.post(self.url, activity5)
+		response6 = self.client.post(self.url, activity6)
+		response7 = self.client.post(self.url, activity7)
+		#response8 = self.client.post(self.url, activity8)
+		
+		# Need to use API Request Factory so we can use the request object in the HyperLinkedRelatedField Serializer
+		factory = APIRequestFactory()
+		view = ActivityViewSet.as_view({'post':'create'})
+		request8 = factory.post(self.url, activity8)
+		response8 = view(request8)
 
 		self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response6.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response7.status_code, status.HTTP_201_CREATED)
-		#self.assertEqual(response8.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response8.status_code, status.HTTP_201_CREATED)
 
 		# API should include all info in response
-		# ID numbers, image = None, nested objects
+		# ID numbers, image = None, nested objects are included, data for object creation should get deleted
 		activity4['id'] = 4
 		activity4['image'] = None
 		del(activity4['curriculum_rels'])
@@ -1605,6 +1608,8 @@ class ActivityTests(APITestCase):
 		activity4['materials'] = []
 		del(activity4['resource_IDs'])
 		activity4['resources'] = []
+		del(activity4['activity_rels'])
+		activity4['relationships'] = []
 
 
 		activity5['id'] = 5
@@ -1619,6 +1624,8 @@ class ActivityTests(APITestCase):
 		activity5['materials'] = [MaterialSerializer(self.material1).data]
 		del(activity5['resource_IDs'])
 		activity5['resources'] = []
+		del(activity5['activity_rels'])
+		activity5['relationships'] = []
 
 
 		activity6['id'] = 6
@@ -1633,6 +1640,8 @@ class ActivityTests(APITestCase):
 		activity6['materials'] = []
 		del(activity6['resource_IDs'])
 		activity6['resources'] = [ResourceSerializer(self.resource1).data]
+		del(activity6['activity_rels'])
+		activity6['relationships'] = []
 
 
 		activity7['id'] = 7
@@ -1647,13 +1656,32 @@ class ActivityTests(APITestCase):
 		activity7['materials'] = []
 		del(activity7['resource_IDs'])
 		activity7['resources'] = []
+		del(activity7['activity_rels'])
+		activity7['relationships'] = []
 
+
+		activity8['id'] = 8
+		activity8['image'] = None
+		del(activity8['curriculum_rels'])
+		activity8['get_curricula'] = []
+		del(activity8['tag_IDs'])
+		activity8['tags'] = [
+			TagSerializer(self.tag1).data
+		]
+		del(activity8['material_IDs'])
+		activity8['materials'] = []
+		del(activity8['resource_IDs'])
+		activity8['resources'] = []
+		del(activity8['activity_rels'])
+		activity8['relationships'] = [
+			ActivitySerializer(self.activity1, context={'request': request8}).data
+		]
 
 		self.assertEqual(response4.data, activity4)
 		self.assertEqual(response5.data, activity5)
 		self.assertEqual(response6.data, activity6)
 		self.assertEqual(response7.data, activity7)
-		#self.assertEqual(response8.data, activity8)
+		self.assertEqual(response8.data, activity8)
 
 	def test_create_activity_invalid_data(self):
 		"""

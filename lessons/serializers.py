@@ -166,7 +166,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     	resource_IDs = validated_data.pop('resource_IDs')
     	material_IDs = validated_data.pop('material_IDs')
     	curriculum_rels = validated_data.pop('curriculum_rels')
-    	relationships = validated_data.pop('relationships')
+    	activity_rels = validated_data.pop('activity_rels')
     	 
     	activity = Activity.objects.create(**validated_data)
 
@@ -185,13 +185,14 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                 number = rel["number"]
             )
     		relationship.save()
-    	for activity_activity_rel in relationships:
-    		activity2 = get_object_or_404(Activity, pk=activity_activity_rel["activityID"])
+    	for rel in activity_rels:
+    		activity2 = get_object_or_404(Activity, pk=rel["activityID"])
     		relationship = ActivityRelationship.objects.create(
-                from_activity = activity2,
-                to_activity = activity,
-                rel_type = activity_activity_rel["type"]
-            )
+    			from_activity = activity2,
+    			to_activity = activity,
+    			rel_type = rel["type"]
+    		)
+    		relationship.save()
 
     	activity.save()
     	return activity

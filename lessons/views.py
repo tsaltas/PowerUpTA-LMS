@@ -153,10 +153,11 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 , curriculum_rels = request.data["curriculum_rels"]
                 , material_IDs = request.data["material_IDs"]
                 , resource_IDs = request.data["resource_IDs"]
-                , relationships = request.data["relationships"]
+                , activity_rels = request.data["activity_rels"]
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            print "serializer not valid: " + str(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         """
