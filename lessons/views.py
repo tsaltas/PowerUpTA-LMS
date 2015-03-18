@@ -12,6 +12,7 @@ from lessons.models import Curriculum, Activity, Tag, Material, Resource, Curric
 from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer, CurriculumActivityRelationshipSerializer
 
 from rest_framework import viewsets, status
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from rest_framework.response import Response
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -20,12 +21,15 @@ class TagViewSet(viewsets.ModelViewSet):
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    parser_classes = (MultiPartParser, FormParser, FileUploadParser)
 
     # Custom function to associate activities with tag
     def create(self, request):
         print "inside the creation function"
         print "data is"
         print request.data
+        print "test logo file size (inside views.py): " + str(request.data["logo"].size)
+
         serializer = TagSerializer(data = request.data)
 
         if serializer.is_valid():
@@ -36,6 +40,25 @@ class TagViewSet(viewsets.ModelViewSet):
         else:
             print "serializer not valid"
             print serializer.errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Custom function to remove activities from tag if specified
+    def partial_update(self, request, pk=None):
+        # Get the tag object
+        tag = get_object_or_404(Tag, pk=pk)
+
+        # Get new activities list
+        if 'activities' in request.data:
+            activities = request.data["activities"]
+        else:
+            activities = [activity.id for activity in tag.activities.all()]
+        
+        # Update `tag` with partial data
+        serializer = TagSerializer(tag, request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save(activities=activities)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MaterialViewSet(viewsets.ModelViewSet):
@@ -119,26 +142,25 @@ class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
 
-    # TODO: Validate data before saving objects?
+    # Custom function to associate activities with resources, materials, tags, curricula, and other activities
     def create(self, request):
-        # Create the new activity with required fields
-        activity = Activity.objects.create(
-            name = request.data["name"],
-            description = request.data["description"],
-        )
-        # Add any tags
-        for tag_id in request.data["tags"]:
-            activity.tags.add(get_object_or_404(Tag, pk=tag_id))
-        # Add optional fields if provided by user
-        if "teaching_notes" in request.data:
-            activity.teaching_notes = request.data["teaching_notes"]
-        if "video_url" in request.data:
-            activity.video_url = request.data["video_url"]
-        if "category" in request.data:
-            activity.category = request.data["category"]
-        if "image" in request.data:
-            activity.image = request.data["image"]
+        serializer = ActivitySerializer(data = request.data)
 
+        if serializer.is_valid():
+            # Save new activity instance and pass in lists of objects to be associated with the activity
+            serializer.save(
+                tag_IDs = request.data["tag_IDs"]
+                , curriculum_rels = request.data["curriculum_rels"]
+                , material_IDs = request.data["material_IDs"]
+                , resource_IDs = request.data["resource_IDs"]
+                , relationships = request.data["relationships"]
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        """
+        From old create method
         # Try to create the activity-curriculum relationship and save activity
         try:
             curriculum = get_object_or_404(Curriculum, pk=request.data["curriculum"])
@@ -152,8 +174,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
         except:
             return Response("Error creating new activity: " + str(sys.exc_info()[0]),
                             status=status.HTTP_400_BAD_REQUEST)
-        # on success, return Response object
-        return Response()
+        """
 
 class CurriculumViewSet(viewsets.ModelViewSet):
     """

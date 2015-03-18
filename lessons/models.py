@@ -72,7 +72,6 @@ class Activity(models.Model):
 	# REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	description = models.TextField()
-	tags = models.ManyToManyField(Tag, related_name="activities")
 	# OPTIONAL
 	category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
 	teaching_notes = models.TextField(blank=True)
@@ -83,6 +82,7 @@ class Activity(models.Model):
 		symmetrical=False,
 		blank=True
 	)
+	tags = models.ManyToManyField(Tag, blank=True, related_name="activities")
 	materials = models.ManyToManyField(Material, blank=True, related_name="activities")
 	resources = models.ManyToManyField(Resource, blank=True, related_name="activities")
 	# An activity has a many-to-many relationship with Curriculum (defined ABOVE)

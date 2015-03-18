@@ -69,6 +69,7 @@ DATABASES = {
 }
 
 # Configure Rest Framework to use JSON data by default
+
 REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
