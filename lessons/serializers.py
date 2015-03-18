@@ -131,13 +131,6 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     materials = MaterialSerializer(many = True, required=False)
     resources = ResourceSerializer(many = True, required=False)
 
-    relationships = serializers.HyperlinkedRelatedField(
-    	many=True
-    	, view_name='lessons:activity-detail'
-    	, queryset=ActivityRelationship.objects.all()
-    	, required=False
-    )
-
     class Meta:
         model = Activity
         fields = ('id',
@@ -149,7 +142,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'video_url',
                   'image',
                   'get_curricula',
-                  'relationships',
+                  'get_relationships',
                   'materials',
                   'resources',
                  )
@@ -177,7 +170,11 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     		activity.resources.add(get_object_or_404(Resource, pk=resourceID))
     	for materialID in material_IDs:
     		activity.materials.add(get_object_or_404(Material, pk=materialID))
-    	for rel in curriculum_rels:
+    	# save new activity
+        activity.save()
+
+        # create objects that have through models
+        for rel in curriculum_rels:
     		curr = get_object_or_404(Curriculum, pk=rel["curriculumID"])
     		relationship = CurriculumActivityRelationship.objects.create(
                 curriculum = curr,
@@ -186,15 +183,15 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
             )
     		relationship.save()
     	for rel in activity_rels:
-    		activity2 = get_object_or_404(Activity, pk=rel["activityID"])
-    		relationship = ActivityRelationship.objects.create(
+            # TODO: Make the symmetrical relationships for sub and super activities
+            activity2 = get_object_or_404(Activity, pk=rel["activityID"])
+            relationship = ActivityRelationship(
     			from_activity = activity2,
     			to_activity = activity,
     			rel_type = rel["type"]
     		)
-    		relationship.save()
+            relationship.save()
 
-    	activity.save()
     	return activity
 
 class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):

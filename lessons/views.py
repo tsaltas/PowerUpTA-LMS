@@ -148,6 +148,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             # Save new activity instance and pass in lists of objects to be associated with the activity
+            print "serializer was valid!"
             serializer.save(
                 tag_IDs = request.data["tag_IDs"]
                 , curriculum_rels = request.data["curriculum_rels"]

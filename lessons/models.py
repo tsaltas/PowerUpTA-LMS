@@ -99,7 +99,8 @@ class Activity(models.Model):
 	def get_curricula(self):
 		return [relationship.curriculum.id for relationship in self.curriculum_relationships.all()]
 
-	# TODO: Write methods that create symmetric relationships between activities
+	def get_relationships(self):
+		return [(relationship.from_activity.id, relationship.get_rel_type_display()) for relationship in self.relationships_to.all()]
 
 class Curriculum(models.Model):
 	"""
