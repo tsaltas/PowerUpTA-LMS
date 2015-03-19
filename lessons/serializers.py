@@ -177,20 +177,37 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
         for rel in curriculum_rels:
     		curr = get_object_or_404(Curriculum, pk=rel["curriculumID"])
     		relationship = CurriculumActivityRelationship.objects.create(
-                curriculum = curr,
-                activity = activity,
-                number = rel["number"]
+                curriculum = curr
+                , activity = activity
+                , number = rel["number"]
             )
     		relationship.save()
     	for rel in activity_rels:
-            # TODO: Make the symmetrical relationships for sub and super activities
             activity2 = get_object_or_404(Activity, pk=rel["activityID"])
+            rel_type = rel["type"]
+
             relationship = ActivityRelationship(
-    			from_activity = activity2,
-    			to_activity = activity,
-    			rel_type = rel["type"]
+    			from_activity = activity2
+    			, to_activity = activity
+    			, rel_type = rel_type
     		)
             relationship.save()
+
+            # Need to make symmetrical relationship for sub / super activities
+            if rel_type == "SUP":
+                symmetric_relationship = ActivityRelationship(
+                    from_activity = activity
+                    , to_activity = activity2
+                    , rel_type = "SUB"
+                )
+                symmetric_relationship.save()
+            if rel_type == "SUB":
+                symmetric_relationship = ActivityRelationship(
+                    from_activity = activity
+                    , to_activity = activity2
+                    , rel_type = "SUP"
+                )
+                symmetric_relationship.save()
 
     	return activity
 

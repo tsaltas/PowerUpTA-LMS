@@ -105,7 +105,6 @@ class ActivityTests(APITestCase):
 			, description="This is another test activity."
 			, video_url='http://www.testactivity2.com'
 		)
-		activity2.tags.add(tag1)
 		activity2.resources.add(resource1)
 		activity2.resources.add(resource2)
 
@@ -114,11 +113,28 @@ class ActivityTests(APITestCase):
 			, description="This is the third test activity."
 			, category='OFF'
 		)
-		activity3.tags.add(tag1, tag2)
 		activity3.materials.add(material1)
 
 		# Data to compare against objects returned from the API
-		cls.activity1 = activity1
+		cls.activity1 = {
+			'id': 1
+			, 'name': 'Test1'
+			, 'description': 'This is just a test activity.'
+			, 'tags': []
+			, 'category': ''
+			, 'teaching_notes': 'This topic is very hard.'
+			, 'video_url': ''
+			, 'image': None
+			, 'get_curricula': []
+			, 'get_relationships': []
+			, 'materials': [
+				MaterialSerializer(material1).data
+				, MaterialSerializer(material2).data
+			]
+			, 'resources': [
+				ResourceSerializer(resource1).data
+			]
+		}
 		cls.activity2 = {
 			'id': 2
 			, 'name': 'Test2'
@@ -131,7 +147,10 @@ class ActivityTests(APITestCase):
 			, 'get_curricula': []
 			, 'get_relationships': []
 			, 'materials': []
-			, 'resources': []
+			, 'resources': [
+				ResourceSerializer(resource1).data
+				, ResourceSerializer(resource2).data
+			]
 		}
 		cls.activity3 = {
 			'id': 3
@@ -144,7 +163,9 @@ class ActivityTests(APITestCase):
 			, 'image': None
 			, 'get_curricula': []
 			, 'get_relationships': []
-			, 'materials': []
+			, 'materials': [
+				MaterialSerializer(material1).data
+			]
 			, 'resources': []
 		}
 	
@@ -215,9 +236,9 @@ class ActivityTests(APITestCase):
 			'name': 'Test5'
 			, 'description': 'This is just a test activity.'
 			, 'tag_IDs': [self.tag2.id]
-			, 'category': ''
-			, 'teaching_notes': ''
-			, 'video_url': ''
+			, 'category': 'OFF'
+			, 'teaching_notes': 'This is hard to teach.'
+			, 'video_url': 'http://www.test5.com'
 			, 'curriculum_rels': []
 			, 'activity_rels': []
 			, 'material_IDs': [self.material1.id]
@@ -229,8 +250,8 @@ class ActivityTests(APITestCase):
 			'name': 'Test6'
 			, 'description': 'This is just a test activity.'
 			, 'tag_IDs': [self.tag1.id]
-			, 'category': ''
-			, 'teaching_notes': ''
+			, 'category': 'ONL'
+			, 'teaching_notes': 'This is easy to teach.'
 			, 'video_url': ''
 			, 'curriculum_rels': []
 			, 'activity_rels': []
@@ -243,8 +264,8 @@ class ActivityTests(APITestCase):
 			'name': 'Test7'
 			, 'description': 'This is just a test activity.'
 			, 'tag_IDs': [self.tag2.id]
-			, 'category': ''
-			, 'teaching_notes': ''
+			, 'category': 'DIS'
+			, 'teaching_notes': 'Students should work at their own pace.'
 			, 'video_url': ''
 			, 'curriculum_rels': [
 				{
@@ -257,39 +278,38 @@ class ActivityTests(APITestCase):
 			, 'resource_IDs': []
 		}
 
-		# 1 activity relationship (Extension)
+		# 2 of each optional object
 		activity8 = {
 			'name': 'Test8'
-			, 'description': 'This is just a test activity.'
-			, 'tag_IDs': [self.tag1.id]
-			, 'category': ''
+			, 'description': 'This is just a loaded test activity.'
+			, 'tag_IDs': [self.tag1.id, self.tag2.id]
+			, 'category': 'EXT'
 			, 'teaching_notes': ''
-			, 'video_url': ''
-			, 'curriculum_rels': []
-			, 'activity_rels': [
+			, 'video_url': 'http://www.test8.com'
+			, 'curriculum_rels': [
 				{
-					"activityID": self.activity1.id
-					, "type": 'EXT'
+					"curriculumID": self.curriculum1.id
+					, "number": 2
+				}
+				,{
+					"curriculumID": self.curriculum2.id
+					, "number": 1
 				}
 			]
-			, 'material_IDs': []
-			, 'resource_IDs': []
+			, 'activity_rels': []
+			, 'material_IDs': [self.material1.id, self.material2.id]
+			, 'resource_IDs': [self.resource1.id, self.resource2.id]
 		}
-
-		# TODO: test creatin activities with multiple object relationships
-		# TODO: Make symmetric relatoinship for related activities
 
 		response4 = self.client.post(self.url, activity4)
 		response5 = self.client.post(self.url, activity5)
 		response6 = self.client.post(self.url, activity6)
 		response7 = self.client.post(self.url, activity7)
-		response8 = self.client.post(self.url, activity8)
 
 		self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response6.status_code, status.HTTP_201_CREATED)
 		self.assertEqual(response7.status_code, status.HTTP_201_CREATED)
-		self.assertEqual(response8.status_code, status.HTTP_201_CREATED)
 
 		# API should include all info in response
 		# ID numbers, image = None, nested objects are included, data for object creation should get deleted
@@ -311,6 +331,7 @@ class ActivityTests(APITestCase):
 
 		activity5['id'] = 5
 		activity5['image'] = None
+		activity5['category'] = 'Offline'
 		del(activity5['curriculum_rels'])
 		activity5['get_curricula'] = []
 		del(activity5['tag_IDs'])
@@ -327,6 +348,7 @@ class ActivityTests(APITestCase):
 
 		activity6['id'] = 6
 		activity6['image'] = None
+		activity6['category'] = 'Online'
 		del(activity6['curriculum_rels'])
 		activity6['get_curricula'] = []
 		del(activity6['tag_IDs'])
@@ -340,9 +362,9 @@ class ActivityTests(APITestCase):
 		del(activity6['activity_rels'])
 		activity6['get_relationships'] = []
 
-
 		activity7['id'] = 7
 		activity7['image'] = None
+		activity7['category'] = 'Discussion'
 		del(activity7['curriculum_rels'])
 		activity7['get_curricula'] = [self.curriculum1.id]
 		del(activity7['tag_IDs'])
@@ -356,29 +378,174 @@ class ActivityTests(APITestCase):
 		del(activity7['activity_rels'])
 		activity7['get_relationships'] = []
 
-
-		activity8['id'] = 8
-		activity8['image'] = None
-		del(activity8['curriculum_rels'])
-		activity8['get_curricula'] = []
-		del(activity8['tag_IDs'])
-		activity8['tags'] = [
-			TagSerializer(self.tag1).data
-		]
-		del(activity8['material_IDs'])
-		activity8['materials'] = []
-		del(activity8['resource_IDs'])
-		activity8['resources'] = []
-		del(activity8['activity_rels'])
-		activity8['get_relationships'] = [
-			(self.activity1.id, 'extension')
-		]
-
 		self.assertEqual(response4.data, activity4)
 		self.assertEqual(response5.data, activity5)
 		self.assertEqual(response6.data, activity6)
 		self.assertEqual(response7.data, activity7)
+
+		# Add last to avoid adding new activities to nested objects
+		response8 = self.client.post(self.url, activity8)
+
+		activity8['id'] = 8
+		activity8['image'] = None
+		activity8['category'] = 'Extension'
+		del(activity8['curriculum_rels'])
+		activity8['get_curricula'] = [self.curriculum1.id, self.curriculum2.id]
+		del(activity8['tag_IDs'])
+		activity8['tags'] = [
+			TagSerializer(self.tag1).data
+			, TagSerializer(self.tag2).data
+		]
+		del(activity8['material_IDs'])
+		activity8['materials'] = [
+			MaterialSerializer(self.material1).data
+			, MaterialSerializer(self.material2).data
+		]
+		del(activity8['resource_IDs'])
+		activity8['resources'] = [
+			ResourceSerializer(self.resource1).data
+			, ResourceSerializer(self.resource2).data
+		]
+		del(activity8['activity_rels'])
+		activity8['get_relationships'] = []
+
+		self.assertEqual(response8.status_code, status.HTTP_201_CREATED)
+
 		self.assertEqual(response8.data, activity8)
+
+	def test_create_activity_activity_relationships(self):
+		# Setup:
+		# Activity 4 is an extension of Activity 5
+		# Activity 6 is a sub-activity of Activity 5
+		# Activity 5 is a super-activity of Activity 6
+		
+		# TODO: Make symmetric relatoinship for related activities
+
+		activity4 = {
+			'name': 'Test4'
+			, 'description': 'This is just a test activity.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+
+		activity5 = {
+			'name': 'Test5'
+			, 'description': 'This is another test activity.'
+			, 'tag_IDs': [self.tag2.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': [
+				{
+					"activityID": 4
+					, "type": 'EXT'
+				}
+			]
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+
+		activity6 = {
+			'name': 'Test6'
+			, 'description': 'This is a test activity.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': [
+				{
+					"activityID": 5
+					, "type": 'SUP'
+				}
+			]
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+
+		# Make post requests (in the right order)
+		response4 = self.client.post(self.url, activity4)
+		response5 = self.client.post(self.url, activity5)
+		response6 = self.client.post(self.url, activity6)
+		
+		# Check HTTP responses
+		self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
+		self.assertEqual(response6.status_code, status.HTTP_201_CREATED)
+
+		# GET new activity5 after updating relationship with 6
+		response5 = self.client.get(self.url + "5/")
+		self.assertEqual(response5.status_code, status.HTTP_200_OK)
+		# fix issue with tags returned from test server
+		response5.data["tags"] = [TagSerializer(self.tag2).data]
+
+		# API should include all info in response (including those left blank)
+		activity4['id'] = 4
+		activity4['image'] = None
+		del(activity4['curriculum_rels'])
+		activity4['get_curricula'] = []
+		del(activity4['tag_IDs'])
+		activity4['tags'] = [
+			TagSerializer(self.tag1).data
+		]
+		del(activity4['material_IDs'])
+		activity4['materials'] = []
+		del(activity4['resource_IDs'])
+		activity4['resources'] = []
+		del(activity4['activity_rels'])
+
+
+		activity5['id'] = 5
+		activity5['image'] = None
+		del(activity5['curriculum_rels'])
+		activity5['get_curricula'] = []
+		del(activity5['tag_IDs'])
+		activity5['tags'] = [
+			TagSerializer(self.tag2).data
+		]
+		del(activity5['material_IDs'])
+		activity5['materials'] = []
+		del(activity5['resource_IDs'])
+		activity5['resources'] = []
+		del(activity5['activity_rels'])
+
+
+		activity6['id'] = 6
+		activity6['image'] = None
+		del(activity6['curriculum_rels'])
+		activity6['get_curricula'] = []
+		del(activity6['tag_IDs'])
+		activity6['tags'] = [
+			TagSerializer(self.tag1).data
+		]
+		del(activity6['material_IDs'])
+		activity6['materials'] = []
+		del(activity6['resource_IDs'])
+		activity6['resources'] = []
+		del(activity6['activity_rels'])
+
+		# Should NOT be a symmetric activity relationship between Activity 4 and Activity 5
+		# Activity 4 is an extension of Activity 5
+		
+		# Should be a symmetric activity relationship between Activity 6 and Activity 5
+		# Activity 6 is a sub-activity of Activity 5
+		# Activity 5 is a super-activity of Activity 6
+		
+		activity4['get_relationships'] = []
+		activity5['get_relationships'] = [(4, 'extension'), (6, 'sub-activity')]
+		activity6['get_relationships'] = [(5, 'super-activity')]
+
+		# Check that correct data was saved
+		self.assertEqual(response4.data, activity4)
+		self.assertEqual(response5.data, activity5)
+		self.assertEqual(response6.data, activity6)
 
 	def test_create_activity_invalid_data(self):
 		"""

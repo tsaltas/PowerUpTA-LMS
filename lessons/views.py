@@ -148,7 +148,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
         if serializer.is_valid():
             # Save new activity instance and pass in lists of objects to be associated with the activity
-            print "serializer was valid!"
             serializer.save(
                 tag_IDs = request.data["tag_IDs"]
                 , curriculum_rels = request.data["curriculum_rels"]
@@ -158,25 +157,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print "serializer not valid: " + str(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        """
-        From old create method
-        # Try to create the activity-curriculum relationship and save activity
-        try:
-            curriculum = get_object_or_404(Curriculum, pk=request.data["curriculum"])
-            relationship = CurriculumActivityRelationship.objects.create(
-                curriculum = curriculum,
-                activity = activity,
-                number = request.data["number"]
-            )
-            relationship.save()
-            activity.save()
-        except:
-            return Response("Error creating new activity: " + str(sys.exc_info()[0]),
-                            status=status.HTTP_400_BAD_REQUEST)
-        """
 
 class CurriculumViewSet(viewsets.ModelViewSet):
     """
