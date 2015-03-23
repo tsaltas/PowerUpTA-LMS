@@ -27,14 +27,13 @@ class TagViewSet(viewsets.ModelViewSet):
     # Custom function to associate activities with tag
     def create(self, request):
         print "inside the creation function"
-        print "data is"
+        print "request content type: "
+        print request.content_type
+        print "request.data: "
         print request.data
-        print "File is: "
-        print request.FILES
-        print "logo is "
-        if "logo" in request.FILES:
-            print request.FILES['logo']
-            print "test logo file size (inside views.py): " + str(request.data["logo"].size)
+        #print "request.FILES: "
+        #print request.FILES
+        print "test logo file size (inside views.py): " + str(request.data["logo"].size)
 
         serializer = TagSerializer(data = request.data)
         activities = []

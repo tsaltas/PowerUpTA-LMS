@@ -396,12 +396,10 @@ app.controller('NewMaterialModalCtrl', ['$scope'
 app.controller('NewTagModalCtrl', ['$scope'
     , '$modalInstance'
     , 'activityID'
-    , 'fileUpload'
     , 'Tag'
     , function ($scope
         , $modalInstance
         , activityID
-        , fileUpload
         , Tag
     ) {
 
@@ -433,20 +431,21 @@ app.controller('NewTagModalCtrl', ['$scope'
 
     $scope.save = function() {
         // assign correct activity to the new tag
+        console.log("Saving new tag.");
         $scope.newTag.activityID = activityID;
-        console.log("Inside the save function");
+        console.log("New tag object: ");
         console.log($scope.newTag);
-        // if the user selected an image in the input form, upload the image
-        if ($scope.newTag.logo) {
-            console.log("Uploading logo: ");
-            var file = $scope.newTag.logo;
-            var uploadUrl = '/media/tag_logos/';
-            fileUpload.uploadFileToUrl(file, uploadUrl);
-           // assign the image URL to the new activity before saving the activity
-           $scope.newTag.logo = '/media/tag_logos/' + $scope.newTag.logo.name;
-        };
+        var fd = new FormData();
+        fd.append('file', $scope.newTag.logo);
+        console.log("Form data object");
+        console.log(fd);
+        $scope.newTag.logo = fd;
+
+        console.log("Submitting API request: ");
 
         return $scope.newTag.$save().then(function(result) {
+            console.log("Result of API call: ");
+            console.log(result);
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newTag = new Tag();
@@ -568,7 +567,8 @@ app.controller('DropdownCtrl', ['$scope', function ($scope) {
 }]);
 
 // File upload directive
-// Gets the file in the HTML form into the controller's scope
+// Angular's ng-model does not work on inputs with type='file'
+// Gets the file bound to 'my-file-model' in the HTML form into the controller's scope
 app.directive('myFileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',

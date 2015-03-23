@@ -23,5 +23,13 @@ app.factory('Material', ['$resource', function($resource) {
 }]);
 
 app.factory('Tag', ['$resource', function($resource) {
-	return $resource('/api/tags/:id', {id:'@id'});
+	return $resource('/api/tags/:id', {id:'@id'}, {
+		'save': {
+			method: 'POST'
+			, transformRequest: angular.identity
+			//, headers: {
+			//	'Content-Type': undefined
+			//}
+		}
+	});
 }]);
