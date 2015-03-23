@@ -28,7 +28,11 @@ class TagViewSet(viewsets.ModelViewSet):
     def create(self, request):
         print "inside the creation function"
         print "data is"
-        print request.data
+        print request.data['name']
+        print "File is: "
+        print request.FILES
+        print "logo is "
+        print request.FILES['logo']
         print "test logo file size (inside views.py): " + str(request.data["logo"].size)
 
         serializer = TagSerializer(data = request.data)
@@ -161,7 +165,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
             activity_rels = []
             material_IDs = []
             resource_IDs = []
-            
+
             if "material_IDs" in request.data:
                 material_IDs = request.data["material_IDs"]
             if "resource_IDs" in request.data:

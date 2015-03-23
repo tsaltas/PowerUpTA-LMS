@@ -50,11 +50,15 @@ app.controller('CurriculumCtrl', ['$scope'
     // query API for curricula
 	$scope.curricula = Curriculum.query(getCurriculumTags);
 
-    // function to check whether objects in the HTML template are defined
-    // we are checking URLS as strings to avoid javascript parse errors
-    // also checking lists
+    // Function to check whether objects in the HTML template are defined
+    // Some objects we want to hide are actually undefined
+    // Others are empty lists or empty strings, so x.length checks those
     $scope.notEmpty = function(x) {
-      return (x.length > 0);
+        if (typeof(x) != "undefined") {
+            return (x.length > 0);
+        }
+        else return false;
+
     };
 
     // list of tags to add tag to lesson
@@ -300,8 +304,13 @@ app.controller('NewActivityModalCtrl', ['$scope'
 
     $scope.save = function() {
         // Add curriculum and number to new activity object
-        $scope.newActivity.curriculum = curriculumID;
-        $scope.newActivity.number = number;
+        $scope.newActivity.curriculum_rels = [
+            {
+               curriculumID: curriculumID
+               , number: number
+            }
+        
+        ];
         // Save new activity to DB
         console.log("Saving new activity to database.")
         return $scope.newActivity.$save().then(function(result) {
@@ -333,8 +342,8 @@ app.controller('NewResourceModalCtrl', ['$scope'
     $scope.newResource = new Resource();
 
     $scope.save = function() {
-        // assign correct activity to the new resource
-        $scope.newResource.activityID = activityID;
+        // assign new resource object to the correct activity
+        $scope.newResource.activities = [activityID];
 
         return $scope.newResource.$save().then(function(result) {
             $modalInstance.close(result);
