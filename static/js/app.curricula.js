@@ -129,15 +129,17 @@ app.controller('CurriculumCtrl', ['$scope'
         }); 
     };
 
-    // open modal window to create new tag
-    $scope.newTag = function (activity, addTag, size) {
+    // open modal window to create new tag 
+    $scope.newTag = function (curriculum, activity, addTag, size) {
         // if an existing tag was selected in drop-down menu (it's not undefined)
         if (addTag) {
             // TODO: add tag to lesson (API call)
-            // add to list of tags on page (without refresh)
+            // add tag to curriculum (just for display on page)
+            // add tag to lesson (display on page without refresh)
             activity.tags.push(addTag);
         }
-        // if user selected "create new tag" (addTag was undefined) then open modal window with new tag form
+        // if user selected "create new tag" (addTag was undefined)
+        // then open modal window with new tag form
         else {
             var modalInstance = $modal.open({
                 templateUrl: 'static/partials/new-tag.html',
@@ -151,8 +153,10 @@ app.controller('CurriculumCtrl', ['$scope'
             });
             
             // add newly created tag to list on the page (without refresh)
+            // add to the lesson and also to the parent curriculum
             modalInstance.result.then(function (newTag) {
-                $scope.tags.push(newTag);
+                activity.tags.push(newTag);
+                curriculum.tags.push(newTag);
             });
         }
     };
@@ -395,10 +399,12 @@ app.controller('NewMaterialModalCtrl', ['$scope'
 
 app.controller('NewTagModalCtrl', ['$scope'
     , '$modalInstance'
+    , '$http'
     , 'activityID'
     , 'Tag'
     , function ($scope
         , $modalInstance
+        , $http
         , activityID
         , Tag
     ) {
@@ -432,30 +438,46 @@ app.controller('NewTagModalCtrl', ['$scope'
     $scope.save = function() {
         // assign correct activity to the new tag
         console.log("Saving new tag.");
-        $scope.newTag.activityID = activityID;
+        $scope.newTag.activities = [activityID];
+
         console.log("New tag object: ");
         console.log($scope.newTag);
+
+        // Create multipart/form-data so we can submit the image with the tag
         var fd = new FormData();
-        fd.append('file', $scope.newTag.logo);
-        console.log("Form data object");
-        console.log(fd);
-        $scope.newTag.logo = fd;
+        // Use underscore library to loop through properties in the newTag object
+        _.each($scope.newTag, function (value, key, list) {
+            fd.append(key, list[key]);
+        });
 
-        console.log("Submitting API request: ");
+        console.log("Submitting HTTP post request: ");
 
-        return $scope.newTag.$save().then(function(result) {
-            console.log("Result of API call: ");
+        // Make custom POST request to make sure image is uploaded
+        // Cannot use ng-resource request factory for multipart/form-data
+        $http({
+            method: 'POST',
+            url: '/api/tags/',
+            data: fd,
+            transformRequest: angular.identity,
+            // browser will automatically fill in 'multipart/form-data'
+            // browser will also supply the boundary parameter
+            // manually setting 'multipart/form-data' will fail to add boundary parameter
+            headers: {
+                'Content-Type': undefined
+            }
+        }).success(function (result) {
+            console.log("Successfully created new Tag!:");
             console.log(result);
             $modalInstance.close(result);
-        }).then(function() {
-            return $scope.newTag = new Tag();
-        }).then(function() {
+            $scope.newTag = new Tag();
             return $scope.errors = null;
-        }, function(rejection) {
-            return $scope.errors = rejection.data;
+        }).error(function(rejection) {
+            console.log("Failed to create new Tag!:");
+            console.log(rejection);
+            return $scope.errors = rejection;
         });
     };
-
+    
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
