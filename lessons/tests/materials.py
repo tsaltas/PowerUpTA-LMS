@@ -210,14 +210,6 @@ class MaterialTests(APITestCase):
 		# Activity DNE, so should return 404 not found
 		self.assertEqual(response9.status_code, status.HTTP_404_NOT_FOUND)
 
-		# API should include new material ID number in response
-		material4['id'] = 4
-		material5['id'] = 5
-		material6['id'] = 6
-		material7['id'] = 7
-		material8['id'] = 8
-		material9['id'] = 9
-
 		self.assertEqual(response4.data, {'name': ['This field may not be blank.']})
 		self.assertEqual(response5.data, {'url': ['This field may not be blank.']})
 		self.assertEqual(response6.data, {'url': ['Enter a valid URL.']})

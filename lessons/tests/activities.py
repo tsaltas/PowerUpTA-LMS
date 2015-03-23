@@ -1,4 +1,5 @@
 import unittest
+import copy
 
 from django.core.urlresolvers import reverse
 
@@ -14,7 +15,6 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from mock import MagicMock
 from django.core.files import File
 
-#@unittest.skip("Skip activity testing for now.")
 class ActivityTests(APITestCase):
 	
 	""" ACTIVITY TEST SETUP / TEARDOWN """
@@ -92,7 +92,7 @@ class ActivityTests(APITestCase):
 
 		# Create some activity objects
 		activity1 = Activity.objects.create(
-			name='Test1'
+			name='TestActivity1'
 			, description="This is just a test activity."
 			, teaching_notes ="This topic is very hard."
 		)
@@ -101,7 +101,7 @@ class ActivityTests(APITestCase):
 		activity1.materials.add(material2)
 
 		activity2 = Activity.objects.create(
-			name='Test2'
+			name='TestActivity2'
 			, description="This is another test activity."
 			, video_url='http://www.testactivity2.com'
 		)
@@ -109,7 +109,7 @@ class ActivityTests(APITestCase):
 		activity2.resources.add(resource2)
 
 		activity3 = Activity.objects.create(
-			name='Test3'
+			name='TestActivity3'
 			, description="This is the third test activity."
 			, category='OFF'
 		)
@@ -118,7 +118,7 @@ class ActivityTests(APITestCase):
 		# Data to compare against objects returned from the API
 		cls.activity1 = {
 			'id': 1
-			, 'name': 'Test1'
+			, 'name': 'TestActivity1'
 			, 'description': 'This is just a test activity.'
 			, 'tags': []
 			, 'category': ''
@@ -137,7 +137,7 @@ class ActivityTests(APITestCase):
 		}
 		cls.activity2 = {
 			'id': 2
-			, 'name': 'Test2'
+			, 'name': 'TestActivity2'
 			, 'description': 'This is another test activity.'
 			, 'tags': []
 			, 'category': ''
@@ -154,7 +154,7 @@ class ActivityTests(APITestCase):
 		}
 		cls.activity3 = {
 			'id': 3
-			, 'name': 'Test3'
+			, 'name': 'TestActivity3'
 			, 'description': "This is the third test activity."
 			, 'tags': []
 			, 'category': 'Offline'
@@ -418,8 +418,6 @@ class ActivityTests(APITestCase):
 		# Activity 4 is an extension of Activity 5
 		# Activity 6 is a sub-activity of Activity 5
 		# Activity 5 is a super-activity of Activity 6
-		
-		# TODO: Make symmetric relatoinship for related activities
 
 		activity4 = {
 			'name': 'Test4'
@@ -433,6 +431,7 @@ class ActivityTests(APITestCase):
 			, 'material_IDs': []
 			, 'resource_IDs': []
 		}
+		response4 = self.client.post(self.url, activity4)
 
 		activity5 = {
 			'name': 'Test5'
@@ -444,13 +443,14 @@ class ActivityTests(APITestCase):
 			, 'curriculum_rels': []
 			, 'activity_rels': [
 				{
-					"activityID": 4
+					"activityID": response4.data['id']
 					, "type": 'EXT'
 				}
 			]
 			, 'material_IDs': []
 			, 'resource_IDs': []
 		}
+		response5 = self.client.post(self.url, activity5)
 
 		activity6 = {
 			'name': 'Test6'
@@ -462,17 +462,13 @@ class ActivityTests(APITestCase):
 			, 'curriculum_rels': []
 			, 'activity_rels': [
 				{
-					"activityID": 5
+					"activityID": response5.data['id']
 					, "type": 'SUP'
 				}
 			]
 			, 'material_IDs': []
 			, 'resource_IDs': []
 		}
-
-		# Make post requests (in the right order)
-		response4 = self.client.post(self.url, activity4)
-		response5 = self.client.post(self.url, activity5)
 		response6 = self.client.post(self.url, activity6)
 		
 		# Check HTTP responses
@@ -481,13 +477,13 @@ class ActivityTests(APITestCase):
 		self.assertEqual(response6.status_code, status.HTTP_201_CREATED)
 
 		# GET new activity5 after updating relationship with 6
-		response5 = self.client.get(self.url + "5/")
+		response5 = self.client.get(self.url + str(response5.data['id']) + "/")
 		self.assertEqual(response5.status_code, status.HTTP_200_OK)
 		# fix issue with tags returned from test server
 		response5.data["tags"] = [TagSerializer(self.tag2).data]
 
 		# API should include all info in response (including those left blank)
-		activity4['id'] = 4
+		activity4['id'] = response4.data['id']
 		activity4['image'] = None
 		del(activity4['curriculum_rels'])
 		activity4['get_curricula'] = []
@@ -502,7 +498,7 @@ class ActivityTests(APITestCase):
 		del(activity4['activity_rels'])
 
 
-		activity5['id'] = 5
+		activity5['id'] = response5.data['id']
 		activity5['image'] = None
 		del(activity5['curriculum_rels'])
 		activity5['get_curricula'] = []
@@ -517,7 +513,7 @@ class ActivityTests(APITestCase):
 		del(activity5['activity_rels'])
 
 
-		activity6['id'] = 6
+		activity6['id'] = response6.data['id']
 		activity6['image'] = None
 		del(activity6['curriculum_rels'])
 		activity6['get_curricula'] = []
@@ -539,8 +535,8 @@ class ActivityTests(APITestCase):
 		# Activity 5 is a super-activity of Activity 6
 		
 		activity4['get_relationships'] = []
-		activity5['get_relationships'] = [(4, 'extension'), (6, 'sub-activity')]
-		activity6['get_relationships'] = [(5, 'super-activity')]
+		activity5['get_relationships'] = [(response4.data['id'], 'extension'), (response6.data['id'], 'sub-activity')]
+		activity6['get_relationships'] = [(response5.data['id'], 'super-activity')]
 
 		# Check that correct data was saved
 		self.assertEqual(response4.data, activity4)
@@ -551,207 +547,98 @@ class ActivityTests(APITestCase):
 		"""
 		Should NOT be able to create a new activity object with invalid data.
 		"""
-		# name missing
-		activity4 = {
+		# Missing name
+		activity = {
 			'name': ''
-			, 'url': 'http://www.test4.com'
-			, 'activities': [self.activity1.id]
+			, 'description': 'This is just a test activity.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
 		}
-		# URL missing
-		activity5 = {
-			'name': 'Test5'
-			, 'url': ''
-			, 'activities': []
-		}
-		# URL malformed
-		activity6 = {
-			'name': 'Test6'
-			, 'url': 'www.test6.com'
-			, 'activities': [self.activity2.id]
-		}
-		# URL malformed
-		activity7 = {
-			'name': 'Test7'
-			, 'url': 'test7.com'
-			, 'activities': []
-		}
-		# URL malformed
-		activity8 = {
-			'name': 'Test8'
-			, 'url': 'test8.co'
-			, 'activities': []
-		}
-		# Activity DNE
-		activity9 = {
-			'name': 'Test9'
-			, 'url': 'http://www.test9.com'
-			, 'activities': [100]
-		}
-
-		response4 = self.client.post(self.url, activity4, format='json')
-		response5 = self.client.post(self.url, activity5, format='json')
-		response6 = self.client.post(self.url, activity6, format='json')
-		response7 = self.client.post(self.url, activity7, format='json')
-		response8 = self.client.post(self.url, activity8, format='json')
-		response9 = self.client.post(self.url, activity9, format='json')
-
-		self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response6.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response7.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response8.status_code, status.HTTP_400_BAD_REQUEST)
-		# Activity DNE, so should return 404 not found
-		self.assertEqual(response9.status_code, status.HTTP_404_NOT_FOUND)
-
-		# API should include new activity ID number in response
-		activity4['id'] = 4
-		activity5['id'] = 5
-		activity6['id'] = 6
-		activity7['id'] = 7
-		activity8['id'] = 8
-		activity9['id'] = 9
-
-		self.assertEqual(response4.data, {'name': ['This field may not be blank.']})
-		self.assertEqual(response5.data, {'url': ['This field may not be blank.']})
-		self.assertEqual(response6.data, {'url': ['Enter a valid URL.']})
-		self.assertEqual(response7.data, {'url': ['Enter a valid URL.']})
-		self.assertEqual(response8.data, {'url': ['Enter a valid URL.']})
-		self.assertEqual(response9.data, {'detail': 'Not found'})
-
-	def test_create_activity_duplicate_name(self):
-		"""
-		Should NOT be able to create a new activity object with duplicate value
-		on unique-only field "name"
-		"""
-
-		# Duplicate name
-		duplicate = {
-			'name': 'Test1'
-			, 'url': 'http://www.duplicate.com'
-			, 'activities': []
-		}
-	
-		response = self.client.post(self.url, duplicate, format='json')
-
+		response = self.client.post(self.url, activity)
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'name': ['This field may not be blank.']})
 
-		self.assertEqual(response.data, {'name': ['This field must be unique.']})
+		# Missing description
+		activity = {
+			'name': 'Test5'
+			, 'description': ''
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'description': ['This field may not be blank.']})
+
+		# Tag DNE
+		activity = {
+			'name': 'Test6'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [100]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
+
+		# Category DNE
+		activity = {
+			'name': 'Test7'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': 'DNE'
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'category': ['`DNE` is not a valid choice.']})
+
+		# Verify only 3 original objects in the DB
+		response = self.client.get(self.url)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		print response.data
+		self.assertEqual(len(response.data), 3)
 
 	""" ACTIVITY PATCH REQUESTS"""
 	def test_update_activity(self):
 		"""
 		Should be able to update activity with PATCH request
 		"""
-
-		# Update name
-		response1 = self.client.patch(self.url + "1/", {'name': 'Updated'}, format='json')
-		activity1 = {
-			'id': 1
-			, 'name': 'Updated'
-			, 'url': 'http://www.test1.com'
-			, 'activities': []
-		}
-		
-		# Update URL
-		response2 = self.client.patch(self.url + "2/", {'url': 'http://www.updated.com'}, format='json')
-		activity2 = {
-			'id': 2
-			, 'name': 'Test2'
-			, 'url': 'http://www.updated.com'
-			, 'activities': [self.activity1.id]
-		}
-		
-		# Remove one activity
-		response3 = self.client.patch(self.url + "3/", {'activities': [self.activity1.id]}, format='json')
-		activity3 = {
-			'id': 3
-			, 'name': 'Test3'
-			, 'url': 'http://www.test3.com'
-			, 'activities': [self.activity1.id]
-		}
-
-		# Remove all activities
-		response4 = self.client.patch(self.url + "3/", {'activities': []}, format='json')
-		activity4 = {
-			'id': 3
-			, 'name': 'Test3'
-			, 'url': 'http://www.test3.com'
-			, 'activities': []
-		}
-
-		# Add first activity
-		response5 = self.client.patch(
-			self.url + "3/"
-			, {'activities': [self.activity1.id]}
-			, format='json'
-		)
-		activity5 = {
-			'id': 3
-			, 'name': 'Test3'
-			, 'url': 'http://www.test3.com'
-			, 'activities': [self.activity1.id]
-		}
-
-		# Add additional activity
-		response6 = self.client.patch(
-			self.url + "3/"
-			, {'activities': [self.activity1.id, self.activity2.id]}
-			, format='json'
-		)
-		activity6 = {
-			'id': 3
-			, 'name': 'Test3'
-			, 'url': 'http://www.test3.com'
-			, 'activities': [self.activity1.id, self.activity2.id]
-		}
-
-		self.assertEqual(response1.status_code, status.HTTP_200_OK)
-		self.assertEqual(response2.status_code, status.HTTP_200_OK)
-		self.assertEqual(response3.status_code, status.HTTP_200_OK)
-		self.assertEqual(response4.status_code, status.HTTP_200_OK)
-		self.assertEqual(response5.status_code, status.HTTP_200_OK)
-		self.assertEqual(response6.status_code, status.HTTP_200_OK)
-
-		self.assertEqual(response1.data, activity1)
-		self.assertEqual(response2.data, activity2)
-		self.assertEqual(response3.data, activity3)
-		self.assertEqual(response4.data, activity4)
-		self.assertEqual(response5.data, activity5)
-		self.assertEqual(response6.data, activity6)
+		pass
 	
 	def test_update_activity_invalid_data(self):
 		"""
 		Should NOT be able to update activity with PATCH request using invalid data
 		"""
-
-		# Remove name
-		response1 = self.client.patch(self.url + "1/", {'name': ''}, format='json')
-		
-		# Remove URL
-		response2 = self.client.patch(self.url + "2/", {'url': ''}, format='json')
-		
-		# Add activity that DNE
-		response3 = self.client.patch(self.url + "3/", {'activities': [100]}, format='json')
-
-		# Update to duplicate name
-		response4 = self.client.patch(self.url + "1/", {'name': 'Test2'}, format='json')
-
-		self.assertEqual(response1.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response3.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
-
-		self.assertEqual(response1.data, {'name': ['This field may not be blank.']})
-		self.assertEqual(response2.data, {'url': ['This field may not be blank.']})
-		self.assertEqual(response3.data, {'detail': 'Not found'})
-		self.assertEqual(response4.data, {'name': ['This field must be unique.']})
+		pass
 
 	def test_update_activity_that_DNE(self):
 		"""
 		Should NOT be able to update activity with PATCH request if it does not exist
 		"""
-
-		response = self.client.patch(self.url + "4/", {'name': 'Does not exist'}, format='json')
+		response = self.client.patch(self.url + "4/", {'name': 'Does not exist'})
 
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
@@ -773,9 +660,16 @@ class ActivityTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertEqual(len(response.data), 2)
 
+		# Remove ID of activity1 from resource on activity2
+		activity2 = copy.deepcopy(self.activity2)
+		del(activity2["resources"][0]["activities"][0])
+		# Remove ID of activity1 from material on activity3
+		activity3 = copy.deepcopy(self.activity3)
+		del(activity3["materials"][0]["activities"][0])
+
 		# Convert ordered dict objects into unordered dicts for comparison
-		self.assertEqual(dict(response.data[0]), self.activity2)
-		self.assertEqual(dict(response.data[1]), self.activity3)
+		self.assertEqual(dict(response.data[0]), activity2)
+		self.assertEqual(dict(response.data[1]), activity3)
 
 	def test_delete_activity_that_DNE(self):
 		"""
@@ -794,5 +688,6 @@ class ActivityTests(APITestCase):
 
 		# Convert ordered dict objects into unordered dicts for comparison
 		self.assertEqual(dict(response.data[0]), self.activity1)
+
 		self.assertEqual(dict(response.data[1]), self.activity2)
 		self.assertEqual(dict(response.data[2]), self.activity3)
