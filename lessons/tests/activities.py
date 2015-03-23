@@ -230,7 +230,6 @@ class ActivityTests(APITestCase):
 			, 'resource_IDs': []
 		}
 
-		
 		# 1 material
 		activity5 = {
 			'name': 'Test5'
@@ -543,11 +542,11 @@ class ActivityTests(APITestCase):
 		self.assertEqual(response5.data, activity5)
 		self.assertEqual(response6.data, activity6)
 
-	def test_create_activity_invalid_data(self):
+	def test_create_activity_missing_fields(self):
 		"""
-		Should NOT be able to create a new activity object with invalid data.
+		Should NOT be able to create a new activity object with required fields missing
 		"""
-		# Missing name
+		# Name missing
 		activity = {
 			'name': ''
 			, 'description': 'This is just a test activity.'
@@ -564,9 +563,9 @@ class ActivityTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response.data, {'name': ['This field may not be blank.']})
 
-		# Missing description
+		# Description missing
 		activity = {
-			'name': 'Test5'
+			'name': 'TestActivity - No Description'
 			, 'description': ''
 			, 'tag_IDs': [self.tag1.id]
 			, 'category': ''
@@ -581,9 +580,37 @@ class ActivityTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response.data, {'description': ['This field may not be blank.']})
 
+		# Tag missing
+		activity = {
+			'name': 'TestActivity - Tag missing'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': []
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'tag_IDs': ['This field may not be blank.']})
+
+		# Verify only 3 original objects in the DB
+		response = self.client.get(self.url)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(len(response.data), 3)
+
+	def test_create_activity_invalid_data(self):
+		"""
+		Should NOT be able to create a new activity object with invalid data
+		"""
+
 		# Tag DNE
 		activity = {
-			'name': 'Test6'
+			'name': 'TestActivity - Tag DNE'
 			, 'description': 'This is just a test.'
 			, 'tag_IDs': [100]
 			, 'category': ''
@@ -594,13 +621,14 @@ class ActivityTests(APITestCase):
 			, 'material_IDs': []
 			, 'resource_IDs': []
 		}
+
 		response = self.client.post(self.url, activity)
 		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 		self.assertEqual(response.data, {'detail': 'Not found'})
 
-		# Category DNE
+		# Category invalid
 		activity = {
-			'name': 'Test7'
+			'name': 'TestActivity - Category invalid'
 			, 'description': 'This is just a test.'
 			, 'tag_IDs': [self.tag1.id]
 			, 'category': 'DNE'
@@ -615,13 +643,148 @@ class ActivityTests(APITestCase):
 		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 		self.assertEqual(response.data, {'category': ['`DNE` is not a valid choice.']})
 
+		# Malformed video URL
+		activity = {
+			'name': 'TestActivity - Video URL invalid'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': 'cool.com'
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'video_url': ['Enter a valid URL.']})
+
 		# Verify only 3 original objects in the DB
 		response = self.client.get(self.url)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		print response.data
 		self.assertEqual(len(response.data), 3)
 
-	""" ACTIVITY PATCH REQUESTS"""
+	def test_create_activity_invalid_objects(self):
+		"""
+		Should be able to create a new activity object if non-required objects are invalid
+		"""
+
+		# Material DNE
+		activity = {
+			'name': 'TestActivity - Material DNE'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': [100]
+			, 'resource_IDs': []
+		}
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
+
+		# Resource DNE
+		activity = {
+			'name': 'TestActivity - Resource DNE'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': [100]
+		}
+		
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
+
+		# Curriculum DNE
+		activity = {
+			'name': 'TestActivity - Curriculum DNE'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': [
+				{
+					"curriculumID": 100
+					, "number": 1
+				}
+			]
+			, 'activity_rels': []
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+		
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
+
+		# Activity DNE
+		activity = {
+			'name': 'TestActivity - Activity DNE'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': []
+			, 'activity_rels': [
+				{
+					"activityID": 100
+					, "type": 'EXT'
+				}
+			]
+			, 'material_IDs': []
+			, 'resource_IDs': []
+		}
+		
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
+
+		# All DNE
+		activity = {
+			'name': 'TestActivity - All Objects DNE'
+			, 'description': 'This is just a test.'
+			, 'tag_IDs': [self.tag1.id]
+			, 'category': ''
+			, 'teaching_notes': ''
+			, 'video_url': ''
+			, 'curriculum_rels': [
+				{
+					"curriculumID": 100
+					, "number": 1
+				}
+			]
+			, 'activity_rels': [
+				{
+					"activityID": 100
+					, "type": 'EXT'
+				}
+			]
+			, 'material_IDs': [100]
+			, 'resource_IDs': [100]
+		}
+		
+		response = self.client.post(self.url, activity)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': 'Not found'})
+
+		# Verify 5 new objects added to DB
+		response = self.client.get(self.url)
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(len(response.data), 8)
+
+	""" ACTIVITY PATCH REQUESTS """
 	def test_update_activity(self):
 		"""
 		Should be able to update activity with PATCH request

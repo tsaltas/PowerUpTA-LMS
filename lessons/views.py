@@ -1,5 +1,6 @@
 import sys
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.forms.models import modelformset_factory
 from django.http import HttpResponseRedirect
@@ -147,15 +148,58 @@ class ActivityViewSet(viewsets.ModelViewSet):
         serializer = ActivitySerializer(data = request.data)
 
         if serializer.is_valid():
+            # If no tag_IDs, return 400_BAD_REQUEST
+            if (("tag_IDs" not in request.data) or (len(request.data["tag_IDs"]) == 0)):
+                return Response({'tag_IDs': ['This field may not be blank.']}, status=status.HTTP_400_BAD_REQUEST)
+            # If any tag_ID is invalid, return 404_NOT_FOUND
+            for tagID in request.data["tag_IDs"]:
+                try:
+                    Tag.objects.get(pk=tagID)
+                except ObjectDoesNotExist:
+                    return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+            # Look for errors with curricula and activities passed in
+            curricula = request.data["curriculum_rels"]
+            activities = request.data["activity_rels"]
+            
+            curricula_rels = []
+            activity_rels = []
+            
+            rel_errors = 0
+
+            for rel in curricula:
+                try:
+                    Curriculum.objects.get(pk=rel["curriculumID"])
+                    curricula_rels.append(rel)
+                except ObjectDoesNotExist:
+                    rel_errors+=1
+
+            for rel in activities:
+                try:
+                    Activity.objects.get(pk=rel["activityID"])
+                    activity_rels.append(rel)
+                except ObjectDoesNotExist:
+                    rel_errors+=1
+
             # Save new activity instance and pass in lists of objects to be associated with the activity
-            serializer.save(
-                tag_IDs = request.data["tag_IDs"]
-                , curriculum_rels = request.data["curriculum_rels"]
-                , material_IDs = request.data["material_IDs"]
-                , resource_IDs = request.data["resource_IDs"]
-                , activity_rels = request.data["activity_rels"]
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if (rel_errors > 0):
+                serializer.save(
+                    tag_IDs = request.data["tag_IDs"]
+                    , curriculum_rels = curricula_rels
+                    , material_IDs = request.data["material_IDs"]
+                    , resource_IDs = request.data["resource_IDs"]
+                    , activity_rels = activity_rels
+                )
+                return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            else:
+                serializer.save(
+                    tag_IDs = request.data["tag_IDs"]
+                    , curriculum_rels = request.data["curriculum_rels"]
+                    , material_IDs = request.data["material_IDs"]
+                    , resource_IDs = request.data["resource_IDs"]
+                    , activity_rels = request.data["activity_rels"]
+                )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
