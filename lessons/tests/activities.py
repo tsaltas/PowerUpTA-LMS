@@ -789,13 +789,225 @@ class ActivityTests(APITestCase):
 		"""
 		Should be able to update activity with PATCH request
 		"""
-		pass
+		activity1 = {
+			'id': 1
+			, 'name': 'TestActivity1'
+			, 'description': 'This is just a test activity.'
+			, 'tags': []
+			, 'category': ''
+			, 'teaching_notes': 'This topic is very hard.'
+			, 'video_url': ''
+			, 'image': None
+			, 'get_curricula': []
+			, 'get_relationships': []
+			, 'materials': [
+				MaterialSerializer(self.material1).data
+				, MaterialSerializer(self.material2).data
+			]
+			, 'resources': [
+				ResourceSerializer(self.resource1).data
+			]
+		}
+
+		# Update name
+		response = self.client.patch(self.url + "1/", {'name': 'Updated'}, format='json')
+		activity1['name'] = 'Updated'
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Update description
+		response = self.client.patch(self.url + "1/", {'description': 'Updated description'}, format='json')
+		activity1['description'] = 'Updated description'
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Add category
+		response = self.client.patch(self.url + "1/", {'category': 'OFF'}, format='json')
+		activity1['category'] = 'Offline'
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Update category
+		response = self.client.patch(self.url + "1/", {'category': 'ONL'}, format='json')
+		activity1['category'] = 'Online'
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Add video URL
+		response = self.client.patch(self.url + "1/", {'video_url': 'http://www.video.com'}, format='json')
+		activity1['video_url'] = 'http://www.video.com'
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Update video URL
+		response = self.client.patch(self.url + "1/", {'video_url': 'http://www.updated.com'}, format='json')
+		activity1['video_url'] = 'http://www.updated.com'
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Add some tags
+		response = self.client.patch(self.url + "1/", {'tag_IDs': [self.tag1.id, self.tag2.id]}, format='json')
+		activity1['tags'] = [TagSerializer(self.tag1).data, TagSerializer(self.tag2).data]
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Change the resource
+		response = self.client.patch(self.url + "1/", {'resource_IDs': [self.resource2.id]}, format='json')
+		activity1['resources'] = [ResourceSerializer(self.resource2).data]
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Delete all materials
+		response = self.client.patch(self.url + "1/", {'material_IDs': []}, format='json')
+		activity1['materials'] = []
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Add activity relationship
+		response = self.client.patch(
+			self.url + "1/"
+			, {
+				'activity_rels': [{
+					"activityID": 2
+					, "type": 'EXT'
+					}]
+			}
+			, format='json'
+		)
+		activity1['get_relationships'] = [(2, 'extension')]
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Add curriculum relationship
+		response = self.client.patch(
+			self.url + "1/"
+			, {
+				'curriculum_rels': [{
+					"curriculumID": self.curriculum1.id
+					, "number": 2
+					}]
+			}
+			, format='json'
+		)
+		activity1['get_curricula'] = [self.curriculum1.id]
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
+
+		# Delete activity and curriculum relationships
+		response = self.client.patch(self.url + "1/", {'curriculum_rels': [], 'activity_rels': []}, format='json')
+		activity1['get_relationships'] = []
+		activity1['get_curricula'] = []
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		self.assertEqual(response.data, activity1)
 	
 	def test_update_activity_invalid_data(self):
 		"""
 		Should NOT be able to update activity with PATCH request using invalid data
 		"""
-		pass
+		# Blank name
+		response = self.client.patch(self.url + "1/", {'name': ''}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'name': ["This field may not be blank."]})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+
+		# Blank description
+		response = self.client.patch(self.url + "1/", {'description': ''}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'description': ["This field may not be blank."]})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+
+		# Tag DNE
+		response = self.client.patch(self.url + "1/", {'tag_IDs': [100]}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': "Not found"})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+
+		# Invalid category
+		response = self.client.patch(self.url + "1/", {'category': 'DNE'}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'category': ["`DNE` is not a valid choice."]})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+		
+		# Invalid video URL
+		response = self.client.patch(self.url + "1/", {'video_url': 'cool.com'}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data, {'video_url': ["Enter a valid URL."]})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+		
+		# Curriculum DNE
+		response = self.client.patch(
+			self.url + "1/"
+			, {
+				'curriculum_rels': [{
+					"curriculumID": 100
+					, "number": 2
+					}]
+			}
+			, format='json'
+		)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': "Not found"})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+		
+		# Activity DNE
+		response = self.client.patch(
+			self.url + "1/"
+			, {
+				'activity_rels': [{
+					"activityID": 100
+					, "type": 'EXT'
+					}]
+			}
+			, format='json'
+		)
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': "Not found"})
+		response = self.client.get(self.url + "1/")
+		self.assertEqual(response.data, self.activity1)
+
+		"""
+		# TODO: Invalid relationship type
+		response = self.client.patch(
+			self.url + "1/"
+			, {
+				'activity_rels': [{
+					"activityID": self.activity2['id']
+					, "type": 'DNE'
+					}]
+			}
+			, format='json'
+		)
+		print response.data
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST
+		self.assertEqual(response.data, {'detail': "Not found"})
+		response = self.client.get(self.url + "1/")
+
+		self.assertEqual(response.data, self.activity1)
+		"""
+		
+		# Material DNE
+		response = self.client.patch(self.url + "1/", {'material_IDs': [100]}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': "Not found"})
+		response = self.client.get(self.url + "1/")
+		# Failed request removes old materials and does not add the invalid new one
+		self.activity1["materials"] = []
+		self.assertEqual(response.data, self.activity1)
+
+		# Resource DNE
+		response = self.client.patch(self.url + "1/", {'resource_IDs': [100]}, format='json')
+		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+		self.assertEqual(response.data, {'detail': "Not found"})
+		response = self.client.get(self.url + "1/")
+		# Failed request removes old materials and does not add the invalid new one
+		self.activity1["resources"] = []
+		self.assertEqual(response.data, self.activity1)
 
 	def test_update_activity_that_DNE(self):
 		"""

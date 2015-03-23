@@ -84,17 +84,15 @@ class MaterialViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         # Get the material object
         material = get_object_or_404(Material, pk=pk)
-
-        # Get new activities list
-        if 'activities' in request.data:
-            activities = request.data["activities"]
-        else:
-            activities = [activity.id for activity in material.activities.all()]
-        
         # Update `material` with partial data
         serializer = MaterialSerializer(material, request.data, partial=True)
         if serializer.is_valid():
-            serializer.save(activities=activities)
+            # Get new activities list if necessary
+            if 'activities' in request.data:
+                activities = request.data["activities"]
+                serializer.save(activities=activities)
+            else:
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -121,17 +119,16 @@ class ResourceViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, pk=None):
         # Get the resource object
         resource = get_object_or_404(Resource, pk=pk)
-
-        # Get new activities list
-        if 'activities' in request.data:
-            activities = request.data["activities"]
-        else:
-            activities = [activity.id for activity in resource.activities.all()]
-        
         # Update `resource` with partial data
         serializer = ResourceSerializer(resource, request.data, partial=True)
+
         if serializer.is_valid():
-            serializer.save(activities=activities)
+            # Get new activities list if necessary
+            if 'activities' in request.data:
+                activities = request.data["activities"]
+                serializer.save(activities=activities)
+            else:
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -200,6 +197,36 @@ class ActivityViewSet(viewsets.ModelViewSet):
                     , activity_rels = request.data["activity_rels"]
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Custom function to manage objects related to activity on patch / update request
+    def partial_update(self, request, pk=None):
+        # Get the activity object
+        activity = get_object_or_404(Activity, pk=pk)
+        # Update `activity` with partial data
+        serializer = ActivitySerializer(activity, request.data, partial=True)
+
+        if serializer.is_valid():
+            # Get and save new objects if necessary
+            if 'tag_IDs' in request.data:
+                tag_IDs = request.data["tag_IDs"]
+                serializer.save(tag_IDs = tag_IDs)
+            if 'material_IDs' in request.data:
+                material_IDs = request.data["material_IDs"]
+                serializer.save(material_IDs = material_IDs)
+            if 'resource_IDs' in request.data:
+                resource_IDs = request.data["resource_IDs"]
+                serializer.save(resource_IDs = resource_IDs)
+            if 'activity_rels' in request.data:
+                activity_rels = request.data["activity_rels"]
+                serializer.save(activity_rels = activity_rels)
+            if 'curriculum_rels' in request.data:
+                curriculum_rels = request.data["curriculum_rels"]
+                serializer.save(curriculum_rels = curriculum_rels)
+            else:
+                serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

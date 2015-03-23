@@ -85,7 +85,7 @@ class Activity(models.Model):
 	)
 	materials = models.ManyToManyField(Material, blank=True, related_name="activities")
 	resources = models.ManyToManyField(Resource, blank=True, related_name="activities")
-	# An activity has a many-to-many relationship with Curriculum (defined ABOVE)
+	# An activity has a many-to-many relationship with Curriculum (defined in curriculum)
 
 	class Meta:
 		verbose_name_plural = "activities"
@@ -131,7 +131,7 @@ class Curriculum(models.Model):
 	upper_grade = models.IntegerField(choices = GRADES)
 	# OPTIONAL
 	tagline = models.CharField(max_length=100, blank=True)
-	activities = models.ManyToManyField(Activity, through="CurriculumActivityRelationship", blank=True)
+	activities = models.ManyToManyField(Activity, through="CurriculumActivityRelationship", blank=True, related_name = 'curricula')
 
 	class Meta:
 		verbose_name_plural = "curricula"

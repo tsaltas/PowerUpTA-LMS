@@ -158,12 +158,12 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     	tag_IDs = validated_data.pop('tag_IDs')
     	resource_IDs = validated_data.pop('resource_IDs')
     	material_IDs = validated_data.pop('material_IDs')
-    	curriculum_rels = validated_data.pop('curriculum_rels')
-    	activity_rels = validated_data.pop('activity_rels')
+        curriculum_rels = validated_data.pop('curriculum_rels')
+        activity_rels = validated_data.pop('activity_rels')
     	 
     	activity = Activity.objects.create(**validated_data)
 
-    	# Add activity-object relationships
+    	# Add foreign key relationships
     	for tagID in tag_IDs:
     		activity.tags.add(get_object_or_404(Tag, pk=tagID))
     	for resourceID in resource_IDs:
@@ -173,43 +173,47 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     	# save new activity
         activity.save()
 
-        # create objects that have through models
-        for rel in curriculum_rels:
-    		curr = get_object_or_404(Curriculum, pk=rel["curriculumID"])
-    		relationship = CurriculumActivityRelationship.objects.create(
-                curriculum = curr
-                , activity = activity
-                , number = rel["number"]
-            )
-    		relationship.save()
-    	for rel in activity_rels:
-            activity2 = get_object_or_404(Activity, pk=rel["activityID"])
-            rel_type = rel["type"]
-
-            relationship = ActivityRelationship(
-    			from_activity = activity2
-    			, to_activity = activity
-    			, rel_type = rel_type
-    		)
-            relationship.save()
-
-            # Need to make symmetrical relationship for sub / super activities
-            if rel_type == "SUP":
-                symmetric_relationship = ActivityRelationship(
-                    from_activity = activity
-                    , to_activity = activity2
-                    , rel_type = "SUB"
-                )
-                symmetric_relationship.save()
-            if rel_type == "SUB":
-                symmetric_relationship = ActivityRelationship(
-                    from_activity = activity
-                    , to_activity = activity2
-                    , rel_type = "SUP"
-                )
-                symmetric_relationship.save()
+        # create relationships that have through models
+        create_activity_curriculum_relationships(activity, curriculum_rels)
+        create_activity_activity_relationships(activity, activity_rels)
 
     	return activity
+
+    # Custom function to update objects associated with activity
+    def update(self, instance, validated_data):
+        # Update any fields passed in
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.category = validated_data.get('category', instance.category)
+        instance.teaching_notes = validated_data.get('teaching_notes', instance.teaching_notes)
+        instance.video_url = validated_data.get('video_url', instance.video_url)
+        instance.image = validated_data.get('image', instance.image)
+
+        # Update any relationships if specified
+        if 'tag_IDs' in validated_data:
+            instance.tags.clear()
+            tag_IDs = validated_data.get('tag_IDs')
+            for tagID in tag_IDs:
+                instance.tags.add(get_object_or_404(Tag, pk=tagID))
+        if 'material_IDs' in validated_data:
+            instance.materials.clear()
+            material_IDs = validated_data.get('material_IDs')
+            for materialID in material_IDs:
+                instance.materials.add(get_object_or_404(Material, pk=materialID))
+        if 'resource_IDs' in validated_data:
+            instance.resources.clear()
+            resource_IDs = validated_data.get('resource_IDs')
+            for resourceID in resource_IDs:
+                instance.resources.add(get_object_or_404(Resource, pk=resourceID))
+        if 'activity_rels' in validated_data:
+            instance.relationships_to.all().delete()
+            create_activity_activity_relationships(instance, validated_data.get('activity_rels'))
+        if 'curriculum_rels' in validated_data:
+            instance.curriculum_relationships.all().delete()
+            create_activity_curriculum_relationships(instance, validated_data.get('curriculum_rels'))
+        
+        instance.save()
+        return instance
 
 class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
   activity = ActivitySerializer()
@@ -246,3 +250,42 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
           ret['upper_grade'] = "K"
         
         return ret 
+
+""" Helper Functions """
+def create_activity_activity_relationships(activity, activity_rels):
+    for rel in activity_rels:
+        activity2 = get_object_or_404(Activity, pk=rel["activityID"])
+        rel_type = rel["type"]
+
+        relationship = ActivityRelationship(
+            from_activity = activity2
+            , to_activity = activity
+            , rel_type = rel_type
+        )
+        relationship.save()
+
+        # Need to make symmetrical relationship for sub / super activities
+        if rel_type == "SUP":
+            symmetric_relationship = ActivityRelationship(
+                from_activity = activity
+                , to_activity = activity2
+                , rel_type = "SUB"
+            )
+            symmetric_relationship.save()
+        if rel_type == "SUB":
+            symmetric_relationship = ActivityRelationship(
+                from_activity = activity
+                , to_activity = activity2
+                , rel_type = "SUP"
+            )
+            symmetric_relationship.save()
+
+def create_activity_curriculum_relationships(activity, curriculum_rels):
+    for rel in curriculum_rels:
+        curr = get_object_or_404(Curriculum, pk=rel["curriculumID"])
+        relationship = CurriculumActivityRelationship.objects.create(
+            curriculum = curr
+            , activity = activity
+            , number = rel["number"]
+        )
+        relationship.save()
