@@ -157,11 +157,15 @@ class ActivityViewSet(viewsets.ModelViewSet):
             
             # Look for errors with any curricula and activities passed in
             rel_errors = 0
+            curriculum_rels = []
+            activity_rels = []
+            if "material_IDs" in request.data:
+                material_IDs = request.data["material_IDs"]
+            if "resource_IDs" in request.data:
+                resource_IDs = request.data["resource_IDs"]
 
             if "curriculum_rels" in request.data:
                 curricula = request.data["curriculum_rels"]
-                curriculum_rels = []
-
                 for rel in curricula:
                     try:
                         Curriculum.objects.get(pk=rel["curriculumID"])
@@ -171,32 +175,24 @@ class ActivityViewSet(viewsets.ModelViewSet):
             
             if "activity_rels" in request.data:
                 activities = request.data["activity_rels"]
-                activity_rels = []
                 for rel in activities:
                     try:
                         Activity.objects.get(pk=rel["activityID"])
                         activity_rels.append(rel)
                     except ObjectDoesNotExist:
                         rel_errors+=1
-
             # Save new activity instance and pass in lists of objects to be associated with the activity
+            serializer.save(
+                tag_IDs = request.data["tag_IDs"]
+                , curriculum_rels = curriculum_rels
+                , material_IDs = material_IDs
+                , resource_IDs = resource_IDs
+                , activity_rels = activity_rels
+            )
+            
             if (rel_errors > 0):
-                serializer.save(
-                    tag_IDs = request.data["tag_IDs"]
-                    , curriculum_rels = curriculum_rels
-                    , material_IDs = request.data["material_IDs"]
-                    , resource_IDs = request.data["resource_IDs"]
-                    , activity_rels = activity_rels
-                )
                 return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
             else:
-                serializer.save(
-                    tag_IDs = request.data["tag_IDs"]
-                    , curriculum_rels = request.data["curriculum_rels"]
-                    , material_IDs = request.data["material_IDs"]
-                    , resource_IDs = request.data["resource_IDs"]
-                    , activity_rels = request.data["activity_rels"]
-                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
