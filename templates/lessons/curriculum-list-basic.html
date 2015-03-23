@@ -73,7 +73,7 @@
 										<option value=''>Create new tag</option>
 									</select>
 									<span>
-										<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(relationship.activity, addTag)"></i>
+										<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(curriculum, relationship.activity, addTag)"></i>
 										<span ng-show="newTagLabel">Add {{addTag.name || "New tag"}}</span>
 									</span>
 								</div>

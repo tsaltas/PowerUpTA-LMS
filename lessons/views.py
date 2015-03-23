@@ -22,18 +22,17 @@ class TagViewSet(viewsets.ModelViewSet):
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    #parser_classes = (MultiPartParser, FormParser, FileUploadParser)
 
     # Custom function to associate activities with tag
     def create(self, request):
-        print "inside the creation function"
-        print "request content type: "
-        print request.content_type
-        print "request.data: "
-        print request.data
+        #print "inside the creation function"
+        #print "request content type: "
+        #print request.content_type
+        #print "request.data: "
+        #print request.data
         #print "request.FILES: "
         #print request.FILES
-        print "test logo file size (inside views.py): " + str(request.data["logo"].size)
+        #print "test logo file size (inside views.py): " + str(request.data["logo"].size)
 
         serializer = TagSerializer(data = request.data)
         activities = []
@@ -42,12 +41,12 @@ class TagViewSet(viewsets.ModelViewSet):
             activities = request.data["activities"]
 
         if serializer.is_valid():
-            print "serializer was valid!"
+            #print "serializer was valid!"
             # Save new tag instance and pass in list of activities to be associated with the tag
             serializer.save(activities=activities)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print "serializer not valid"
+            #print "serializer not valid"
             print serializer.errors
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
