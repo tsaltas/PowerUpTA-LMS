@@ -159,6 +159,9 @@ class ActivityViewSet(viewsets.ModelViewSet):
             rel_errors = 0
             curriculum_rels = []
             activity_rels = []
+            material_IDs = []
+            resource_IDs = []
+            
             if "material_IDs" in request.data:
                 material_IDs = request.data["material_IDs"]
             if "resource_IDs" in request.data:
