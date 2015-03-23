@@ -155,34 +155,35 @@ class ActivityViewSet(viewsets.ModelViewSet):
                 except ObjectDoesNotExist:
                     return Response({'detail': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
             
-            # Look for errors with curricula and activities passed in
-            curricula = request.data["curriculum_rels"]
-            activities = request.data["activity_rels"]
-            
-            curricula_rels = []
-            activity_rels = []
-            
+            # Look for errors with any curricula and activities passed in
             rel_errors = 0
 
-            for rel in curricula:
-                try:
-                    Curriculum.objects.get(pk=rel["curriculumID"])
-                    curricula_rels.append(rel)
-                except ObjectDoesNotExist:
-                    rel_errors+=1
+            if "curriculum_rels" in request.data:
+                curricula = request.data["curriculum_rels"]
+                curriculum_rels = []
 
-            for rel in activities:
-                try:
-                    Activity.objects.get(pk=rel["activityID"])
-                    activity_rels.append(rel)
-                except ObjectDoesNotExist:
-                    rel_errors+=1
+                for rel in curricula:
+                    try:
+                        Curriculum.objects.get(pk=rel["curriculumID"])
+                        curriculum_rels.append(rel)
+                    except ObjectDoesNotExist:
+                        rel_errors+=1
+            
+            if "activity_rels" in request.data:
+                activities = request.data["activity_rels"]
+                activity_rels = []
+                for rel in activities:
+                    try:
+                        Activity.objects.get(pk=rel["activityID"])
+                        activity_rels.append(rel)
+                    except ObjectDoesNotExist:
+                        rel_errors+=1
 
             # Save new activity instance and pass in lists of objects to be associated with the activity
             if (rel_errors > 0):
                 serializer.save(
                     tag_IDs = request.data["tag_IDs"]
-                    , curriculum_rels = curricula_rels
+                    , curriculum_rels = curriculum_rels
                     , material_IDs = request.data["material_IDs"]
                     , resource_IDs = request.data["resource_IDs"]
                     , activity_rels = activity_rels
