@@ -396,10 +396,12 @@ app.controller('NewMaterialModalCtrl', ['$scope'
 app.controller('NewTagModalCtrl', ['$scope'
     , '$modalInstance'
     , 'activityID'
+    , 'fileUpload'
     , 'Tag'
     , function ($scope
         , $modalInstance
         , activityID
+        , fileUpload
         , Tag
     ) {
 
@@ -432,6 +434,17 @@ app.controller('NewTagModalCtrl', ['$scope'
     $scope.save = function() {
         // assign correct activity to the new tag
         $scope.newTag.activityID = activityID;
+        console.log("Inside the save function");
+        console.log($scope.newTag);
+        // if the user selected an image in the input form, upload the image
+        if ($scope.newTag.logo) {
+            console.log("Uploading logo: ");
+            var file = $scope.newTag.logo;
+            var uploadUrl = '/media/tag_logos/';
+            fileUpload.uploadFileToUrl(file, uploadUrl);
+           // assign the image URL to the new activity before saving the activity
+           $scope.newTag.logo = '/media/tag_logos/' + $scope.newTag.logo.name;
+        };
 
         return $scope.newTag.$save().then(function(result) {
             $modalInstance.close(result);
@@ -552,4 +565,44 @@ app.controller('DropdownCtrl', ['$scope', function ($scope) {
     $scope.status.isopen = !$scope.status.isopen;
   };
   
+}]);
+
+// File upload directive
+// Gets the file in the HTML form into the controller's scope
+app.directive('myFileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        // link function listens for changes to the content of the file upload element
+        // changes the value of the scope variable appropriately
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.myFileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+
+// File upload service
+// Makes the HTTP POST request to the server
+app.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, uploadUrl){
+        var fd = new FormData();
+        fd.append('file', file);
+        $http.post(uploadUrl, fd, {
+            // override default transformRequest function
+            // by default, angular serializes the request to JSON data
+            // we want to leave the file data intact so use the identify function
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(){
+        })
+        .error(function(){
+        });
+    }
 }]);
