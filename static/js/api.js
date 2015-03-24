@@ -7,7 +7,15 @@ app.config(function($resourceProvider) {
 });
 
 app.factory('Activity', ['$resource', function($resource) {
-	return $resource('/api/activities/:id', {id:'@id'});
+	return $resource('/api/activities/:id', {id:'@id'}, 
+		// Custom PUT method called "update"
+		// Usage: Activity.update({ id:$id }, {});
+		{
+			'update' : {
+				method: 'PATCH'
+				//, headers: {'Content-Type': 'application/json;charset=utf-8'}
+			}
+		});
 }]);
 
 app.factory('Curriculum', ['$resource', function($resource) {

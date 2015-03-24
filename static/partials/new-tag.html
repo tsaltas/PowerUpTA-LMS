@@ -24,7 +24,7 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newTagCategory">Category</label>
-					<select class="form-control form-fixed-width" id="newTagCategory" ng-model="newTag.category" ng-options="cat.code as cat.type for cat in categories">
+					<select class="form-control form-fixed-width" id="newTagCategory" ng-model="newTag.category" ng-options="value for value in categories">
 						<option value=''>Category</option>
 					</select>
 				</div>				

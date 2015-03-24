@@ -10,10 +10,12 @@ app.config(function($resourceProvider) {
 app.controller('CurriculumCtrl', ['$scope'
     , '$modal'
     , 'Curriculum'
+    , 'Activity'
     , 'Tag'
     , function($scope
         , $modal
         , Curriculum
+        , Activity
         , Tag
     ){
 
@@ -59,6 +61,13 @@ app.controller('CurriculumCtrl', ['$scope'
         }
         else return false;
 
+    };
+
+    // Function to determine if object is in a list
+    // Checks objects by id
+    function containsObject(list, obj) {
+        var res = _.find(list, function(val){return obj.id == val.id});
+        return (_.isUndefined(res))? false:true;
     };
 
     // list of tags to add tag to lesson
@@ -133,11 +142,24 @@ app.controller('CurriculumCtrl', ['$scope'
     $scope.newTag = function (curriculum, activity, addTag, size) {
         // if an existing tag was selected in drop-down menu (it's not undefined)
         if (addTag) {
-            // TODO: add tag to lesson (API call)
-            // add tag to curriculum (just for display on page)
-            // add tag to lesson (display on page without refresh)
-            activity.tags.push(addTag);
+            // add tag to curriculum (update front-end without refresh)
+            if (containsObject(curriculum.tags, addTag) == false) {
+                curriculum.tags.push(addTag);
+            }
+
+            // Update list of tag IDs for activity
+            var tagList = [addTag.id]
+            _.each(activity.tags, function (value, key, list) {
+                tagList.push(value.id);
+            });
+
+            // Add tag to lesson on back-end (custom "PATCH" request to API)
+            // Also update tags of activity displyed on front-end
+            Activity.update({ id:activity.id }, {'tag_IDs': tagList}, function(response) {
+                activity.tags = response.tags;
+            });
         }
+
         // if user selected "create new tag" (addTag was undefined)
         // then open modal window with new tag form
         else {
@@ -412,28 +434,7 @@ app.controller('NewTagModalCtrl', ['$scope'
     $scope.newTag = new Tag();
 
     // list of possible categories for new tag form
-    $scope.categories = [
-        {
-            code: "LAN"
-            , type: "Language"
-        }
-        , {
-            code: "TEC"
-          , type: "Technology"  
-        }
-        , {
-            code: "DIF"
-            , type: "Difficulty"
-        }
-        , {
-            code: "LEN"
-            , type: "Length"
-        }
-        , {
-            code: "CON"
-            , type: "Concept"
-        }
-    ];
+    $scope.categories = ["Language", "Technology", "Concept", "Difficulty", "Length"];
 
     $scope.save = function() {
         // assign correct activity to the new tag

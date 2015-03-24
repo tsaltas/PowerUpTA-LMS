@@ -10,11 +10,6 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ('id', 'name', 'logo', 'category')
 
-    def to_representation(self, instance):
-      ret = super(TagSerializer, self).to_representation(instance)
-      ret['category'] = instance.get_category_display()
-      return ret
-
     # Custom function to associate activities with tags
     def create(self, validated_data):
     	# Get list of activities to be associated with the new tag
@@ -147,10 +142,10 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'resources',
                  )
     
-    def to_representation(self, instance):
-        ret = super(ActivitySerializer, self).to_representation(instance)
-        ret['category'] = instance.get_category_display()
-        return ret
+    #def to_representation(self, instance):
+        #ret = super(ActivitySerializer, self).to_representation(instance)
+        #ret['category'] = instance.get_category_display()
+        #return ret
 
     # Custom function to associate objects with activities
     def create(self, validated_data):

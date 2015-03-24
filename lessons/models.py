@@ -12,20 +12,20 @@ class Tag(models.Model):
 		# First element of tuple is the value stored in the DB
 		# Second element of tuple is displayed by the default form widget or in a ModelChoiceField
 		# Given an instance of a Tag object called "t", the display value can be accessed like this: t.get_category_display()
-		('LAN', 'Language'),
-		('TEC', 'Technology'),
-		('DIF', 'Difficulty'),
-		('LEN', 'Length'),
-		('CON', 'Concept'),
+		('Language', 'Language'),
+		('Technology', 'Technology'),
+		('Difficulty', 'Difficulty'),
+		('Length', 'Length'),
+		('Concept', 'Concept'),
 	)
 	# ALL REQUIRED
 	name = models.CharField(max_length=50, unique=True)
 	logo = models.ImageField(upload_to='tag_logos')
-	category = models.CharField(max_length=3, choices=CATEGORIES)
+	category = models.CharField(max_length=15, choices=CATEGORIES)
 	# A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 	
 	def __unicode__(self):
-		return self.name + " (" + self.get_category_display() + ")"
+		return self.name + " (" + self.category + ")"
 
 	def tag_logo(self):
 		return '<img src="{}" alt="{}" height="40" width="40">'.format(self.logo.url, self.name + " logo")
@@ -92,7 +92,7 @@ class Activity(models.Model):
 
 	def __unicode__(self):
 		if self.category:
-			return self.get_category_display() + ": " + self.name
+			return self.category + ": " + self.name
 		else:
 			return self.name
 
@@ -147,9 +147,9 @@ class ActivityRelationship(models.Model):
 	3) One activity is a short extension of another
 	"""
 	RELATIONSHIP_TYPES = (
-		('SUB', 'sub-activity'),
-		('SUP', 'super-activity'),
-		('EXT', 'extension'),
+		('sub-activity', 'sub-activity'),
+		('super-activity', 'super-activity'),
+		('extension', 'extension'),
 	)
 	# ALL REQUIRED
 	rel_type = models.CharField(max_length=3, choices=RELATIONSHIP_TYPES, verbose_name="Relationship Type")

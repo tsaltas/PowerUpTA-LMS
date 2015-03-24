@@ -25,6 +25,7 @@ class TagViewSet(viewsets.ModelViewSet):
 
     # Custom function to associate activities with tag
     def create(self, request):
+        print "CREATING NEW TAG!"
         #print "inside the creation function"
         #print "request content type: "
         #print request.content_type
