@@ -37,13 +37,13 @@ class ActivityTests(APITestCase):
 		tag1 = Tag.objects.create(
 			name='TestTag1'
 			, logo=test_logo
-			, category='LAN'
+			, category='Language'
 		)
 
 		tag2 = Tag.objects.create(
 			name='TestTag2'
 			, logo=test_logo
-			, category='TEC'
+			, category='Technology'
 		)
 
 		# Create some resource objects to associate with activities
@@ -175,6 +175,10 @@ class ActivityTests(APITestCase):
 		Delete objects
 		"""
 		Activity.objects.all().delete()
+		Tag.objects.all().delete()
+		Resource.objects.all().delete()
+		Material.objects.all().delete()
+		Curriculum.objects.all().delete()
 
 	""" ACTIVITY GET REQUESTS """
 	def test_get_all_activities(self):

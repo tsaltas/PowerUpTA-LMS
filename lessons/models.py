@@ -92,7 +92,7 @@ class Activity(models.Model):
 
 	def __unicode__(self):
 		if self.category:
-			return self.category + ": " + self.name
+			return self.category.get_category_display() + ": " + self.name
 		else:
 			return self.name
 
@@ -147,9 +147,9 @@ class ActivityRelationship(models.Model):
 	3) One activity is a short extension of another
 	"""
 	RELATIONSHIP_TYPES = (
-		('sub-activity', 'sub-activity'),
-		('super-activity', 'super-activity'),
-		('extension', 'extension'),
+		('SUB', 'sub-activity'),
+		('SUP', 'super-activity'),
+		('EXT', 'extension'),
 	)
 	# ALL REQUIRED
 	rel_type = models.CharField(max_length=3, choices=RELATIONSHIP_TYPES, verbose_name="Relationship Type")
