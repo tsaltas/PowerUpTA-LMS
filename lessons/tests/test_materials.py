@@ -1,9 +1,11 @@
 from django.core.urlresolvers import reverse
 
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 
 from lessons.models import Activity, Material
+
+from lessons.serializers import ActivitySerializer, MaterialSerializer
 
 class MaterialTests(APITestCase):
 	
@@ -46,29 +48,20 @@ class MaterialTests(APITestCase):
 		material3.activities.add(activity1)
 		material3.activities.add(activity2)
 
-		# Add activities to the class object for reference in later tests
-		cls.activity1 = activity1
-		cls.activity2 = activity2
+		# Data to compare in later tests
+		cls.material1 = MaterialSerializer(material1).data
+		cls.material2 = MaterialSerializer(material2).data
+		cls.material3 = MaterialSerializer(material3).data
+		cls.activity1 = ActivitySerializer(activity1).data
+		cls.activity2 = ActivitySerializer(activity2).data
 
-		# Data to compare against objects returned from the API
-		cls.material1 = {
-			'id': 1
-			, 'name': 'Test1'
-			, 'url': 'http://www.test1.com'
-			, 'activities': []
-		}
-		cls.material2 = {
-			'id': 2
-			, 'name': 'Test2'
-			, 'url': 'http://www.test2.com'
-			, 'activities': [activity1.id]
-		}
-		cls.material3 = {
-			'id': 3
-			, 'name': 'Test3'
-			, 'url': 'http://www.test3.com'
-			, 'activities': [activity1.id, activity2.id]
-		}
+		# Add serialized objects to test DB
+		client = APIClient()
+		client.post(reverse('lessons:material-list'), cls.material1)
+		client.post(reverse('lessons:material-list'), cls.material2)
+		client.post(reverse('lessons:material-list'), cls.material3)
+		client.post(reverse('lessons:activity-list'), cls.activity1)
+		client.post(reverse('lessons:activity-list'), cls.activity2)
 	
 	@classmethod
 	def tearDownClass(cls):
@@ -128,13 +121,13 @@ class MaterialTests(APITestCase):
 		material5 = {
 			'name': 'Test5'
 			, 'url': 'http://www.test5.com'
-			, 'activities': [self.activity1.id]
+			, 'activities': [self.activity1["id"]]
 		}
 		# >1 activities
 		material6 = {
 			'name': 'Test6'
 			, 'url': 'http://www.test6.com'
-			, 'activities': [self.activity1.id, self.activity2.id]
+			, 'activities': [self.activity1["id"], self.activity2["id"]]
 		}
 
 		response4 = self.client.post(self.url, material4, format='json')
@@ -162,7 +155,7 @@ class MaterialTests(APITestCase):
 		material4 = {
 			'name': ''
 			, 'url': 'http://www.test4.com'
-			, 'activities': [self.activity1.id]
+			, 'activities': [self.activity1["id"]]
 		}
 		# URL missing
 		material5 = {
@@ -174,7 +167,7 @@ class MaterialTests(APITestCase):
 		material6 = {
 			'name': 'Test6'
 			, 'url': 'www.test6.com'
-			, 'activities': [self.activity2.id]
+			, 'activities': [self.activity2["id"]]
 		}
 		# URL malformed
 		material7 = {
@@ -255,16 +248,16 @@ class MaterialTests(APITestCase):
 			'id': 2
 			, 'name': 'Test2'
 			, 'url': 'http://www.updated.com'
-			, 'activities': [self.activity1.id]
+			, 'activities': [self.activity1["id"]]
 		}
 		
 		# Remove one activity
-		response3 = self.client.patch(self.url + "3/", {'activities': [self.activity1.id]}, format='json')
+		response3 = self.client.patch(self.url + "3/", {'activities': [self.activity1["id"]]}, format='json')
 		material3 = {
 			'id': 3
 			, 'name': 'Test3'
 			, 'url': 'http://www.test3.com'
-			, 'activities': [self.activity1.id]
+			, 'activities': [self.activity1["id"]]
 		}
 
 		# Remove all activities
@@ -279,27 +272,27 @@ class MaterialTests(APITestCase):
 		# Add first activity
 		response5 = self.client.patch(
 			self.url + "3/"
-			, {'activities': [self.activity1.id]}
+			, {'activities': [self.activity1["id"]]}
 			, format='json'
 		)
 		material5 = {
 			'id': 3
 			, 'name': 'Test3'
 			, 'url': 'http://www.test3.com'
-			, 'activities': [self.activity1.id]
+			, 'activities': [self.activity1["id"]]
 		}
 
 		# Add additional activity
 		response6 = self.client.patch(
 			self.url + "3/"
-			, {'activities': [self.activity1.id, self.activity2.id]}
+			, {'activities': [self.activity1["id"], self.activity2["id"]]}
 			, format='json'
 		)
 		material6 = {
 			'id': 3
 			, 'name': 'Test3'
 			, 'url': 'http://www.test3.com'
-			, 'activities': [self.activity1.id, self.activity2.id]
+			, 'activities': [self.activity1["id"], self.activity2["id"]]
 		}
 
 		self.assertEqual(response1.status_code, status.HTTP_200_OK)
