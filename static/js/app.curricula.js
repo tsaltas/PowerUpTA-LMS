@@ -132,6 +132,12 @@ app.controller('CurriculumCtrl', ['$scope'
                 for (var i = 0; i < $scope.curricula.length; i++) {
                     if ($scope.curricula[i].id == curriculum.id) {
                         $scope.curricula[i].activities.push(curriculum.activities[curriculum.activities.length - 1]);
+                        // update curriculum tags with tags on activity
+                        _.each(newActivity.tags, function (value, key, list) {
+                            if (containsObject($scope.curricula[i].tags, value) == false) {
+                                $scope.curricula[i].tags.push(value);
+                            }
+                        });
                     }
                 }
             });
@@ -140,24 +146,34 @@ app.controller('CurriculumCtrl', ['$scope'
 
     // open modal window to create new tag 
     $scope.newTag = function (curriculum, activity, addTag, size) {
-        // if an existing tag was selected in drop-down menu (it's not undefined)
-        if (addTag) {
-            // add tag to curriculum (update front-end without refresh)
-            if (containsObject(curriculum.tags, addTag) == false) {
-                curriculum.tags.push(addTag);
-            }
-
-            // Update list of tag IDs for activity
-            var tagList = [addTag.id]
+        
+        // Function to submit PATCH request to API adding a new tag to an activity
+        function addTagActivity(activity, newTag) {
+            // Create new list of tag IDs for activity
+            var tagList = [newTag.id]
             _.each(activity.tags, function (value, key, list) {
                 tagList.push(value.id);
             });
 
             // Add tag to lesson on back-end (custom "PATCH" request to API)
-            // Also update tags of activity displyed on front-end
+            // Also update tags of activity displayed on front-end
             Activity.update({ id:activity.id }, {'tag_IDs': tagList}, function(response) {
                 activity.tags = response.tags;
             });
+
+            // Return updated activity with new tag
+            return activity;
+        }
+
+        // if an existing tag was selected in drop-down menu (it's not undefined)
+        if (addTag) {
+            // add tag to curriculum (on front-end)
+            if (containsObject(curriculum.tags, addTag) == false) {
+                curriculum.tags.push(addTag);
+            }
+
+            // Add tag to activity (back-end and front-end)
+            activity = addTagActivity(activity, addTag)
         }
 
         // if user selected "create new tag" (addTag was undefined)
@@ -174,11 +190,13 @@ app.controller('CurriculumCtrl', ['$scope'
                 }
             });
             
-            // add newly created tag to list on the page (without refresh)
-            // add to the lesson and also to the parent curriculum
+            // Add new tag to curriculum (front-end)
+            // Add new tag to activity (back-end and front-end)
+            // Add to the drop-down selection menu
             modalInstance.result.then(function (newTag) {
-                activity.tags.push(newTag);
                 curriculum.tags.push(newTag);
+                activity = addTagActivity(activity, newTag);
+                $scope.tags.push(newTag);
             });
         }
     };
