@@ -65,18 +65,14 @@ DATABASES = {
         , 'USER': 'reatixf2_tsaltas'
         , 'PASSWORD': 'Development011'      
         , 'HOST': 'localhost'
+        , 'TEST': {
+            'NAME': 'reafixf2_lms_test'
+            , 'USER': 'reatixf2_test'
+            , 'PASSWORD': 'Test011'
+        }
     }
 }
 
-TEST = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql'
-        , 'NAME': 'reafixf2_lms_test'
-        , 'USER': 'reatixf2_test'
-        , 'PASSWORD': 'Test011'
-        , 'HOST': 'localhost'
-    }
-}
 
 # Configure Rest Framework to use JSON data by default
 
