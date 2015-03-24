@@ -142,10 +142,10 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'resources',
                  )
     
-    #def to_representation(self, instance):
-        #ret = super(ActivitySerializer, self).to_representation(instance)
-        #ret['category'] = instance.get_category_display()
-        #return ret
+    def to_representation(self, instance):
+        ret = super(ActivitySerializer, self).to_representation(instance)
+        ret['category'] = instance.get_category_display()
+        return ret
 
     # Custom function to associate objects with activities
     def create(self, validated_data):
