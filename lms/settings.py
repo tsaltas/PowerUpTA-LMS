@@ -65,7 +65,7 @@ DATABASES = {
         , 'USER': 'reatixf2_tsaltas'
         , 'PASSWORD': 'Development011'      
         , 'HOST': 'localhost'
-        , 'TEST': {'NAME': 'reafixf2_lms_test'}
+        , 'TEST': {'NAME': 'reatixf2_lms_test'}
     }
 }
 
