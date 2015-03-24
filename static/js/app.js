@@ -1,5 +1,5 @@
 
-app = angular.module('lms.app.curricula', ['lms.api', 'ui.bootstrap']);
+app = angular.module('lms.app', ['lms.api', 'ui.bootstrap']);
 
 // Don't strip trailing slashes from calculated URLs
 // The Django API expects slashes
