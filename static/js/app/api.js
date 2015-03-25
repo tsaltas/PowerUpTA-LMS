@@ -1,12 +1,18 @@
-// Uses Angular-Resource to make calls to the API
-// Allows us to avoid hard-coding aspects of the API including constructing URLs
-app = angular.module('lms.api', ['ngResource']);
+'use strict';
 
-app.config(function($resourceProvider) {
+/*
+** API Module
+** Uses Angular-Resource to make calls to the API
+** Allows us to avoid hard-coding aspects of the API including constructing URLs
+*/
+
+var api = angular.module('lms.api', ['ngResource', 'ngRoute']);
+
+api.config(function($resourceProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
 });
 
-app.factory('Activity', ['$resource', function($resource) {
+api.factory('Activity', ['$resource', function($resource) {
 	return $resource('/api/activities/:id', {id:'@id'}, 
 		// Custom PUT method called "update"
 		// Usage: Activity.update({ id:$id }, {});
@@ -18,18 +24,18 @@ app.factory('Activity', ['$resource', function($resource) {
 		});
 }]);
 
-app.factory('Curriculum', ['$resource', function($resource) {
+api.factory('Curriculum', ['$resource', function($resource) {
 	return $resource('/api/curricula/:id', {id:'@id'});
 }]);
 
-app.factory('Resource', ['$resource', function($resource) {
+api.factory('Resource', ['$resource', function($resource) {
 	return $resource('/api/resources/:id', {id:'@id'});
 }]);
 
-app.factory('Material', ['$resource', function($resource) {
+api.factory('Material', ['$resource', function($resource) {
 	return $resource('/api/materials/:id', {id:'@id'});
 }]);
 
-app.factory('Tag', ['$resource', function($resource) {
+api.factory('Tag', ['$resource', function($resource) {
 	return $resource('/api/tags/:id', {id:'@id'});
 }]);

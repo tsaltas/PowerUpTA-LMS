@@ -2,7 +2,7 @@
 
 /* Lessons Module Controllers */
 
-var lessonsControllers = angular.module('lessonsControllers', [
+var lessonsControllers = angular.module('lms.controllers', [
     'activityControllers'
     ,'tagControllers'
     ,'materialControllers'

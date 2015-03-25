@@ -1,139 +1,15 @@
 'use strict';
 
-/* App Module */
+/* Lessons Module Controllers */
 
-var app = angular.module('lms.app', [
-    'lms.api'
-     ,'ui.bootstrap'
-    //, 'lms.controllers'
-    , 'ngResource'
+var lessonsControllers = angular.module('lms.controllers', [
+    'activityControllers'
+    //,'tagControllers'
+    //,'materialControllers'
+    //,'resourceControllers'
 ]);
 
-// Don't strip trailing slashes from calculated URLs
-// The DRF API expects slashes
-app.config(['$resourceProvider',
-    function($resourceProvider) {
-        $resourceProvider.defaults.stripTrailingSlashes = false;
-}]);
-
-app.controller('NewCurrModalCtrl', ['$scope'
-    , '$modalInstance'
-    , 'Curriculum'
-    , 'Activity'
-    , function ($scope
-        , $modalInstance
-        , Curriculum
-        , Activity
-    ) {
-    console.log("Inside new curriculum modal window controller.");
-    // list of activities for new curriculum form
-    $scope.activities = [];
-    $scope.activities = Activity.query();
-
-    // list of possible grades for new curriculum form
-    $scope.grades = [{
-        id: 0,
-        value: "K"
-    }];
-    for (i = 1; i <= 12; i++) { 
-        newGrade = {
-            id: i,
-            value: i.toString()
-        };
-        $scope.grades.push(newGrade);
-    };
-    
-    $scope.newCurriculum = new Curriculum();
-
-    $scope.save = function() {
-        console.log("Saving new curriculum to database.");
-        // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
-        if ($scope.newCurriculum.activities) {
-            console.log("Associating first activity with new curriculum.");
-            $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
-        };
-
-        return $scope.newCurriculum.$save().then(function(result) {
-            // change grades on new curriculum from DB storage value to display value
-            result.lower_grade = $scope.grades[result.lower_grade].value;
-            result.upper_grade = $scope.grades[result.upper_grade].value;
-            // return new curriculum to main controller to update display on page and close the modal window
-            $modalInstance.close(result);
-        }).then(function() {
-            return $scope.newCurriculum = new Curriculum();
-        }).then(function() {
-            return $scope.errors = null;
-        }, function(rejection) {
-            return $scope.errors = rejection.data;
-        });
-    };
-
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}]);
-
-
-
-// File upload directive
-// Angular's ng-model does not work on inputs with type='file'
-// Gets the file bound to 'my-file-model' in the HTML form into the controller's scope
-app.directive('myFileModel', ['$parse', function ($parse) {
-    return {
-        restrict: 'A',
-        // link function listens for changes to the content of the file upload element
-        // changes the value of the scope variable appropriately
-        link: function(scope, element, attrs) {
-            var model = $parse(attrs.myFileModel);
-            var modelSetter = model.assign;
-            
-            element.bind('change', function(){
-                scope.$apply(function(){
-                    modelSetter(scope, element[0].files[0]);
-                });
-            });
-        }
-    };
-}]);
-
-// File upload service
-// Makes the HTTP POST request to the server
-app.service('fileUpload', ['$http', function ($http) {
-    this.uploadFileToUrl = function(file, uploadUrl){
-        var fd = new FormData();
-        fd.append('file', file);
-        $http.post(uploadUrl, fd, {
-            // override default transformRequest function
-            // by default, angular serializes the request to JSON data
-            // we want to leave the file data intact so use the identify function
-            transformRequest: angular.identity,
-            headers: {'Content-Type': undefined}
-        })
-        .success(function(){
-        })
-        .error(function(){
-        });
-    }
-}]);
-
-app.controller('DropdownCtrl', ['$scope', function ($scope) {
-  
-  // initialize navbar to collapsed state
-  $scope.navbarCollapsed = true;
-
-  $scope.status = {
-    isopen: false,
-  };
-
-  $scope.toggleDropdown = function($event) {
-    $event.preventDefault();
-    $event.stopPropagation();
-    $scope.status.isopen = !$scope.status.isopen;
-  };
-  
-}]);
-
-app.controller('CurriculumCtrl', ['$scope'
+lessonsControllers.controller('CurriculumCtrl', ['$scope'
     , '$modal'
     , 'Curriculum'
     , 'Activity'
@@ -145,7 +21,7 @@ app.controller('CurriculumCtrl', ['$scope'
         , Tag
     ){
 
-  $scope.curricula = [];
+	$scope.curricula = [];
 
     // curricula accordion expands to display one curriculum at a time
     $scope.oneAtATime = true;
@@ -176,7 +52,7 @@ app.controller('CurriculumCtrl', ['$scope'
     };
 
     // query API for curricula
-  $scope.curricula = Curriculum.query(getCurriculumTags);
+	$scope.curricula = Curriculum.query(getCurriculumTags);
 
     // Function to check whether objects in the HTML template are defined
     // Some objects we want to hide are actually undefined
@@ -374,23 +250,117 @@ app.controller('CurriculumCtrl', ['$scope'
     };
 }]);
 
-/*
-Routing Example
+lessonsControllers.controller('NewCurrModalCtrl', ['$scope'
+    , '$modalInstance'
+    , 'Curriculum'
+    , 'Activity'
+    , function ($scope
+        , $modalInstance
+        , Curriculum
+        , Activity
+    ) {
+    console.log("Inside new curriculum modal window controller.");
+    // list of activities for new curriculum form
+    $scope.activities = [];
+    $scope.activities = Activity.query();
 
-phonecatApp.config(['$routeProvider',
-  function($routeProvider) {
-    $routeProvider.
-      when('/phones', {
-        templateUrl: 'partials/phone-list.html',
-        controller: 'PhoneListCtrl'
-      }).
-      when('/phones/:phoneId', {
-        templateUrl: 'partials/phone-detail.html',
-        controller: 'PhoneDetailCtrl'
-      }).
-      otherwise({
-        redirectTo: '/phones'
-      });
-  }]);
+    // list of possible grades for new curriculum form
+    $scope.grades = [{
+        id: 0,
+        value: "K"
+    }];
+    for (i = 1; i <= 12; i++) { 
+        newGrade = {
+            id: i,
+            value: i.toString()
+        };
+        $scope.grades.push(newGrade);
+    };
+    
+    $scope.newCurriculum = new Curriculum();
 
- */
+    $scope.save = function() {
+        console.log("Saving new curriculum to database.");
+        // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
+        if ($scope.newCurriculum.activities) {
+            console.log("Associating first activity with new curriculum.");
+            $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
+        };
+
+        return $scope.newCurriculum.$save().then(function(result) {
+            // change grades on new curriculum from DB storage value to display value
+            result.lower_grade = $scope.grades[result.lower_grade].value;
+            result.upper_grade = $scope.grades[result.upper_grade].value;
+            // return new curriculum to main controller to update display on page and close the modal window
+            $modalInstance.close(result);
+        }).then(function() {
+            return $scope.newCurriculum = new Curriculum();
+        }).then(function() {
+            return $scope.errors = null;
+        }, function(rejection) {
+            return $scope.errors = rejection.data;
+        });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
+lessonsControllers.controller('DropdownCtrl', ['$scope', function ($scope) {
+  
+  // initialize navbar to collapsed state
+  $scope.navbarCollapsed = true;
+
+  $scope.status = {
+    isopen: false,
+  };
+
+  $scope.toggleDropdown = function($event) {
+    $event.preventDefault();
+    $event.stopPropagation();
+    $scope.status.isopen = !$scope.status.isopen;
+  };
+  
+}]);
+
+// File upload directive
+// Angular's ng-model does not work on inputs with type='file'
+// Gets the file bound to 'my-file-model' in the HTML form into the controller's scope
+lessonsControllers.directive('myFileModel', ['$parse', function ($parse) {
+    return {
+        restrict: 'A',
+        // link function listens for changes to the content of the file upload element
+        // changes the value of the scope variable appropriately
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.myFileModel);
+            var modelSetter = model.assign;
+            
+            element.bind('change', function(){
+                scope.$apply(function(){
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);
+
+// File upload service
+// Makes the HTTP POST request to the server
+lessonsControllers.service('fileUpload', ['$http', function ($http) {
+    this.uploadFileToUrl = function(file, uploadUrl){
+        var fd = new FormData();
+        fd.append('file', file);
+        $http.post(uploadUrl, fd, {
+            // override default transformRequest function
+            // by default, angular serializes the request to JSON data
+            // we want to leave the file data intact so use the identify function
+            transformRequest: angular.identity,
+            headers: {'Content-Type': undefined}
+        })
+        .success(function(){
+        })
+        .error(function(){
+        });
+    }
+}]);
