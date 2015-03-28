@@ -4,8 +4,8 @@
 
 var app = angular.module('lms.app', [
     'lms.api'
-     ,'ui.bootstrap'
-    //, 'lms.controllers'
+    , 'ui.bootstrap'
+    , 'lms.controllers'
     , 'ngResource'
 ]);
 
