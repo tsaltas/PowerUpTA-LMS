@@ -6,7 +6,7 @@
 ** Allows us to avoid hard-coding aspects of the API including constructing URLs
 */
 
-var api = angular.module('lms.api', ['ngResource', 'ngRoute']);
+var api = angular.module('lms.api', ['ngResource']);
 
 api.config(function($resourceProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
