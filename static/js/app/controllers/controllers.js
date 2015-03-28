@@ -1,6 +1,12 @@
 'strict';
 
-var lessonsControllers = angular.module('lms.controllers', []);
+var lessonsControllers = angular.module('lms.controllers', [
+    , 'resourceControllers'
+    , 'materialControllers'
+    , 'tagControllers'
+    , 'activityControllers'
+    , 'curriculumControllers'
+]);
 
 lessonsControllers.controller('DropdownCtrl', ['$scope', function ($scope) {
   

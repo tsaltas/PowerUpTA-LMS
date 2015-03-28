@@ -5,11 +5,6 @@ var app = angular.module('lms.app', [
     , 'ui.bootstrap'
     , 'lms.directives'
     , 'lms.controllers'
-    , 'resourceControllers'
-    , 'materialControllers'
-    , 'tagControllers'
-    , 'activityControllers'
-    , 'curriculumControllers'
 ]);
 
 // Don't strip trailing slashes from calculated URLs
