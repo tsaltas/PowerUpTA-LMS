@@ -1,5 +1,7 @@
 'use strict';
 
+/* Activity Module Controllers */
+
 var activityControllers = angular.module('activityControllers', []);
 
 activityControllers.controller('NewActivityModalCtrl', ['$scope'
@@ -147,12 +149,6 @@ activityControllers.controller('ActivityMaterialsModalCtrl', ['$scope'
         });
     };
 
-    $scope.cancel = function () {
-        $modalInstance.dismiss('cancel');
-    };
-}]);
-
-activityControllers.controller('RelatedActivitiesModalCtrl', ['$scope', '$modalInstance', 'Activity', function ($scope, $modalInstance, Activity) {
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };

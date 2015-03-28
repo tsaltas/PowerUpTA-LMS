@@ -1,15 +1,16 @@
 'use strict';
 
+/* Lessons Module Controllers */
+
 var lessonsControllers = angular.module('lms.controllers', [
     , 'resourceControllers'
     , 'materialControllers'
     , 'tagControllers'
     , 'activityControllers'
     , 'curriculumControllers'
-]);
+
 
 lessonsControllers.controller('DropdownCtrl', ['$scope', function ($scope) {
-  
   // initialize navbar to collapsed state
   $scope.navbarCollapsed = true;
 
@@ -22,5 +23,4 @@ lessonsControllers.controller('DropdownCtrl', ['$scope', function ($scope) {
     $event.stopPropagation();
     $scope.status.isopen = !$scope.status.isopen;
   };
-  
 }]);

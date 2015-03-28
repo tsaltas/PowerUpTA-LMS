@@ -92,7 +92,7 @@ class Activity(models.Model):
 
 	def __unicode__(self):
 		if self.category:
-			return self.category.get_category_display() + ": " + self.name
+			return self.get_category_display() + ": " + self.name
 		else:
 			return self.name
 

@@ -1,5 +1,7 @@
 'use strict';
 
+/* Curriculum Module Controllers */
+
 var curriculumControllers = angular.module('curriculumControllers', []);
 
 curriculumControllers.controller('CurriculumCtrl', ['$scope'
