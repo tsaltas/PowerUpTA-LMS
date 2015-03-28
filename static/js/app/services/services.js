@@ -1,5 +1,7 @@
 'use strict';
 
+/* Lessons Services Module */
+
 var lessonsServices = angular.module('lms.services', []);
 
 // File upload service

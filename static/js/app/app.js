@@ -1,6 +1,6 @@
 'use strict';
 
-/* App Module */
+/* Lessons App Module */
 
 var app = angular.module('lms.app', [
     'lms.api'

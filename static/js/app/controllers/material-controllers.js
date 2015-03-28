@@ -1,5 +1,7 @@
 'use strict';
 
+/* Material Module Controllers */
+
 var materialControllers = angular.module('materialControllers', []);
 
 materialControllers.controller('NewMaterialModalCtrl', ['$scope'

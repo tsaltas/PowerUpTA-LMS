@@ -1,6 +1,6 @@
 'use strict';
 
-/* Resources Module Controllers */
+/* Resource Module Controllers */
 
 var resourceControllers = angular.module('resourceControllers', []);
 

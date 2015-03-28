@@ -1,5 +1,7 @@
 'use strict';
 
+/* Lessons API Module */
+
 // Uses Angular-Resource to make calls to the API
 // Allows us to avoid hard-coding aspects of the API including constructing URLs
 var api = angular.module('lms.api', ['ngResource']);

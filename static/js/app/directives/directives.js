@@ -1,5 +1,7 @@
 'use strict';
 
+/* Lessons Directives Module */
+
 var lessonsDirectives = angular.module('lms.directives', []);
 
 // File upload directive
