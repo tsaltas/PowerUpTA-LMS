@@ -1,6 +1,10 @@
+'use strict';
+
+var lessonsServices = angular.module('lms.services', []);
+
 // File upload service
 // Makes the HTTP POST request to the server
-app.service('fileUpload', ['$http', function ($http) {
+lessonsServices.service('fileUpload', ['$http', function ($http) {
     this.uploadFileToUrl = function(file, uploadUrl){
         var fd = new FormData();
         fd.append('file', file);

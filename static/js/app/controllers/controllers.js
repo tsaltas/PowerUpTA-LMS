@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var lessonsControllers = angular.module('lms.controllers', [
     , 'resourceControllers'

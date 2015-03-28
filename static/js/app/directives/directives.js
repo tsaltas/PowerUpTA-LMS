@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var lessonsDirectives = angular.module('lms.directives', []);
 

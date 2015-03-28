@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var tagControllers = angular.module('tagControllers', []);
 

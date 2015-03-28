@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var app = angular.module('lms.app', [
     'lms.api'

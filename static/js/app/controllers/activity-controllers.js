@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var activityControllers = angular.module('activityControllers', []);
 
@@ -70,7 +70,7 @@ activityControllers.controller('NewActivityModalCtrl', ['$scope'
     };
 }]);
 
-app.controller('ActivityResourcesModalCtrl', ['$scope'
+activityControllers.controller('ActivityResourcesModalCtrl', ['$scope'
     , '$modalInstance'
     , '$modal'
     , 'Resource'

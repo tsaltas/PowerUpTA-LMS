@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var materialControllers = angular.module('materialControllers', []);
 

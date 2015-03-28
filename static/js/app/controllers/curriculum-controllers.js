@@ -1,4 +1,4 @@
-'strict';
+'use strict';
 
 var curriculumControllers = angular.module('curriculumControllers', []);
 
@@ -22,14 +22,14 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
     // curriculum inherits tags from nested activities
     var getCurriculumTags = function(curricula) {
         // curriculum inherits tags from activities
-        for (i = 0; i < curricula.length; i++) {
+        for (var i = 0; i < curricula.length; i++) {
             curricula[i].tags = [];
-            curr = curricula[i];
-            tagNames = []
-            for (j = 0; j < curr.activities.length; j++) {
-                activity = curr.activities[j].activity;
-                for (k = 0; k < activity.tags.length; k++) {
-                    tag = activity.tags[k];
+            var curr = curricula[i];
+            var tagNames = []
+            for (var j = 0; j < curr.activities.length; j++) {
+                var activity = curr.activities[j].activity;
+                for (var k = 0; k < activity.tags.length; k++) {
+                    var tag = activity.tags[k];
                     // only inherit language and technology tags
                     if (tag.category == "Language" | tag.category == "Technology") {
                         // do not add duplicates to list
