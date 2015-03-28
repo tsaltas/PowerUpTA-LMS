@@ -19,7 +19,8 @@ api.factory('Activity', ['$resource', function($resource) {
 				method: 'PATCH'
 				//, headers: {'Content-Type': 'application/json;charset=utf-8'}
 			}
-		});
+		}
+	);
 }]);
 
 api.factory('Curriculum', ['$resource', function($resource) {
