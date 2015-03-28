@@ -8,7 +8,7 @@ var lessonsControllers = angular.module('lms.controllers', [
     , 'tagControllers'
     , 'activityControllers'
     , 'curriculumControllers'
-
+]);
 
 lessonsControllers.controller('DropdownCtrl', ['$scope', function ($scope) {
   // initialize navbar to collapsed state
