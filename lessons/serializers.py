@@ -1,8 +1,8 @@
-from django.forms import widgets
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from lessons.models import Tag, Resource, Material, Activity, Curriculum, ActivityRelationship, CurriculumActivityRelationship
+
 
 class TagSerializer(serializers.ModelSerializer):
 
@@ -12,36 +12,37 @@ class TagSerializer(serializers.ModelSerializer):
 
     # Custom function to associate activities with tags
     def create(self, validated_data):
-    	# Get list of activities to be associated with the new tag
-    	activities = validated_data.pop('activities')
-    	 
-    	tag = Tag.objects.create(**validated_data)
+        # Get list of activities to be associated with the new tag
+        activities = validated_data.pop('activities')
 
-    	# Add activity-tag relationships
-    	for activityID in activities:
-    		tag.activities.add(get_object_or_404(Activity, pk=activityID))
+        tag = Tag.objects.create(**validated_data)
 
-    	tag.save()
-    	return tag
+        # Add activity-tag relationships
+        for activityID in activities:
+            tag.activities.add(get_object_or_404(Activity, pk=activityID))
+
+        tag.save()
+        return tag
 
     # Custom function to update activities list
     def update(self, instance, validated_data):
-      # Update any fields passed in
-      instance.name = validated_data.get('name', instance.name)
-      instance.url = validated_data.get('url', instance.url)
-      instance.url = validated_data.get('logo', instance.logo)
+        # Update any fields passed in
+        instance.name = validated_data.get('name', instance.name)
+        instance.url = validated_data.get('url', instance.url)
+        instance.url = validated_data.get('logo', instance.logo)
 
-      # Add activity-tag relationships if specified
-      if 'activities' in validated_data:
-        # Remove any existing relationships
-        instance.activities.clear()
-        # Add new relationships
-        activities = validated_data.get('activities')
-        for activityID in activities:
-          instance.activities.add(get_object_or_404(Activity, pk=activityID))
+        # Add activity-tag relationships if specified
+        if 'activities' in validated_data:
+            # Remove any existing relationships
+            instance.activities.clear()
+            # Add new relationships
+            activities = validated_data.get('activities')
+            for activityID in activities:
+                instance.activities.add(get_object_or_404(Activity, pk=activityID))
 
-      instance.save()
-      return instance
+        instance.save()
+        return instance
+
 
 class ResourceSerializer(serializers.ModelSerializer):
     activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -52,35 +53,36 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     # Custom function to associate activities with resources
     def create(self, validated_data):
-    	# Get list of activities to be associated with the new resource
-    	activities = validated_data.pop('activities')
-    	 
-    	resource = Resource.objects.create(**validated_data)
+        # Get list of activities to be associated with the new resource
+        activities = validated_data.pop('activities')
 
-    	# Add activity-resource relationships
-    	for activityID in activities:
-    		resource.activities.add(get_object_or_404(Activity, pk=activityID))
+        resource = Resource.objects.create(**validated_data)
 
-    	resource.save()
-    	return resource
+        # Add activity-resource relationships
+        for activityID in activities:
+            resource.activities.add(get_object_or_404(Activity, pk=activityID))
+
+        resource.save()
+        return resource
 
     # Custom function to update activities list
     def update(self, instance, validated_data):
-    	# Update any fields passed in
-    	instance.name = validated_data.get('name', instance.name)
-    	instance.url = validated_data.get('url', instance.url)
+        # Update any fields passed in
+        instance.name = validated_data.get('name', instance.name)
+        instance.url = validated_data.get('url', instance.url)
 
-    	# Add activity-resource relationships if specified
-    	if 'activities' in validated_data:
-    		# Remove any existing relationships
-    		instance.activities.clear()
-    		# Add new relationships
-    		activities = validated_data.get('activities')
-    		for activityID in activities:
-    			instance.activities.add(get_object_or_404(Activity, pk=activityID))
+        # Add activity-resource relationships if specified
+        if 'activities' in validated_data:
+            # Remove any existing relationships
+            instance.activities.clear()
+            # Add new relationships
+            activities = validated_data.get('activities')
+            for activityID in activities:
+                instance.activities.add(get_object_or_404(Activity, pk=activityID))
 
-    	instance.save()
-    	return instance
+        instance.save()
+        return instance
+
 
 class MaterialSerializer(serializers.ModelSerializer):
     activities = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -91,40 +93,41 @@ class MaterialSerializer(serializers.ModelSerializer):
 
     # Custom function to associate activities with materials
     def create(self, validated_data):
-    	# Get list of activities to be associated with the new material
-    	activities = validated_data.pop('activities')
-    	 
-    	material = Material.objects.create(**validated_data)
+        # Get list of activities to be associated with the new material
+        activities = validated_data.pop('activities')
 
-    	# Add activity-material relationships
-    	for activityID in activities:
-    		material.activities.add(get_object_or_404(Activity, pk=activityID))
+        material = Material.objects.create(**validated_data)
 
-    	material.save()
-    	return material
+        # Add activity-material relationships
+        for activityID in activities:
+            material.activities.add(get_object_or_404(Activity, pk=activityID))
+
+        material.save()
+        return material
 
     # Custom function to update activities list
     def update(self, instance, validated_data):
-    	# Update any fields passed in
-    	instance.name = validated_data.get('name', instance.name)
-    	instance.url = validated_data.get('url', instance.url)
+        # Update any fields passed in
+        instance.name = validated_data.get('name', instance.name)
+        instance.url = validated_data.get('url', instance.url)
 
-    	# Add activity-material relationships if specified
-    	if 'activities' in validated_data:
-    		# Remove any existing relationships
-    		instance.activities.clear()
-    		# Add new relationships
-    		activities = validated_data.get('activities')
-    		for activityID in activities:
-    			instance.activities.add(get_object_or_404(Activity, pk=activityID))
+        # Add activity-material relationships if specified
+        if 'activities' in validated_data:
+            # Remove any existing relationships
+            instance.activities.clear()
+            # Add new relationships
+            activities = validated_data.get('activities')
+            for activityID in activities:
+                instance.activities.add(get_object_or_404(Activity, pk=activityID))
 
-    	instance.save()
-    	return instance
+        instance.save()
+        return instance
+
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
-    tags = TagSerializer(many = True, required=False)
-    materials = MaterialSerializer(many = True, required=False)
-    resources = ResourceSerializer(many = True, required=False)
+    tags = TagSerializer(many=True, required=False)
+    materials = MaterialSerializer(many=True, required=False)
+    resources = ResourceSerializer(many=True, required=False)
 
     class Meta:
         model = Activity
@@ -141,7 +144,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'materials',
                   'resources',
                  )
-    
+
     def to_representation(self, instance):
         ret = super(ActivitySerializer, self).to_representation(instance)
         ret['category'] = instance.get_category_display()
@@ -149,30 +152,30 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
 
     # Custom function to associate objects with activities
     def create(self, validated_data):
-    	# Get lists of objects to be associated with the new activity
-    	tag_IDs = validated_data.pop('tag_IDs')
-    	resource_IDs = validated_data.pop('resource_IDs')
-    	material_IDs = validated_data.pop('material_IDs')
+        # Get lists of objects to be associated with the new activity
+        tag_IDs = validated_data.pop('tag_IDs')
+        resource_IDs = validated_data.pop('resource_IDs')
+        material_IDs = validated_data.pop('material_IDs')
         curriculum_rels = validated_data.pop('curriculum_rels')
         activity_rels = validated_data.pop('activity_rels')
-    	 
-    	activity = Activity.objects.create(**validated_data)
 
-    	# Add foreign key relationships
-    	for tagID in tag_IDs:
-    		activity.tags.add(get_object_or_404(Tag, pk=tagID))
-    	for resourceID in resource_IDs:
-    		activity.resources.add(get_object_or_404(Resource, pk=resourceID))
-    	for materialID in material_IDs:
-    		activity.materials.add(get_object_or_404(Material, pk=materialID))
-    	# save new activity
+        activity = Activity.objects.create(**validated_data)
+
+        # Add foreign key relationships
+        for tagID in tag_IDs:
+            activity.tags.add(get_object_or_404(Tag, pk=tagID))
+        for resourceID in resource_IDs:
+            activity.resources.add(get_object_or_404(Resource, pk=resourceID))
+        for materialID in material_IDs:
+            activity.materials.add(get_object_or_404(Material, pk=materialID))
+        # save new activity
         activity.save()
 
         # create relationships that have through models
         create_activity_curriculum_relationships(activity, curriculum_rels)
         create_activity_activity_relationships(activity, activity_rels)
 
-    	return activity
+        return activity
 
     # Custom function to update objects associated with activity
     def update(self, instance, validated_data):
@@ -206,21 +209,23 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
         if 'curriculum_rels' in validated_data:
             instance.curriculum_relationships.all().delete()
             create_activity_curriculum_relationships(instance, validated_data.get('curriculum_rels'))
-        
+
         instance.save()
         return instance
 
-class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
-  activity = ActivitySerializer()
-  curriculum = serializers.PrimaryKeyRelatedField(queryset=Curriculum.objects.all())
 
-  class Meta:
-    model = CurriculumActivityRelationship
-    fields = ('id', 'curriculum', 'activity', 'number')
+class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
+    activity = ActivitySerializer()
+    curriculum = serializers.PrimaryKeyRelatedField(queryset=Curriculum.objects.all())
+
+    class Meta:
+        model = CurriculumActivityRelationship
+        fields = ('id', 'curriculum', 'activity', 'number')
+
 
 class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
     activities = CurriculumActivityRelationshipSerializer(source='activity_relationships', many=True)
-    
+
     class Meta:
         model = Curriculum
         fields = ('id',
@@ -231,56 +236,59 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
                   'activities',
                   'tagline',
                  )
-    
+
     def to_representation(self, instance):
         ret = super(CurriculumSerializer, self).to_representation(instance)
         # Uncomment these to display grades as words ("sixth") instead of numbers ("6")
-        #ret['lower_grade'] = instance.get_lower_grade_display()
-        #ret['upper_grade'] = instance.get_upper_grade_display()
+        # ret['lower_grade'] = instance.get_lower_grade_display()
+        # ret['upper_grade'] = instance.get_upper_grade_display()
 
         # Make grade 0 display as K
         if instance.lower_grade == 0:
-          ret['lower_grade'] = "K"
+            ret['lower_grade'] = "K"
         if instance.upper_grade == 0:
-          ret['upper_grade'] = "K"
-        
-        return ret 
+            ret['upper_grade'] = "K"
+
+        return ret
 
 """ Helper Functions """
+
+
 def create_activity_activity_relationships(activity, activity_rels):
     for rel in activity_rels:
         activity2 = get_object_or_404(Activity, pk=rel["activityID"])
         rel_type = rel["type"]
 
         relationship = ActivityRelationship(
-            from_activity = activity2
-            , to_activity = activity
-            , rel_type = rel_type
+            from_activity=activity2
+            , to_activity=activity
+            , rel_type=rel_type
         )
         relationship.save()
 
         # Need to make symmetrical relationship for sub / super activities
         if rel_type == "SUP":
             symmetric_relationship = ActivityRelationship(
-                from_activity = activity
-                , to_activity = activity2
-                , rel_type = "SUB"
+                from_activity=activity
+                , to_activity=activity2
+                , rel_type="SUB"
             )
             symmetric_relationship.save()
         if rel_type == "SUB":
             symmetric_relationship = ActivityRelationship(
-                from_activity = activity
-                , to_activity = activity2
-                , rel_type = "SUP"
+                from_activity=activity
+                , to_activity=activity2
+                , rel_type="SUP"
             )
             symmetric_relationship.save()
+
 
 def create_activity_curriculum_relationships(activity, curriculum_rels):
     for rel in curriculum_rels:
         curr = get_object_or_404(Curriculum, pk=rel["curriculumID"])
         relationship = CurriculumActivityRelationship.objects.create(
-            curriculum = curr
-            , activity = activity
-            , number = rel["number"]
+            curriculum=curr
+            , activity=activity
+            , number=rel["number"]
         )
         relationship.save()
