@@ -55,7 +55,7 @@ activityControllers.controller('NewActivityModalCtrl', ['$scope'
         
         ];
         // Save new activity to DB
-        console.log("Saving new activity to database.")
+        console.log("Saving new activity to database.");
         return $scope.newActivity.$save().then(function(result) {
             $modalInstance.close(result);
         }).then(function() {

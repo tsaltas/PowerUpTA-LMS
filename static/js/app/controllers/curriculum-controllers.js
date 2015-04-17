@@ -264,8 +264,8 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
         id: 0,
         value: "K"
     }];
-    for (i = 1; i <= 12; i++) { 
-        newGrade = {
+    for (var i = 1; i <= 12; i++) { 
+        var newGrade = {
             id: i,
             value: i.toString()
         };
@@ -275,18 +275,21 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
     $scope.newCurriculum = new Curriculum();
 
     $scope.save = function() {
-        console.log("Saving new curriculum to database.");
-        // if the user selected an activity in the input form, let's assign it as the 1st activity in the curriculum
+        // If the user selected an activity in the input form, assign it as the 1st activity in the curriculum
         if ($scope.newCurriculum.activities) {
             console.log("Associating first activity with new curriculum.");
-            $scope.newCurriculum.activities = [{"activity":$scope.newCurriculum.activities, "number":1}];
-        };
-
+            $scope.newCurriculum.activities = [
+                {
+                    "activity":$scope.newCurriculum.activities
+                    , "number":1
+                }
+            ];
+        }
+        console.log("Saving new curriculum to database.");
         return $scope.newCurriculum.$save().then(function(result) {
             // change grades on new curriculum from DB storage value to display value
             result.lower_grade = $scope.grades[result.lower_grade].value;
             result.upper_grade = $scope.grades[result.upper_grade].value;
-            // return new curriculum to main controller to update display on page and close the modal window
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newCurriculum = new Curriculum();
