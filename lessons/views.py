@@ -243,51 +243,26 @@ class CurriculumViewSet(viewsets.ModelViewSet):
     queryset = Curriculum.objects.all()
     serializer_class = CurriculumSerializer
 
-    # TODO: Validate data before saving objects?
     def create(self, request):
-        print "request is: "
-        print request
-        print "data: "
-        print request.data
-        print "post: "
-        print request.POST
-        print "get: "
-        print request.GET
-        # first create the new curriculum
-        curriculum = Curriculum.objects.create(
-            name=request.data["name"],
-            description=request.data["description"],
-            upper_grade=request.data["upper_grade"],
-            lower_grade=request.data["lower_grade"]
-        )
-        # Add optional fields if provided by user
-        if "tagline" in request.data:
-            curriculum.tagline = request.data["tagline"]
+        # print "request data: "
+        # print request.data
 
-        # try to save curriculum
-        try :
-            curriculum.save()
-        except:
-            return Response("Error creating new curriculum: " + str(sys.exc_info()[0]),
-                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = CurriculumSerializer(data=request.data)
 
-        # if user specified an activity, then try to create any activity-curriculum relationships
-        if "activities" in request.data:
-            try:
-                for relationship in request.data["activities"]:
-                    activity = get_object_or_404(Activity, pk=relationship["activity"])
-                    relationship = CurriculumActivityRelationship.objects.create(
-                        curriculum=curriculum,
-                        activity=activity,
-                        number=relationship["number"]
-                    )
-                    relationship.save()
-            except:
-                return Response("Error adding curriculum-activity relationships: " + str(sys.exc_info()[0]),
-                                status=status.HTTP_400_BAD_REQUEST)
-        # on success, return Response object
-        return Response()
-
+        if serializer.is_valid():
+            # Look for optional activities passed in
+            if "activity_rels" in request.data:
+                activity_rels = request.data["activity_rels"]
+                # Save new curriculum instance and pass in list of activities to be associated
+                serializer.save(
+                    activity_rels=activity_rels
+                )
+            else:
+                serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print serializer.errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CurriculumActivityRelationshipViewSet(viewsets.ModelViewSet):
     """

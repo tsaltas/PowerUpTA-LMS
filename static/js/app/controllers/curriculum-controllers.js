@@ -276,11 +276,11 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
 
     $scope.save = function() {
         // If the user selected an activity in the input form, assign it as the 1st activity in the curriculum
-        if ($scope.newCurriculum.activities) {
+        if ($scope.newCurriculum.activity_rels) {
             console.log("Associating first activity with new curriculum.");
-            $scope.newCurriculum.activities = [
+            $scope.newCurriculum.activity_rels = [
                 {
-                    "activity":$scope.newCurriculum.activities
+                    "activityID":$scope.newCurriculum.activities
                     , "number":1
                 }
             ];

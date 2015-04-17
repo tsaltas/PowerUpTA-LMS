@@ -1,4 +1,3 @@
-import unittest
 import copy
 
 from django.core.urlresolvers import reverse
@@ -6,361 +5,247 @@ from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from lessons.models import Activity, Curriculum, Material, Resource, Tag
-from lessons.serializers import ActivitySerializer, MaterialSerializer, ResourceSerializer, TagSerializer
+from lessons.models import Activity, Curriculum
+from lessons.serializers import ActivitySerializer, CurriculumSerializer
 
-# for image mocking
-from django.core.files.uploadedfile import SimpleUploadedFile
-from mock import MagicMock
-from django.core.files import File
 
 class CurriculumTests(APITestCase):
-	
-	""" Curriculum TEST SETUP / TEARDOWN """
+    """ CURRICULUM TEST SETUP / TEARDOWN """
 
-	@classmethod
-	def setUpClass(cls):
-		"""
-		Fake objects to be used across all tests in this class
-		"""
-		pass
-	
-	@classmethod
-	def tearDownClass(cls):
-		"""
-		Delete objects
-		"""
-		pass
+    @classmethod
+    def setUpClass(cls):
+        """
+        Fake objects to be used across all tests in this class
+        """
+        # Endpoint URL for all tests
+        cls.url = reverse('lessons:curriculum-list')
 
-	""" CURRICULUM GET REQUESTS """
-	def test_get_all_curricula(self):
-		"""
-		Should be able to GET list of curricula
-		"""
-		pass
+        # Create some activity objects to associate with curricula
+        activity1 = Activity.objects.create(
+            name='TestActivity1'
+            , description="This is just a test activity."
+            , teaching_notes="This topic is very hard."
+        )
 
-	def test_get_one_curriulum(self):
-		"""
-		Should be able to GET a single curriculum that exists
-		"""
-		pass
+        activity2 = Activity.objects.create(
+            name='TestActivity2'
+            , description="This is another test activity."
+            , teaching_notes="This topic is fun."
+        )
 
-	def test_get_one_curriculum_that_DNE(self):
-		"""
-		Should fail to GET a single curriculum that does not exist
-		"""
-		pass
+        activity3 = Activity.objects.create(
+            name='TestActivity3'
+            , description="Yet another test activity."
+            , teaching_notes="This topic is awesome."
+        )
 
-	""" CURRICULUM POST REQUESTS """
-	def test_create_curriculum(self):
-		"""
-		Should be able to create a new curriculum object with valid data.
-		"""
-		pass
+        # Data to compare against objects returned from the API
+        cls.activity1 = activity1
+        cls.activity2 = activity2
+        cls.activity3 = activity3
+        cls.activity1data = ActivitySerializer(activity1).data
+        cls.activity2data = ActivitySerializer(activity2).data
+        cls.activity3data = ActivitySerializer(activity3).data
 
-	def test_create_curriculum_missing_fields(self):
-		"""
-		Should NOT be able to create a new curriculum object with required fields missing
-		"""
-		
-	def test_create_curriculum_invalid_data(self):
-		"""
-		Should NOT be able to create a new curriculum object with invalid data
-		"""
-	
-	def test_add_activity_curriculum(self):
-		"""
-		Should be able to create curriculum-activity relationships with real activities
-		"""
-		pass
+        # Create some curriculum objects
+        curriculum1 = Curriculum.objects.create(
+            name='TestCurriculum1'
+            , description='This is a test curriculum.'
+            , lower_grade=1
+            , upper_grade=3
+        )
+        curriculum2 = Curriculum.objects.create(
+            name='TestCurriculum2'
+            , description='This is another test curriculum.'
+            , lower_grade=2
+            , upper_grade=4
+        )
 
-	def test_add_invalid_activity_curiculum(self):
-		"""
-		Should be able to create curriculum-activity relationships with invalid activities
-		"""
+        # Data to compare against objects returned from the API
+        cls.curriculum1 = curriculum1
+        cls.curriculum2 = curriculum2
+        cls.curriculum1data = CurriculumSerializer(curriculum1).data
+        cls.curriculum2data = CurriculumSerializer(curriculum2).data
 
-#STOPPED HERE
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Delete objects
+        """
+        Activity.objects.all().delete()
+        Curriculum.objects.all().delete()
 
+    """ CURRICULUM GET REQUESTS """
+    def test_get_all_curricula(self):
+        """
+        Should be able to GET list of curricula
+        """
+        response = self.client.get(self.url)
 
-	""" CURRICULUM PATCH REQUESTS """
-	def test_update_activity(self):
-		"""
-		Should be able to update activity with PATCH request
-		"""
-		activity1 = {
-			'id': 1
-			, 'name': 'TestActivity1'
-			, 'description': 'This is just a test activity.'
-			, 'tags': []
-			, 'category': ''
-			, 'teaching_notes': 'This topic is very hard.'
-			, 'video_url': ''
-			, 'image': None
-			, 'get_curricula': []
-			, 'get_relationships': []
-			, 'materials': [
-				MaterialSerializer(self.material1).data
-				, MaterialSerializer(self.material2).data
-			]
-			, 'resources': [
-				ResourceSerializer(self.resource1).data
-			]
-		}
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
-		# Update name
-		response = self.client.patch(self.url + "1/", {'name': 'Updated'}, format='json')
-		activity1['name'] = 'Updated'
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        # Convert ordered dict objects into unordered dicts for comparison
+        self.assertEqual(dict(response.data[0]), self.curriculum1data)
+        self.assertEqual(dict(response.data[1]), self.curriculum2data)
 
-		# Update description
-		response = self.client.patch(self.url + "1/", {'description': 'Updated description'}, format='json')
-		activity1['description'] = 'Updated description'
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+    def test_get_one_curriulum(self):
+        """
+        Should be able to GET a single curriculum that exists
+        """
+        response = self.client.get(self.url + "1/")
 
-		# Add category
-		response = self.client.patch(self.url + "1/", {'category': 'OFF'}, format='json')
-		activity1['category'] = 'Offline'
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Convert ordered dict objects into unordered dicts for comparison
+        self.assertEqual(response.data, self.curriculum1data)
 
-		# Update category
-		response = self.client.patch(self.url + "1/", {'category': 'ONL'}, format='json')
-		activity1['category'] = 'Online'
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+    def test_get_one_curriculum_that_DNE(self):
+        """
+        Should fail to GET a single curriculum that does not exist
+        """
+        response = self.client.get(self.url + "3/")
 
-		# Add video URL
-		response = self.client.patch(self.url + "1/", {'video_url': 'http://www.video.com'}, format='json')
-		activity1['video_url'] = 'http://www.video.com'
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # Convert ordered dict objects into unordered dicts for comparison
+        self.assertEqual(response.data, {'detail': 'Not found'})
 
-		# Update video URL
-		response = self.client.patch(self.url + "1/", {'video_url': 'http://www.updated.com'}, format='json')
-		activity1['video_url'] = 'http://www.updated.com'
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+    """ CURRICULUM POST REQUESTS """
+    def test_create_curriculum(self):
+        """
+        Should be able to create a new curriculum object with valid data.
+        """
+        # no optional objects
+        curriculum3 = {
+            'name': 'TestCurriculum3'
+            , 'description': 'This is a test curriculum.'
+            , 'lower_grade': 0
+            , 'upper_grade': 3
+        }
 
-		# Add some tags
-		response = self.client.patch(self.url + "1/", {'tag_IDs': [self.tag1.id, self.tag2.id]}, format='json')
-		activity1['tags'] = [TagSerializer(self.tag1).data, TagSerializer(self.tag2).data]
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        # optional activity
+        curriculum4 = {
+            'name': 'TestCurriculum4'
+            , 'description': 'This is another test curriculum.'
+            , 'lower_grade': 1
+            , 'upper_grade': 5
+            , 'activity_rels': [
+                {
+                    'activityID': self.activity1.id
+                    , 'number': 1
+                }
+            ]
+        }
 
-		# Change the resource
-		response = self.client.patch(self.url + "1/", {'resource_IDs': [self.resource2.id]}, format='json')
-		activity1['resources'] = [ResourceSerializer(self.resource2).data]
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        # optional tagline
+        curriculum5 = {
+            'name': 'TestCurriculum5'
+            , 'tagline': 'Testing out the tagline'
+            , 'description': 'This is another test curriculum.'
+            , 'lower_grade': 2
+            , 'upper_grade': 4
+        }
 
-		# Delete all materials
-		response = self.client.patch(self.url + "1/", {'material_IDs': []}, format='json')
-		activity1['materials'] = []
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        # 2 optional activities and tagline
+        curriculum6 = {
+            'name': 'TestCurriculum6'
+            , 'tagline': 'Testing out the tagline plus two activities.'
+            , 'description': 'This is another test curriculum.'
+            , 'lower_grade': 3
+            , 'upper_grade': 6
+            , 'activity_rels': [
+                {
+                    'activityID': self.activity2.id
+                    , 'number': 1
+                }
+                , {
+                    'activityID': self.activity3.id
+                    , 'number': 2
+                }
+            ]
+        }
 
-		# Add activity relationship
-		response = self.client.patch(
-			self.url + "1/"
-			, {
-				'activity_rels': [{
-					"activityID": 2
-					, "type": 'EXT'
-					}]
-			}
-			, format='json'
-		)
-		activity1['get_relationships'] = [(2, 'extension')]
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        response3 = self.client.post(self.url, curriculum3)
+        response4 = self.client.post(self.url, curriculum4)
+        response5 = self.client.post(self.url, curriculum5)
+        response6 = self.client.post(self.url, curriculum6)
 
-		# Add curriculum relationship
-		response = self.client.patch(
-			self.url + "1/"
-			, {
-				'curriculum_rels': [{
-					"curriculumID": self.curriculum1.id
-					, "number": 2
-					}]
-			}
-			, format='json'
-		)
-		activity1['get_curricula'] = [self.curriculum1.id]
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response4.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response5.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response6.status_code, status.HTTP_201_CREATED)
 
-		# Delete activity and curriculum relationships
-		response = self.client.patch(self.url + "1/", {'curriculum_rels': [], 'activity_rels': []}, format='json')
-		activity1['get_relationships'] = []
-		activity1['get_curricula'] = []
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(response.data, activity1)
-	
-	def test_update_activity_invalid_data(self):
-		"""
-		Should NOT be able to update activity with PATCH request using invalid data
-		"""
-		# Blank name
-		response = self.client.patch(self.url + "1/", {'name': ''}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response.data, {'name': ["This field may not be blank."]})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
+        # Add ID
+        curriculum3['id'] = 3
+        curriculum4['id'] = 4
+        curriculum5['id'] = 5
+        curriculum6['id'] = 6
+        # Add activity list
+        curriculum3['activities'] = []
+        curriculum4['activities'] = [ActivitySerializer(self.activity1).data]
+        del(curriculum4["activity_rels"])
+        curriculum5['activities'] = []
+        curriculum6['activities'] = [self.activity2.id, self.activity3.id]
+        del(curriculum6["activity_rels"])
+        # Add tagline
+        curriculum3['tagline'] = ""
+        curriculum4['tagline'] = ""
+        # Update 0 to K
+        curriculum3['lower_grade'] = 'K'
 
-		# Blank description
-		response = self.client.patch(self.url + "1/", {'description': ''}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response.data, {'description': ["This field may not be blank."]})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
+        self.assertEqual(response3.data, curriculum3)
+        self.assertEqual(response4.data, curriculum4)
+        self.assertEqual(response5.data, curriculum5)
+        self.assertEqual(response6.data, curriculum6)
 
-		# Tag DNE
-		response = self.client.patch(self.url + "1/", {'tag_IDs': [100]}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': "Not found"})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
+    def test_create_curriculum_missing_fields(self):
+        """
+        Should NOT be able to create a new curriculum object with required fields missing
+        """
 
-		# Invalid category
-		response = self.client.patch(self.url + "1/", {'category': 'DNE'}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response.data, {'category': ["`DNE` is not a valid choice."]})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
-		
-		# Invalid video URL
-		response = self.client.patch(self.url + "1/", {'video_url': 'cool.com'}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-		self.assertEqual(response.data, {'video_url': ["Enter a valid URL."]})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
-		
-		# Curriculum DNE
-		response = self.client.patch(
-			self.url + "1/"
-			, {
-				'curriculum_rels': [{
-					"curriculumID": 100
-					, "number": 2
-					}]
-			}
-			, format='json'
-		)
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': "Not found"})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
-		
-		# Activity DNE
-		response = self.client.patch(
-			self.url + "1/"
-			, {
-				'activity_rels': [{
-					"activityID": 100
-					, "type": 'EXT'
-					}]
-			}
-			, format='json'
-		)
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': "Not found"})
-		response = self.client.get(self.url + "1/")
-		self.assertEqual(response.data, self.activity1)
+    def test_create_curriculum_invalid_data(self):
+        """
+        Should NOT be able to create a new curriculum object with invalid data
+        """
 
-		"""
-		# TODO: Invalid relationship type
-		response = self.client.patch(
-			self.url + "1/"
-			, {
-				'activity_rels': [{
-					"activityID": self.activity2['id']
-					, "type": 'DNE'
-					}]
-			}
-			, format='json'
-		)
-		print response.data
-		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST
-		self.assertEqual(response.data, {'detail': "Not found"})
-		response = self.client.get(self.url + "1/")
+    def test_add_activity_curriculum(self):
+        """
+        Should be able to create curriculum-activity relationships with real activities
+        """
+        pass
 
-		self.assertEqual(response.data, self.activity1)
-		"""
-		
-		# Material DNE
-		response = self.client.patch(self.url + "1/", {'material_IDs': [100]}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': "Not found"})
-		response = self.client.get(self.url + "1/")
-		# Failed request removes old materials and does not add the invalid new one
-		self.activity1["materials"] = []
-		self.assertEqual(response.data, self.activity1)
+    def test_add_invalid_activity_curiculum(self):
+        """
+        Should be able to create curriculum-activity relationships with invalid activities
+        """
 
-		# Resource DNE
-		response = self.client.patch(self.url + "1/", {'resource_IDs': [100]}, format='json')
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': "Not found"})
-		response = self.client.get(self.url + "1/")
-		# Failed request removes old materials and does not add the invalid new one
-		self.activity1["resources"] = []
-		self.assertEqual(response.data, self.activity1)
+    """ CURRICULUM PATCH REQUESTS """
+    def test_update_activity(self):
+        """
+        Should be able to update activity with PATCH request
+        """
+        pass
 
-	def test_update_activity_that_DNE(self):
-		"""
-		Should NOT be able to update activity with PATCH request if it does not exist
-		"""
-		response = self.client.patch(self.url + "4/", {'name': 'Does not exist'})
+    def test_update_activity_invalid_data(self):
+        """
+        Should NOT be able to update activity with PATCH request using invalid data
+        """
+        pass
 
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': 'Not found'})
+    def test_update_activity_that_DNE(self):
+        """
+        Should NOT be able to update activity with PATCH request if it does not exist
+        """
+        pass
 
+    """ ACTIVITY DELETE REQUESTS """
+    def test_delete_activity(self):
+        """
+        Should be able to DELETE a activity object
+        """
+        pass
 
-	""" ACTIVITY DELETE REQUESTS """
-	def test_delete_activity(self):
-		"""
-		Should be able to DELETE a activity object
-		"""
-		response = self.client.delete(self.url + "1/")
-
-		# Verify object deletion
-		self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-		self.assertEqual(response.data, None)
-
-		# Verify that other objects remain
-		response = self.client.get(self.url)
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(len(response.data), 2)
-
-		# Remove ID of activity1 from resource on activity2
-		activity2 = copy.deepcopy(self.activity2)
-		del(activity2["resources"][0]["activities"][0])
-		# Remove ID of activity1 from material on activity3
-		activity3 = copy.deepcopy(self.activity3)
-		del(activity3["materials"][0]["activities"][0])
-
-		# Convert ordered dict objects into unordered dicts for comparison
-		self.assertEqual(dict(response.data[0]), activity2)
-		self.assertEqual(dict(response.data[1]), activity3)
-
-	def test_delete_activity_that_DNE(self):
-		"""
-		Should NOT be able to DELETE a activity object that does not exist
-		"""
-		response = self.client.delete(self.url + "4/")
-
-		# Verify object deletion
-		self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-		self.assertEqual(response.data, {'detail': 'Not found'})
-
-		# Verify that all objects remain
-		response = self.client.get(self.url)
-		self.assertEqual(response.status_code, status.HTTP_200_OK)
-		self.assertEqual(len(response.data), 3)
-
-		# Convert ordered dict objects into unordered dicts for comparison
-		self.assertEqual(dict(response.data[0]), self.activity1)
-
-		self.assertEqual(dict(response.data[1]), self.activity2)
-		self.assertEqual(dict(response.data[2]), self.activity3)
+    def test_delete_activity_that_DNE(self):
+        """
+        Should NOT be able to DELETE a activity object that does not exist
+        """
+        pass

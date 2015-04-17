@@ -224,7 +224,7 @@ class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
 
 
 class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
-    activities = CurriculumActivityRelationshipSerializer(source='activity_relationships', many=True)
+    activities = CurriculumActivityRelationshipSerializer(source='activity_relationships', many=True, required=False)
 
     class Meta:
         model = Curriculum
@@ -239,6 +239,7 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
         ret = super(CurriculumSerializer, self).to_representation(instance)
+
         # Uncomment these to display grades as words ("sixth") instead of numbers ("6")
         # ret['lower_grade'] = instance.get_lower_grade_display()
         # ret['upper_grade'] = instance.get_upper_grade_display()
@@ -250,6 +251,22 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
             ret['upper_grade'] = "K"
 
         return ret
+
+    # Custom function to associate activities with new curricula
+    def create(self, validated_data):
+        # Get lists of activities to be associated with the new curriculum
+        if 'activity_rels' in validated_data:
+            activity_rels = validated_data.pop('activity_rels')
+        else:
+            activity_rels = False
+
+        curriculum = Curriculum.objects.create(**validated_data)
+
+        if activity_rels:
+            # Add curriculum-activity relationships
+            create_curriculum_activity_relationships(curriculum, activity_rels)
+
+        return curriculum
 
 """ Helper Functions """
 
@@ -283,6 +300,19 @@ def create_activity_activity_relationships(activity, activity_rels):
             symmetric_relationship.save()
 
 
+# TODO: Harmonize these two functions
+def create_curriculum_activity_relationships(curriculum, activity_rels):
+    for rel in activity_rels:
+        activity = get_object_or_404(Activity, pk=rel["activityID"])
+        relationship = CurriculumActivityRelationship.objects.create(
+            curriculum=curriculum,
+            activity=activity,
+            number=rel["number"]
+        )
+        relationship.save()
+
+
+# TODO: Harmonize these two functions
 def create_activity_curriculum_relationships(activity, curriculum_rels):
     for rel in curriculum_rels:
         curr = get_object_or_404(Curriculum, pk=rel["curriculumID"])
