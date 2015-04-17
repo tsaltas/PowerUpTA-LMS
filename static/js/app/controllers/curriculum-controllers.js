@@ -86,15 +86,8 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
         modalInstance.result.then(function (newCurriculum) {
             console.log("Successfully created new curriculum:");
             console.log(newCurriculum);
-            console.log("Querying for updated curriculum");
-            updatedCurricula = Curriculum.query(function() {
-                console.log("Adding new activity to curriculum currently displayed on the page.");
-                for (var i = 0; i < $scope.curricula.length; i++) {
-                    if ($scope.curricula[i].id != updatedCurricula[i].id) {
-                        $scope.curricula.push(updatedCurricula[i]);
-                    }
-                }
-            });  
+            console.log("Adding to curriculum list on page");
+            $scope.curricula.push(newCurriculum)
         });
     };
 
@@ -280,7 +273,7 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
             console.log("Associating first activity with new curriculum.");
             $scope.newCurriculum.activity_rels = [
                 {
-                    "activityID":$scope.newCurriculum.activities
+                    "activityID":$scope.newCurriculum.activity_rels
                     , "number":1
                 }
             ];
