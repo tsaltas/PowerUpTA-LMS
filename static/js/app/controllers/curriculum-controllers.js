@@ -270,7 +270,7 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
     $scope.save = function() {
         // If the user selected an activity in the input form, assign it as the 1st activity in the curriculum
         if ($scope.newCurriculum.activity_rels) {
-            console.log("Associating first activity with new curriculum.");
+            // Assign first activity to number 1
             $scope.newCurriculum.activity_rels = [
                 {
                     "activityID":$scope.newCurriculum.activity_rels
@@ -278,11 +278,9 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
                 }
             ];
         }
+        // Save new curriculum to DB
         console.log("Saving new curriculum to database.");
         return $scope.newCurriculum.$save().then(function(result) {
-            // change grades on new curriculum from DB storage value to display value
-            result.lower_grade = $scope.grades[result.lower_grade].value;
-            result.upper_grade = $scope.grades[result.upper_grade].value;
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newCurriculum = new Curriculum();
