@@ -97,6 +97,11 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
 
     // open modal window to create new activity
     $scope.newActivity = function (curriculum, addActivity, size) {
+        // Function to submit PATCH request to API adding a new activity to a curriculum
+        // If an existing activity was selected in drop-down menu (it's not undefined)
+        // If user selected "create new activity" (addActivity was undefined)
+        // Then open modal window with new activity form
+        
         console.log("Inside new activity function.");
         console.log("Creating new activity modal window.");
 
