@@ -1,5 +1,3 @@
-import copy
-
 from django.core.urlresolvers import reverse
 
 from rest_framework import status
@@ -120,6 +118,7 @@ class CurriculumTests(APITestCase):
             , 'description': 'This is a test curriculum.'
             , 'lower_grade': 0
             , 'upper_grade': 3
+            , 'activity_rels': []
         }
 
         # optional activity
@@ -143,6 +142,7 @@ class CurriculumTests(APITestCase):
             , 'description': 'This is another test curriculum.'
             , 'lower_grade': 2
             , 'upper_grade': 4
+            , 'activity_rels': []
         }
 
         # 2 optional activities and tagline
@@ -180,12 +180,14 @@ class CurriculumTests(APITestCase):
         curriculum5['id'] = 5
         curriculum6['id'] = 6
         # Add activity list
-        curriculum3['activities'] = []
-        curriculum4['activities'] = [ActivitySerializer(self.activity1).data]
+        del(curriculum3["activity_rels"])
         del(curriculum4["activity_rels"])
-        curriculum5['activities'] = []
-        curriculum6['activities'] = [self.activity2.id, self.activity3.id]
+        del(curriculum5["activity_rels"])
         del(curriculum6["activity_rels"])
+        curriculum3['get_activities'] = []
+        curriculum4['get_activities'] = [self.activity1.id]
+        curriculum5['get_activities'] = []
+        curriculum6['get_activities'] = [self.activity2.id, self.activity3.id]
         # Add tagline
         curriculum3['tagline'] = ""
         curriculum4['tagline'] = ""

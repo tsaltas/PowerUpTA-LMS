@@ -142,6 +142,9 @@ class Curriculum(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_activities(self):
+        return [relationship.activity.id for relationship in self.activity_relationships.all()]
+
 
 class ActivityRelationship(models.Model):
     """
