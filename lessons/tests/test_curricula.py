@@ -184,10 +184,10 @@ class CurriculumTests(APITestCase):
         del(curriculum4["activity_rels"])
         del(curriculum5["activity_rels"])
         del(curriculum6["activity_rels"])
-        curriculum3['get_activities'] = []
-        curriculum4['get_activities'] = [self.activity1.id]
-        curriculum5['get_activities'] = []
-        curriculum6['get_activities'] = [self.activity2.id, self.activity3.id]
+        curriculum3['activities'] = []
+        curriculum4['activities'] = [ActivitySerializer(self.activity1).data]
+        curriculum5['activities'] = []
+        curriculum6['activities'] = [ActivitySerializer(self.activity2).data, ActivitySerializer(self.activity3).data]
         # Add tagline
         curriculum3['tagline'] = ""
         curriculum4['tagline'] = ""
