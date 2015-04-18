@@ -578,15 +578,37 @@ class CurriculumTests(APITestCase):
         response = self.client.get(self.url + str(self.curriculum1.id) + "/")
         self.assertEqual(response.data, CurriculumSerializer(self.curriculum1).data)
 
-    """ ACTIVITY DELETE REQUESTS """
-    def test_delete_activity(self):
+    """ CURRICULUM DELETE REQUESTS """
+    def test_delete_curriculum(self):
         """
-        Should be able to DELETE a activity object
+        Should be able to DELETE a curriculum object
         """
-        pass
+        response = self.client.delete(self.url + "1/")
 
-    def test_delete_activity_that_DNE(self):
+        # Verify object deletion
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.data, None)
+
+        # Verify that other object remains
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(dict(response.data[0]), CurriculumSerializer(self.curriculum2).data)
+
+    def test_delete_curriculum_that_DNE(self):
         """
-        Should NOT be able to DELETE a activity object that does not exist
+        Should NOT be able to DELETE a curriculum object that does not exist
         """
-        pass
+        response = self.client.delete(self.url + "4/")
+
+        # Verify object deletion
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, {'detail': 'Not found'})
+
+        # Verify that all objects remain
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(dict(response.data[0]), CurriculumSerializer(self.curriculum1).data)
+        self.assertEqual(dict(response.data[1]), CurriculumSerializer(self.curriculum2).data)
