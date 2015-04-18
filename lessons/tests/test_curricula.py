@@ -446,42 +446,42 @@ class CurriculumTests(APITestCase):
         # Add curriculum to database
         response3 = self.client.post(self.url, curriculum3)
         # Check object was created properly
-        curriculum3['id'] = 10
+        curriculum3['id'] = 11
         del(curriculum3["activity_rels"])
         curriculum3['activities'] = [ActivitySerializer(self.activity1).data]
         self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response3.data, curriculum3)
 
         # Blank name
-        response = self.client.patch(self.url + "10/", {'name': ''})
+        response = self.client.patch(self.url + "11/", {'name': ''})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'name': ['This field may not be blank.']})
-        response = self.client.get(self.url + "10/")
+        response = self.client.get(self.url + "11/")
         self.assertEqual(response.data, curriculum3)
 
         # Null description
-        response = self.client.patch(self.url + "10/", {'description': None})
+        response = self.client.patch(self.url + "11/", {'description': None})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'description': ['This field may not be null.']})
-        response = self.client.get(self.url + "10/")
+        response = self.client.get(self.url + "11/")
         self.assertEqual(response.data, curriculum3)
 
         # Update lower grade
-        response = self.client.patch(self.url + "10/", {'lower_grade': ''})
+        response = self.client.patch(self.url + "11/", {'lower_grade': ''})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'lower_grade': ["`` is not a valid choice."]})
-        response = self.client.get(self.url + "10/")
+        response = self.client.get(self.url + "11/")
         self.assertEqual(response.data, curriculum3)
 
         # Null upper grade
-        response = self.client.patch(self.url + "10/", {'upper_grade': None})
+        response = self.client.patch(self.url + "11/", {'upper_grade': None})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'upper_grade': ['This field may not be null.']})
-        response = self.client.get(self.url + "10/")
+        response = self.client.get(self.url + "11/")
         self.assertEqual(response.data, curriculum3)
 
         # Should be able to remove tagline
-        response = self.client.patch(self.url + "10/", {'tagline': ''})
+        response = self.client.patch(self.url + "11/", {'tagline': ''})
         curriculum3['tagline'] = ''
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, curriculum3)
@@ -491,13 +491,92 @@ class CurriculumTests(APITestCase):
         Should be able to add a valid activity to an existing curriculum with a PATCH request
         Should be able to remove an activity from a curriculum
         """
-        pass
+        # Create a curriculum to update
+        curriculum3 = {
+            'name': 'TestCurriculum3'
+            , 'tagline': 'Optional tagline.'
+            , 'description': 'This is a test curriculum.'
+            , 'lower_grade': 1
+            , 'upper_grade': 3
+            , 'activity_rels': [
+                {
+                    'activityID': self.activity1.id
+                    , 'number': 1
+                }
+            ]
+        }
+        # Add curriculum to database
+        response3 = self.client.post(self.url, curriculum3)
+        # Check object was created properly
+        curriculum3['id'] = 10
+        del(curriculum3["activity_rels"])
+        curriculum3['activities'] = [ActivitySerializer(self.activity1).data]
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response3.data, curriculum3)
+
+        # Add another activity
+        response = self.client.patch(
+            self.url + "10/"
+            , {
+                'activity_rels': [
+                    {
+                        'activityID': self.activity1.id
+                        , 'number': 1
+                    }
+                    , {
+                        'activityID': self.activity2.id
+                        , 'number': 2
+                    }
+                ]
+            }
+        )
+        curriculum3['activities'] = [ActivitySerializer(self.activity1).data, ActivitySerializer(self.activity2).data]
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+
+        # Remove an activity
+        response = self.client.patch(
+            self.url + "10/"
+            , {
+                'activity_rels': [
+                    {
+                        'activityID': self.activity2.id
+                        , 'number': 2
+                    }
+                ]
+            }
+        )
+        curriculum3['activities'] = [ActivitySerializer(self.activity2).data]
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+
+        # Remove all activities
+        response = self.client.patch(
+            self.url + "10/"
+            , {'activity_rels': []}
+        )
+        curriculum3['activities'] = []
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
 
     def test_add_invalid_activity_curriculum(self):
         """
         Should NOT be able to add invalid activity to an existing curriculum
         """
-        pass
+        response = self.client.patch(
+            self.url + str(self.curriculum1.id) + "/"
+            , {
+                'activity_rels': [
+                    {
+                        'activityID': 100
+                        , 'number': 1
+                    }
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        response = self.client.get(self.url + str(self.curriculum1.id) + "/")
+        self.assertEqual(response.data, CurriculumSerializer(self.curriculum1).data)
 
     """ ACTIVITY DELETE REQUESTS """
     def test_delete_activity(self):

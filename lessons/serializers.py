@@ -253,7 +253,6 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
 
         return ret
 
-
     # Custom function to associate activities with new curricula
     def create(self, validated_data):
         # Get lists of activities to be associated with the new curriculum
@@ -269,6 +268,23 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
             create_curriculum_activity_relationships(curriculum, activity_rels)
 
         return curriculum
+
+    # Custom function to update activities associated with curriculum
+    def update(self, instance, validated_data):
+        # Update any fields that were passed in
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.tagline = validated_data.get('tagline', instance.tagline)
+        instance.lower_grade = validated_data.get('lower_grade', instance.lower_grade)
+        instance.upper_grade = validated_data.get('upper_grade', instance.upper_grade)
+
+        # Update any relationships if specified
+        if 'activity_rels' in validated_data:
+            instance.activity_relationships.all().delete()
+            create_curriculum_activity_relationships(instance, validated_data.get('activity_rels'))
+
+        instance.save()
+        return instance
 
 """ Helper Functions """
 

@@ -242,9 +242,6 @@ class CurriculumViewSet(viewsets.ModelViewSet):
     serializer_class = CurriculumSerializer
 
     def create(self, request):
-        # print "request data: "
-        # print request.data
-
         serializer = CurriculumSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -260,6 +257,25 @@ class CurriculumViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Custom function to manage objects related to curriculum on patch / update request
+    def partial_update(self, request, pk=None):
+        # Get the curriculum object to update
+        curriculum = get_object_or_404(Curriculum, pk=pk)
+        # Update the curriculum with partial data
+        serializer = CurriculumSerializer(curriculum, request.data, partial=True)
+
+        if serializer.is_valid():
+            # Get and save any new activities
+            if 'activity_rels' in request.data:
+                activity_rels = request.data["activity_rels"]
+                serializer.save(activity_rels=activity_rels)
+            else:
+                serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class CurriculumActivityRelationshipViewSet(viewsets.ModelViewSet):
     """
