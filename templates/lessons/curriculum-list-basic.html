@@ -42,9 +42,9 @@
 						</span>
 					</div>
 					<accordion-group id="activity-group" heading="Lessons">
-					<div ng-repeat="relationship in curriculum.activities">
+					<div ng-repeat="activity in curriculum.activities">
 						<div class="row">
-							<div class="col-xs-offset-2 col-xs-2" ng-switch on="relationship.activity.category">
+							<div class="col-xs-offset-2 col-xs-2" ng-switch on="activity.category">
 								<!-- Show appropriate logo for curriculum type -->
 								<span ng-switch-when="Offline">
 									<i class="fa fa-pencil fa-fw fa-md icon-pad-top"></i>
@@ -55,33 +55,33 @@
 								<span ng-switch-when="Discussion">
 									<i class="fa fa-users fa-fw fa-md icon-pad-top"></i>
 								</span>
-								<span class="icon-label">{{relationship.activity.category}}</span>
+								<span class="icon-label">{{activity.category}}</span>
 							</div>
 							<div class="col-xs-7">
-								<h4>{{relationship.activity.name}}</h4>
-								<p>{{relationship.activity.description}}</p>
-								<p class="notes">{{relationship.activity.teaching_notes}}<p>
-									<span ng-show="notEmpty({{relationship.activity.tags}})" ng-repeat="tag in relationship.activity.tags">
+								<h4>{{activity.name}}</h4>
+								<p>{{activity.description}}</p>
+								<p class="notes">{{activity.teaching_notes}}<p>
+									<span ng-show="notEmpty({{activity.tags}})" ng-repeat="tag in activity.tags">
 										<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
 									</span>
 									<select class="form-control" id="add-tag" ng-model="addTag" ng-options="tag.name for tag in tags">
 										<option value=''>Create new tag</option>
 									</select>
-									<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(curriculum, relationship.activity, addTag)"></i>
+									<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(curriculum, activity, addTag)"></i>
 									<span ng-show="newTagLabel">Add {{addTag.name || "new tag"}}</span>
 								</div>
 								<div class="col-xs-1">
 									<span class="pull-right icon-pad-top">
-										<span ng-show="notEmpty('{{relationship.activity.video_url}}')">
-											<a href="{{relationship.activity.video_url}}" target="_blank" ><i class="btn fa fa-youtube-play fa-btn" ng-mouseenter="videoLabel = true" ng-mouseleave="videoLabel = false"></i></a>
+										<span ng-show="notEmpty('{{activity.video_url}}')">
+											<a href="{{activity.video_url}}" target="_blank" ><i class="btn fa fa-youtube-play fa-btn" ng-mouseenter="videoLabel = true" ng-mouseleave="videoLabel = false"></i></a>
 										</span>
 										<span>
 											<!-- Open modal window with materials-->
-											<a><i class="btn fa fa-file-o fa-btn" ng-mouseenter="materialsLabel = true" ng-mouseleave="materialsLabel = false" ng-click="activityMaterials(relationship.activity.id, relationship.activity.materials, 'sm')"></i></a>
+											<a><i class="btn fa fa-file-o fa-btn" ng-mouseenter="materialsLabel = true" ng-mouseleave="materialsLabel = false" ng-click="activityMaterials(activity.id, activity.materials, 'sm')"></i></a>
 										</span>
 										<span>
 											<!-- Open modal window with resources / helpful tips-->
-											<a><i class="btn fa fa-question-circle fa-btn" ng-mouseenter="resourcesLabel = true" ng-mouseleave="resourcesLabel = false" ng-click="activityResources(relationship.activity.id, relationship.activity.resources, 'sm')"></i></a>
+											<a><i class="btn fa fa-question-circle fa-btn" ng-mouseenter="resourcesLabel = true" ng-mouseleave="resourcesLabel = false" ng-click="activityResources(activity.id, activity.resources, 'sm')"></i></a>
 										</span>
 										<span>
 											<!-- TODO: Modal window with related activities. Can open in new window or jump to appropriate section-->

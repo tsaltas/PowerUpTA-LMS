@@ -220,10 +220,12 @@ class CurriculumActivityRelationshipSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CurriculumActivityRelationship
-        fields = ('id', 'curriculum', 'activity', 'number')
+        fields = ('id', 'activity', 'number')
 
 
 class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
+
+    activities = ActivitySerializer(read_only=True, many=True)
 
     class Meta:
         model = Curriculum
@@ -233,7 +235,7 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
                   'lower_grade',
                   'upper_grade',
                   'tagline',
-                   'get_activities'
+                  'activities'
                  )
 
     def to_representation(self, instance):
@@ -250,6 +252,7 @@ class CurriculumSerializer(serializers.HyperlinkedModelSerializer):
             ret['upper_grade'] = "K"
 
         return ret
+
 
     # Custom function to associate activities with new curricula
     def create(self, validated_data):
