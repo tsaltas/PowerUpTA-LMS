@@ -321,34 +321,181 @@ class CurriculumTests(APITestCase):
         self.assertEqual(response7.data, {'lower_grade': ["`-1` is not a valid choice."]})
         self.assertEqual(response8.data, {'upper_grade': ["`13` is not a valid choice."]})
 
-    def test_create_activity_curriculum(self):
+    def test_create_curriculum_invalid_activity(self):
         """
-        Should be able to create curriculum with valid activity relationships
+        Should NOT be able to create curriculum with invalid activity relationships
         """
-        pass
+        # Activity DNE
+        curriculum3 = {
+            'name': 'TestCurriculum3'
+            , 'description': 'This curriculum has an invalid activity.'
+            , 'lower_grade': 1
+            , 'upper_grade': 3
+            , 'activity_rels': [
+                {
+                    'activityID': 100
+                    , 'number': 1
+                }
+            ]
+        }
+        response3 = self.client.post(self.url, curriculum3)
+        self.assertEqual(response3.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response3.data, {'detail': 'Not found'})
 
-    def test_create_invalid_activity_curriculum(self):
-        """
-        Should be able to create curriculum with invalid activity relationships
-        """
-        pass
+        # One of several DNE
+        curriculum4 = {
+            'name': 'TestCurriculum4'
+            , 'description': 'This curriculum has an invalid activity.'
+            , 'lower_grade': 1
+            , 'upper_grade': 3
+            , 'activity_rels': [
+                {
+                    'activityID': self.activity1.id
+                    , 'number': 1
+                }
+                , {
+                    'activityID': 100
+                    , 'number': 2
+                }
+            ]
+        }
+        response4 = self.client.post(self.url, curriculum4)
+        self.assertEqual(response4.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response4.data, {'detail': 'Not found'})
 
     """ CURRICULUM PATCH REQUESTS """
-    def test_update_activity(self):
+    def test_update_curriculum(self):
         """
-        Should be able to update activity with PATCH request
+        Should be able to update curriculum with PATCH request
+        """
+        # Create a curriculum to update
+        curriculum3 = {
+            'name': 'OriginalName'
+            , 'tagline': 'Original tagline.'
+            , 'description': 'Original description.'
+            , 'lower_grade': 1
+            , 'upper_grade': 3
+            , 'activity_rels': [
+                {
+                    'activityID': self.activity1.id
+                    , 'number': 1
+                }
+            ]
+        }
+        # Add curriculum to database
+        response3 = self.client.post(self.url, curriculum3)
+        # Check object was created properly
+        curriculum3['id'] = 9
+        del(curriculum3["activity_rels"])
+        curriculum3['activities'] = [ActivitySerializer(self.activity1).data]
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response3.data, curriculum3)
+
+        # Update name
+        response = self.client.patch(self.url + "9/", {'name': 'UpdatedName'})
+        curriculum3['name'] = 'UpdatedName'
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+        # Update description
+        response = self.client.patch(self.url + "9/", {'description': 'This description has been updated.'})
+        curriculum3['description'] = 'This description has been updated.'
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+        # Update tagline
+        response = self.client.patch(self.url + "9/", {'tagline': 'Updated tagline.'})
+        curriculum3['tagline'] = 'Updated tagline.'
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+        # Update lower grade
+        response = self.client.patch(self.url + "9/", {'lower_grade': 2})
+        curriculum3['lower_grade'] = 2
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+        # Update upper grade
+        response = self.client.patch(self.url + "9/", {'upper_grade': 4})
+        curriculum3['upper_grade'] = 4
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+
+    def test_update_curriculum_that_DNE(self):
+        """
+        Should NOT be able to update curriculum with PATCH request if it does not exist
+        """
+        response = self.client.patch(self.url + "100/", {'name': 'Does not exist'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, {'detail': 'Not found'})
+
+    def test_update_curriculum_invalid_data(self):
+        """
+        Should NOT be able to update curriculum with PATCH request using invalid data
+        """
+        # Create a curriculum to update
+        curriculum3 = {
+            'name': 'OriginalName'
+            , 'tagline': 'Original tagline.'
+            , 'description': 'Original description.'
+            , 'lower_grade': 1
+            , 'upper_grade': 3
+            , 'activity_rels': [
+                {
+                    'activityID': self.activity1.id
+                    , 'number': 1
+                }
+            ]
+        }
+        # Add curriculum to database
+        response3 = self.client.post(self.url, curriculum3)
+        # Check object was created properly
+        curriculum3['id'] = 10
+        del(curriculum3["activity_rels"])
+        curriculum3['activities'] = [ActivitySerializer(self.activity1).data]
+        self.assertEqual(response3.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response3.data, curriculum3)
+
+        # Blank name
+        response = self.client.patch(self.url + "10/", {'name': ''})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'name': ['This field may not be blank.']})
+        response = self.client.get(self.url + "10/")
+        self.assertEqual(response.data, curriculum3)
+
+        # Null description
+        response = self.client.patch(self.url + "10/", {'description': None})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'description': ['This field may not be null.']})
+        response = self.client.get(self.url + "10/")
+        self.assertEqual(response.data, curriculum3)
+
+        # Update lower grade
+        response = self.client.patch(self.url + "10/", {'lower_grade': ''})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'lower_grade': ["`` is not a valid choice."]})
+        response = self.client.get(self.url + "10/")
+        self.assertEqual(response.data, curriculum3)
+
+        # Null upper grade
+        response = self.client.patch(self.url + "10/", {'upper_grade': None})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'upper_grade': ['This field may not be null.']})
+        response = self.client.get(self.url + "10/")
+        self.assertEqual(response.data, curriculum3)
+
+        # Should be able to remove tagline
+        response = self.client.patch(self.url + "10/", {'tagline': ''})
+        curriculum3['tagline'] = ''
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, curriculum3)
+
+    def test_update_curriculum_activities(self):
+        """
+        Should be able to add a valid activity to an existing curriculum with a PATCH request
+        Should be able to remove an activity from a curriculum
         """
         pass
 
-    def test_update_activity_invalid_data(self):
+    def test_add_invalid_activity_curriculum(self):
         """
-        Should NOT be able to update activity with PATCH request using invalid data
-        """
-        pass
-
-    def test_update_activity_that_DNE(self):
-        """
-        Should NOT be able to update activity with PATCH request if it does not exist
+        Should NOT be able to add invalid activity to an existing curriculum
         """
         pass
 
