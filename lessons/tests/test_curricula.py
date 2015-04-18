@@ -203,22 +203,135 @@ class CurriculumTests(APITestCase):
         """
         Should NOT be able to create a new curriculum object with required fields missing
         """
+        # Missing name
+        curriculum3 = {
+            'description': 'This curriculum is missing a name.'
+            , 'lower_grade': 0
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Missing description
+        curriculum4 = {
+            'name': 'TestCurriculum4 (Missing description)'
+            , 'lower_grade': 0
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Missing lower grade
+        curriculum5 = {
+            'name': 'TestCurriculum5'
+            , 'description': 'This curriculum is missing a lower grade.'
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Missing upper grade
+        curriculum6 = {
+            'name': 'TestCurriculum6'
+            , 'description': 'This curriculum is missing an upper grade.'
+            , 'lower_grade': 3
+            , 'activity_rels': []
+        }
+
+        response3 = self.client.post(self.url, curriculum3)
+        response4 = self.client.post(self.url, curriculum4)
+        response5 = self.client.post(self.url, curriculum5)
+        response6 = self.client.post(self.url, curriculum6)
+
+        self.assertEqual(response3.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response6.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.assertEqual(response3.data, {'name': ["This field is required."]})
+        self.assertEqual(response4.data, {'description': ["This field is required."]})
+        self.assertEqual(response5.data, {'lower_grade': ["This field is required."]})
+        self.assertEqual(response6.data, {'upper_grade': ["This field is required."]})
 
     def test_create_curriculum_invalid_data(self):
         """
         Should NOT be able to create a new curriculum object with invalid data
         """
+        # Blank name
+        curriculum3 = {
+            'name': ''
+            , 'description': 'This curriculum has a blank name.'
+            , 'lower_grade': 0
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Blank description
+        curriculum4 = {
+            'name': 'TestCurriculum4 (Blank description)'
+            , 'description': ''
+            , 'lower_grade': 0
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Empty string lower grade
+        curriculum5 = {
+            'name': 'TestCurriculum5'
+            , 'description': 'This curriculum has an empty lower grade.'
+            , 'lower_grade': ''
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Null upper grade
+        curriculum6 = {
+            'name': 'TestCurriculum6'
+            , 'description': 'This curriculum has a Null upper grade.'
+            , 'lower_grade': 3
+            , 'upper_grade': None
+            , 'activity_rels': []
+        }
+        # Lower grade outside range
+        curriculum7 = {
+            'name': 'TestCurriculum7'
+            , 'description': 'Lower grade outside range.'
+            , 'lower_grade': -1
+            , 'upper_grade': 3
+            , 'activity_rels': []
+        }
+        # Upper grade outside range
+        curriculum8 = {
+            'name': 'TestCurriculum6'
+            , 'description': 'Upper grade outside range.'
+            , 'lower_grade': 3
+            , 'upper_grade': 13
+            , 'activity_rels': []
+        }
 
-    def test_add_activity_curriculum(self):
+        response3 = self.client.post(self.url, curriculum3)
+        response4 = self.client.post(self.url, curriculum4)
+        response5 = self.client.post(self.url, curriculum5)
+        response6 = self.client.post(self.url, curriculum6)
+        response7 = self.client.post(self.url, curriculum7)
+        response8 = self.client.post(self.url, curriculum8)
+
+        self.assertEqual(response3.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response4.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response5.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response6.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response7.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response8.status_code, status.HTTP_400_BAD_REQUEST)
+
+        self.assertEqual(response3.data, {'name': ["This field may not be blank."]})
+        self.assertEqual(response4.data, {'description': ["This field may not be blank."]})
+        self.assertEqual(response5.data, {'lower_grade': ["`` is not a valid choice."]})
+        self.assertEqual(response6.data, {'upper_grade': ["This field may not be null."]})
+        self.assertEqual(response7.data, {'lower_grade': ["`-1` is not a valid choice."]})
+        self.assertEqual(response8.data, {'upper_grade': ["`13` is not a valid choice."]})
+
+    def test_create_activity_curriculum(self):
         """
-        Should be able to create curriculum-activity relationships with real activities
+        Should be able to create curriculum with valid activity relationships
         """
         pass
 
-    def test_add_invalid_activity_curiculum(self):
+    def test_create_invalid_activity_curriculum(self):
         """
-        Should be able to create curriculum-activity relationships with invalid activities
+        Should be able to create curriculum with invalid activity relationships
         """
+        pass
 
     """ CURRICULUM PATCH REQUESTS """
     def test_update_activity(self):
