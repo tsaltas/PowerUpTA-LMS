@@ -71,6 +71,10 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
     $scope.tags = [];
     $scope.tags = Tag.query();
 
+    // list of activities to add activity to curriculum
+    $scope.activities = [];
+    $scope.activities = Activity.query();
+
     // open modal window to create new curriculum
     $scope.newCurriculum = function (size) {
         console.log("Inside new curriculum function.");
@@ -92,7 +96,7 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
     };
 
     // open modal window to create new activity
-    $scope.newActivity = function (curriculum, size) {
+    $scope.newActivity = function (curriculum, addActivity, size) {
         console.log("Inside new activity function.");
         console.log("Creating new activity modal window.");
 

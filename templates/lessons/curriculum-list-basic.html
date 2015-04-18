@@ -67,10 +67,8 @@
 									<select class="form-control" id="add-tag" ng-model="addTag" ng-options="tag.name for tag in tags">
 										<option value=''>Create new tag</option>
 									</select>
-									<span>
-										<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(curriculum, relationship.activity, addTag)"></i>
-										<span ng-show="newTagLabel">Add {{addTag.name || "New tag"}}</span>
-									</span>
+									<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(curriculum, relationship.activity, addTag)"></i>
+									<span ng-show="newTagLabel">Add {{addTag.name || "new tag"}}</span>
 								</div>
 								<div class="col-xs-1">
 									<span class="pull-right icon-pad-top">
@@ -99,9 +97,13 @@
 							<hr class="no-margin">
 						</div>
 						<div class="container row">
-						<div class="col-xs-offset-10 col-xs-1">
-							<i class="pull-right add-object btn fa fa-plus-circle fa-btn" ng-click="newActivity(curriculum)"></i>
-						</div>
+							<div class="col-xs-offset-4 col-xs-8">
+								<select class="form-control" id="add-activity" ng-model="addActivity" ng-options="activity.name for activity in activities">
+									<option value=''>Create new activity</option>
+								</select>
+								<i class="add-object btn fa fa-plus-circle fa-btn" id="new-activity" ng-mouseenter="newActivityLabel = true" ng-mouseleave="newActivityLabel = false" ng-click="newActivity(curriculum, addActivity)"></i>
+								<span ng-show="newActivityLabel">Add {{addActivity.name || "new activity"}}</span>
+							</div>
 						</div>
 					</accordion-group>
 					<div class="row no-pad">

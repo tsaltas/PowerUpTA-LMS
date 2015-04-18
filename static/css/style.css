@@ -135,7 +135,7 @@ button {
   width: 570px;
 }
 
-#add-tag {
+#add-tag, #add-activity {
   width: initial;
   display: inline;
 }
