@@ -29,7 +29,7 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
             var curr = curricula[i];
             var tagNames = []
             for (var j = 0; j < curr.activities.length; j++) {
-                var activity = curr.activities[j].activity;
+                var activity = curr.activities[j];
                 for (var k = 0; k < activity.tags.length; k++) {
                     var tag = activity.tags[k];
                     // only inherit language and technology tags
@@ -97,50 +97,87 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
 
     // open modal window to create new activity
     $scope.newActivity = function (curriculum, addActivity, size) {
+        console.log("Inside new activity function.");
+        
         // Function to submit PATCH request to API adding a new activity to a curriculum
+        function addActivityCurriculum(curriculum, newActivity) {
+            console.log("Creating list of activities to update curriculum:");
+            // Create new list of activity IDs for curriculum
+            var activityList = []
+            _.each(curriculum.activities, function (value, key, list) {
+                activityList.push(
+                    {
+                        'activityID': value.id
+                        , 'number': key + 1
+                    }
+                );
+            });
+            activityList.push(
+                {
+                    'activityID': newActivity.id
+                    , 'number': activityList.length + 1
+                }
+            );
+            console.log(activityList);
+
+            // Add activity to curriculum on back-end (custom "PATCH" request to API)
+            // Also update activities of curriculum displayed on front-end
+            console.log("Making PATCH request to add new activity to curriculum:");
+            Curriculum.update({ id:curriculum.id }, {'activity_rels': activityList}, function(response) {
+                curriculum.activities = response.activities;
+            });
+
+            console.log("Returning updated curriculum:");
+            // Return updated curriculum with new activity
+            return curriculum;
+        }
+
         // If an existing activity was selected in drop-down menu (it's not undefined)
+        if (addActivity) {
+            curriculum = addActivityCurriculum(curriculum, addActivity)
+        }
         // If user selected "create new activity" (addActivity was undefined)
         // Then open modal window with new activity form
-        
-        console.log("Inside new activity function.");
-        console.log("Creating new activity modal window.");
+        else {
+            console.log("Creating new activity modal window.");
 
-        var modalInstance = $modal.open({
-            templateUrl: 'static/partials/new-activity.html',
-            controller: 'NewActivityModalCtrl',
-            size: size,
-            resolve: {
-                curriculumID: function () {
-                    return curriculum.id;
-                },
-                number: function() {
-                    return curriculum.activities.length + 1;
-                }
-            }
-        });
-        
-        // Add newly created activity to list on the page (without refresh)
-        modalInstance.result.then(function (newActivity) {
-            console.log("Successfully created new activity:");
-            console.log(newActivity);
-
-            console.log("Querying for updated curriculum");
-            curriculum = Curriculum.get({ id:curriculum.id }, function() {
-                // update curriculum scope variable with new activity
-                console.log("Updating scope variable");
-                for (var i = 0; i < $scope.curricula.length; i++) {
-                    if ($scope.curricula[i].id == curriculum.id) {
-                        $scope.curricula[i].activities.push(curriculum.activities[curriculum.activities.length - 1]);
-                        // update curriculum tags with tags on activity
-                        _.each(newActivity.tags, function (value, key, list) {
-                            if (containsObject($scope.curricula[i].tags, value) == false) {
-                                $scope.curricula[i].tags.push(value);
-                            }
-                        });
+            var modalInstance = $modal.open({
+                templateUrl: 'static/partials/new-activity.html',
+                controller: 'NewActivityModalCtrl',
+                size: size,
+                resolve: {
+                    curriculumID: function () {
+                        return curriculum.id;
+                    },
+                    number: function() {
+                        return curriculum.activities.length + 1;
                     }
                 }
             });
-        }); 
+
+            // Add newly created activity to list on the page (without refresh)
+            modalInstance.result.then(function (newActivity) {
+                console.log("Successfully created new activity:");
+                console.log(newActivity);
+
+                console.log("Querying for updated curriculum");
+                curriculum = Curriculum.get({ id:curriculum.id }, function() {
+                    // update curriculum scope variable with new activity
+                    console.log("Updating scope variable");
+                    for (var i = 0; i < $scope.curricula.length; i++) {
+                        if ($scope.curricula[i].id == curriculum.id) {
+                            $scope.curricula[i].activities.push(curriculum.activities[curriculum.activities.length - 1]);
+                            // update curriculum tags with tags on activity
+                            _.each(newActivity.tags, function (value, key, list) {
+                                if (containsObject($scope.curricula[i].tags, value) == false) {
+                                    $scope.curricula[i].tags.push(value);
+                                }
+                            });
+                        }
+                    }
+                });
+            }); 
+        }
     };
 
     // open modal window to create new tag 
