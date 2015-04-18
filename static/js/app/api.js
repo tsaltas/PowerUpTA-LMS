@@ -24,7 +24,16 @@ api.factory('Activity', ['$resource', function($resource) {
 }]);
 
 api.factory('Curriculum', ['$resource', function($resource) {
-	return $resource('/api/curricula/:id', {id:'@id'});
+	return $resource('/api/curricula/:id', {id:'@id'},
+		// Custom PUT method called "update"
+		// Usage: Curriculum.update({ id:$id }, {});
+		{
+			'update' : {
+				method: 'PATCH'
+				//, headers: {'Content-Type': 'application/json;charset=utf-8'}
+			}
+		}
+	);
 }]);
 
 api.factory('Resource', ['$resource', function($resource) {
