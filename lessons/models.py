@@ -18,11 +18,13 @@ class Tag(models.Model):
         ('Concept', 'Concept'),
         ('Misc', 'Miscellaneous'),
     )
-    # ALL REQUIRED
+    # REQUIRED
     name = models.CharField(max_length=50, unique=True)
-    logo = models.ImageField(upload_to='tag_logos')
     category = models.CharField(max_length=15, choices=CATEGORIES)
     # A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
+
+    # OPTIONAL
+    logo = models.ImageField(upload_to='tag_logos', blank=True)
 
     def __unicode__(self):
         return self.name + " (" + self.category + ")"
