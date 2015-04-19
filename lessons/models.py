@@ -16,6 +16,7 @@ class Tag(models.Model):
         ('Difficulty', 'Difficulty'),
         ('Length', 'Length'),
         ('Concept', 'Concept'),
+        ('Misc', 'Miscellaneous'),
     )
     # ALL REQUIRED
     name = models.CharField(max_length=50, unique=True)
