@@ -114,7 +114,7 @@ class Step(models.Model):
     """
     # REQUIRED
     text = models.CharField(max_length=50)
-    activity = models.ForeignKey(Activity, related_name = 'steps')
+    activity = models.ForeignKey(Activity, related_name='steps')
     number = models.IntegerField()
     # OPTIONAL
     step_activity = models.IntegerField(blank=True, null=True)  # ID number of the activity which is the step
