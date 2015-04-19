@@ -117,7 +117,7 @@ class Step(models.Model):
     activity = models.ForeignKey(Activity)
     number = models.IntegerField()
     # OPTIONAL
-    step_activity = models.IntegerField(blank=True)  # ID number of the activity which is the step
+    step_activity = models.IntegerField(blank=True, null=True)  # ID number of the activity which is the step
 
     def __unicode__(self):
         return self.text
