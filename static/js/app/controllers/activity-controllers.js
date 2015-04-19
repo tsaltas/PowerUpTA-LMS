@@ -6,12 +6,14 @@ var activityControllers = angular.module('activityControllers', []);
 
 activityControllers.controller('NewActivityModalCtrl', ['$scope'
     , '$modalInstance'
+    , '$modal'
     , 'Activity'
     , 'Tag'
     , 'curriculumID'
     , 'number'
     , function ($scope
         , $modalInstance
+        , $modal
         , Activity
         , Tag
         , curriculumID
@@ -69,6 +71,25 @@ activityControllers.controller('NewActivityModalCtrl', ['$scope'
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
+    };
+
+    // open modal window to create new tag 
+    $scope.newTag = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/new-tag.html',
+            controller: 'NewTagModalCtrl',
+            size: size,
+            resolve: {
+                activityID: function () {
+                    return null;
+                }
+            }
+        });
+        
+        modalInstance.result.then(function (newTag) {
+            // Add to the drop-down selection menu
+            $scope.tags.push(newTag);
+        });
     };
 }]);
 
