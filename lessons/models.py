@@ -76,9 +76,9 @@ class Activity(models.Model):
 
     # REQUIRED
     name = models.CharField(max_length=50, unique=True)
-    description = models.TextField()
     tags = models.ManyToManyField(Tag, related_name="activities")
     # OPTIONAL
+    description = models.TextField(blank=True)
     category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
     teaching_notes = models.TextField(blank=True)
     video_url = models.URLField(blank=True)  # Assuming link to YouTube
