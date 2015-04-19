@@ -85,10 +85,12 @@
 										<a><i class="fa fa-file-o fa-btn" ng-mouseenter="materialsLabel = true" ng-mouseleave="materialsLabel = false" ng-click="activityMaterials(activity.id, activity.materials, 'sm')"></i></a>
 										<!-- Open modal window with resources / helpful tips -->
 										<a><i class="fa fa-question-circle fa-btn" ng-mouseenter="resourcesLabel = true" ng-mouseleave="resourcesLabel = false" ng-click="activityResources(activity.id, activity.resources, 'sm')"></i></a>
-										<!-- REMOVED: Modal window with related activities. Can open in new window or jump to appropriate section -->
-										<!-- <a><i class="fa fa-plus fa-btn" ng-mouseenter="relatedLabel = true" ng-mouseleave="relatedLabel = false" ng-click="relatedActivities()"></i></a> -->
+										<!-- Open modal window with activity steps -->
+										<a><i class="fa fa-plus fa-btn" ng-mouseenter="stepLabel = true" ng-mouseleave="stepLabel = false" ng-click="activitySteps()"></i></a>
 										<!-- Open pre-populated modal window to edit activity -->
 										<i class="fa fa-edit fa-md" ng-mouseenter="activityEditLabel = true" ng-mouseleave="activityEditLabel = false"></i> 
+										<!-- REMOVED: Modal window with related activities. Can open in new window or jump to appropriate section -->
+										<!-- <a><i class="fa fa-plus fa-btn" ng-mouseenter="relatedLabel = true" ng-mouseleave="relatedLabel = false" ng-click="relatedActivities()"></i></a> -->
 									</span>
 									<br>
 									<br>
@@ -96,6 +98,7 @@
 										<p ng-show="materialsLabel" class="tip pull-right">Lesson materials</p>
 										<p ng-show="resourcesLabel" class="tip pull-right">Helpful hints</p>
 										<p ng-show="relatedLabel" class="tip pull-right">Related lessons</p>
+										<p ng-show="stepLabel" class="tip pull-right">View steps</p>
 										<p ng-show="activityEditLabel" class="tip pull-right">Edit activity</p>
 									</span>
 								</div>
