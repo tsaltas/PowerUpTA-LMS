@@ -10,7 +10,7 @@
 	<div class="no-pad fixed">
 		<div class="modal-header">
 			<h3 class="modal-title">
-				Create New Hint
+				Create New Step
 				<button class="btn btn-warning pull-right" ng-click="cancel()">Cancel</button>
 			</h3>
 
@@ -18,18 +18,18 @@
 		<div class="modal-body">
 			<form id="new-resource-form" class="form-inline">
 				<div class="form-group">
-					<label class="sr-only" for="newResourceName">Name</label>
-					<input type="text" class="form-control form-fixed-width" id="newResourceName" ng-model="newResource.name" placeholder="Name" autofocus>
+					<label class="sr-only" for="newStepText">Text</label>
+					<input type="text" class="form-control form-fixed-width" id="newStepText" ng-model="newStep.text" placeholder="Text" autofocus>
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
-					<label class="sr-only" for="newResourceURL">Resource URL</label>
-					<input type="url" class="form-control form-fixed-width" id="newResourceURL" ng-model="newResource.url" placeholder="URL">
+					<label class="sr-only" for="newStepActivity">Step activity (optional)</label>
+					<input type="url" class="form-control form-fixed-width" id="newStepActivity" ng-model="newStep.step_activity" placeholder="Activity ID">
 				</div>
 				<br>
 				<br>
-				<button class="btn btn-primary pull-right" ng-click="save()">Add Resource</button>
+				<button class="btn btn-primary pull-right" ng-click="save()">Add Step</button>
 				<br>
 				<br>
 				<p class="error">{{errors}}</p>

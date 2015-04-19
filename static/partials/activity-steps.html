@@ -10,18 +10,18 @@
   <div class="no-pad fixed">
     <div class="modal-header">
       <h3 class="modal-title">
-        Helpful Hints
+        Activity Steps
         <button class="btn btn-warning pull-right" ng-click="cancel()">Close</button>
       </h3>
     </div>
     <div class="modal-body">
       <ul>
-        <div ng-repeat="resource in resources">
-          <li><a href={{resource.url}} target="_blank">{{resource.name}}</a></li>
+        <div ng-repeat="step in steps | orderBy:'number'">
+          <li>{{step.number}}) {{step.text}} (Activity number {{step.step_activity}})</li>
         </div>
       </ul>
       <div class="row no-pad">
-        <i class="pull-right add-object btn fa fa-plus-circle fa-btn" ng-click="newResource()"></i>
+        <i class="pull-right add-object btn fa fa-plus-circle fa-btn" ng-click="newStep()"></i>
       </div>
     </div>
   </div>

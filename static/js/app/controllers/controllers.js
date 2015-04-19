@@ -206,7 +206,7 @@ lessonsControllers.controller('AppCtrl', ['$scope'
             controller: 'ActivityStepsModalCtrl',
             size: size,
             resolve: {
-                resources: function () {
+                steps: function () {
                     return steps;
                 },
                 activityID: function () {
