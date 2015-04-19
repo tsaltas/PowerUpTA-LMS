@@ -46,7 +46,7 @@ class CurriculumAdmin(admin.ModelAdmin):
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     fields = (('name', 'category'), 'logo')
-    list_display = ('name', 'category', 'tag_logo')
+    list_display = ('name', 'category')
     list_filter = ('category',)
 
 

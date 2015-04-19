@@ -24,7 +24,7 @@ class Tag(models.Model):
     # A tag has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
 
     # OPTIONAL
-    logo = models.ImageField(upload_to='tag_logos', blank=True)
+    logo = models.ImageField(upload_to='tag_logos', blank=True, null=True)
 
     def __unicode__(self):
         return self.name + " (" + self.category + ")"
