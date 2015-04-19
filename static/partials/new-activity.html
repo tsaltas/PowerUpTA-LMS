@@ -24,12 +24,6 @@
 				<br>
 				<br>
 				<div class="form-group">
-					<label class="sr-only" for="newActivityDesc">Description</label>
-					<textarea class="form-control form-fixed-width" id="newActivityDesc" ng-model="newActivity.description" placeholder="Description"></textarea>
-				</div>
-				<br>
-				<br>
-				<div class="form-group">
 					<label class="sr-only" for="newActivityTags">Tags</label>
 					Add Tags (Hold down "Control", or "Command" on a Mac, to select more than one.)
 					<select class="form-control form-fixed-width" id="newActivityTags" ng-model="newActivity.tag_IDs" ng-options="tag.id as tag.name for tag in tags" multiple>
