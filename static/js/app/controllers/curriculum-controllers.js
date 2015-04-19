@@ -9,11 +9,15 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
     , 'Curriculum'
     , 'Activity'
     , 'Tag'
+    , 'addActivityService'
+    , 'utilitiesService'
     , function($scope
         , $modal
         , Curriculum
         , Activity
         , Tag
+        , addActivityService
+        , utilitiesService
     ){
 
 	$scope.curricula = [];
@@ -60,13 +64,6 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
 
     };
 
-    // Function to determine if object is in a list
-    // Checks objects by id
-    function containsObject(list, obj) {
-        var res = _.find(list, function(val){return obj.id == val.id});
-        return (_.isUndefined(res))? false:true;
-    };
-
     // list of tags to add tag to lesson
     $scope.tags = [];
     $scope.tags = Tag.query();
@@ -99,42 +96,12 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
     $scope.newActivity = function (curriculum, addActivity, size) {
         console.log("Inside new activity function.");
         
-        // Function to submit PATCH request to API adding a new activity to a curriculum
-        function addActivityCurriculum(curriculum, newActivity) {
-            console.log("Creating list of activities to update curriculum:");
-            // Create new list of activity IDs for curriculum
-            var activityList = []
-            _.each(curriculum.activities, function (value, key, list) {
-                activityList.push(
-                    {
-                        'activityID': value.id
-                        , 'number': key + 1
-                    }
-                );
-            });
-            activityList.push(
-                {
-                    'activityID': newActivity.id
-                    , 'number': activityList.length + 1
-                }
-            );
-            console.log(activityList);
-
-            // Add activity to curriculum on back-end (custom "PATCH" request to API)
-            // Also update activities of curriculum displayed on front-end
-            console.log("Making PATCH request to add new activity to curriculum:");
-            Curriculum.update({ id:curriculum.id }, {'activity_rels': activityList}, function(response) {
-                curriculum.activities = response.activities;
-            });
-
-            console.log("Returning updated curriculum:");
-            // Return updated curriculum with new activity
-            return curriculum;
-        }
+        // addActivityCurriculum function was here
 
         // If an existing activity was selected in drop-down menu (it's not undefined)
         if (addActivity) {
-            curriculum = addActivityCurriculum(curriculum, addActivity)
+            console.log("Adding existing activity to curriculum.");
+            curriculum = addActivityService.addActivity(curriculum, addActivity)
         }
         // If user selected "create new activity" (addActivity was undefined)
         // Then open modal window with new activity form
@@ -155,27 +122,16 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
                 }
             });
 
-            // Add newly created activity to list on the page (without refresh)
             modalInstance.result.then(function (newActivity) {
                 console.log("Successfully created new activity:");
                 console.log(newActivity);
 
-                console.log("Querying for updated curriculum");
-                curriculum = Curriculum.get({ id:curriculum.id }, function() {
-                    // update curriculum scope variable with new activity
-                    console.log("Updating scope variable");
-                    for (var i = 0; i < $scope.curricula.length; i++) {
-                        if ($scope.curricula[i].id == curriculum.id) {
-                            $scope.curricula[i].activities.push(curriculum.activities[curriculum.activities.length - 1]);
-                            // update curriculum tags with tags on activity
-                            _.each(newActivity.tags, function (value, key, list) {
-                                if (containsObject($scope.curricula[i].tags, value) == false) {
-                                    $scope.curricula[i].tags.push(value);
-                                }
-                            });
-                        }
-                    }
-                });
+                // Add newly created activity to curriculum (without page refresh)  
+                console.log("Adding new activity to curriculum.");
+                curriculum = addActivityService.addActivity(curriculum, newActivity)
+
+                // Add to activity list (so it shows up in list of activities)
+                $scope.activities.push(newActivity);
             }); 
         }
     };
@@ -204,7 +160,7 @@ curriculumControllers.controller('CurriculumCtrl', ['$scope'
         // if an existing tag was selected in drop-down menu (it's not undefined)
         if (addTag) {
             // add tag to curriculum (on front-end)
-            if (containsObject(curriculum.tags, addTag) == false) {
+            if (utilitiesService.containsObject(curriculum.tags, addTag) == false) {
                 curriculum.tags.push(addTag);
             }
 
@@ -288,14 +244,15 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
     , '$modalInstance'
     , 'Curriculum'
     , 'Activity'
+    , 'addActivityService'
     , function ($scope
         , $modalInstance
         , Curriculum
         , Activity
+        , addActivityService
     ) {
     console.log("Inside new curriculum modal window controller.");
     // list of activities for new curriculum form
-    $scope.activities = [];
     $scope.activities = Activity.query();
 
     // list of possible grades for new curriculum form
@@ -314,19 +271,14 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
     $scope.newCurriculum = new Curriculum();
 
     $scope.save = function() {
-        // If the user selected an activity in the input form, assign it as the 1st activity in the curriculum
-        if ($scope.newCurriculum.activity_rels) {
-            // Assign first activity to number 1
-            $scope.newCurriculum.activity_rels = [
-                {
-                    "activityID":$scope.newCurriculum.activity_rels
-                    , "number":1
-                }
-            ];
-        }
         // Save new curriculum to DB
         console.log("Saving new curriculum to database.");
         return $scope.newCurriculum.$save().then(function(result) {
+            // If the user selected an activity in the input form
+            if ($scope.activity_rels) {
+                // Add activity to curriculum
+                result = addActivityService.addActivity(result, $scope.activity_rels)
+            }
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newCurriculum = new Curriculum();

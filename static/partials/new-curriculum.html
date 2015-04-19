@@ -53,7 +53,7 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="newCurriculumActivities">Activities</label>
-					<select class="form-control form-fixed-width" id="newCurriculumActivities" ng-model="newCurriculum.activity_rels" ng-options="activity.id as activity.name for activity in activities">
+					<select class="form-control form-fixed-width" id="newCurriculumActivities" ng-model="activity_rels" ng-options="activity as activity.name for activity in activities">
 						<option value=''>Add Activity (Optional)</option>
 					</select>
 				</div>
