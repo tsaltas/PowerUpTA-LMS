@@ -14,9 +14,9 @@ class TagSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Get list of activities to be associated with the new tag
         activities = validated_data.pop('activities')
-        
+
         tag = Tag.objects.create(**validated_data)
-        
+
         # Add activity-tag relationships
         for activityID in activities:
             tag.activities.add(get_object_or_404(Activity, pk=activityID))
