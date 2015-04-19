@@ -19,7 +19,7 @@ tagControllers.controller('NewTagModalCtrl', ['$scope'
     $scope.newTag = new Tag();
 
     // list of possible categories for new tag form
-    $scope.categories = ["Language", "Technology", "Concept", "Difficulty", "Length"];
+    $scope.categories = ["Language", "Technology", "Concept", "Difficulty", "Length", "Misc"];
 
     $scope.save = function() {
         // assign correct activity to the new tag
