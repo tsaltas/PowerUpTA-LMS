@@ -4,6 +4,7 @@
 
 var lessonsControllers = angular.module('lms.controllers', [
     , 'resourceControllers'
+    , 'stepControllers'
     , 'materialControllers'
     , 'tagControllers'
     , 'activityControllers'
@@ -16,6 +17,7 @@ lessonsControllers.controller('AppCtrl', ['$scope'
   , 'Curriculum'
   , 'Tag'
   , 'Activity'
+  , 'Step'
   , 'addActivityService'
   , 'utilitiesService'
   , 'inheritTagsService'
@@ -24,6 +26,7 @@ lessonsControllers.controller('AppCtrl', ['$scope'
     , Curriculum
     , Tag
     , Activity
+    , Step
     , addActivityService
     , utilitiesService
     , inheritTagsService
@@ -196,6 +199,23 @@ lessonsControllers.controller('AppCtrl', ['$scope'
             }
         });
     };
+    // open modal window to view activity steps
+    $scope.activitySteps = function (activityID, steps, size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/activity-steps.html',
+            controller: 'ActivityStepsModalCtrl',
+            size: size,
+            resolve: {
+                resources: function () {
+                    return steps;
+                },
+                activityID: function () {
+                    return activityID;
+                }
+            }
+        });
+    };
+    /*
     // TODO: open modal window to view related activities
     $scope.relatedActivities = function (relatedActivities, size) {
         var modalInstance = $modal.open({
@@ -209,6 +229,7 @@ lessonsControllers.controller('AppCtrl', ['$scope'
             }
         });
     };
+    */
 }]);
 
 lessonsControllers.controller('DropdownCtrl', ['$scope', function ($scope) {

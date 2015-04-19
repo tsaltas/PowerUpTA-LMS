@@ -47,3 +47,7 @@ api.factory('Material', ['$resource', function($resource) {
 api.factory('Tag', ['$resource', function($resource) {
 	return $resource('/api/tags/:id', {id:'@id'});
 }]);
+
+api.factory('Step', ['$resource', function($resource) {
+	return $resource('/api/steps/:id', {id:'@id'});
+}]);

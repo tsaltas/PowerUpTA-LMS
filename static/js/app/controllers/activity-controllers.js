@@ -175,6 +175,47 @@ activityControllers.controller('ActivityMaterialsModalCtrl', ['$scope'
     };
 }]);
 
+activityControllers.controller('ActivityStepsModalCtrl', ['$scope'
+    , '$modalInstance'
+    , '$modal'
+    , 'Step'
+    , 'activityID'
+    , 'steps'
+    , function ($scope
+        , $modalInstance
+        , $modal
+        , Step
+        , activityID
+        , steps
+    ) {
+        
+    // steps associated with the appropriate activity
+    $scope.steps = steps;
+
+    // open modal window to create new step
+    $scope.newStep = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/new-step.html',
+            controller: 'NewStepModalCtrl',
+            size: size,
+            resolve: {
+                activityID: function () {
+                    return activityID;
+                }
+            }
+        });
+
+        // add newly created resource to list on the page (without refresh)
+        modalInstance.result.then(function (newStep) {
+            $scope.steps.push(newStep);
+        });
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+}]);
+
 activityControllers.controller('RelatedActivitiesModalCtrl', ['$scope', '$modalInstance', 'Activity', function ($scope, $modalInstance, Activity) {
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
