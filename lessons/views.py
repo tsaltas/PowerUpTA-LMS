@@ -1,8 +1,21 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 
-from lessons.models import Curriculum, Activity, Tag, Material, Resource, CurriculumActivityRelationship
-from lessons.serializers import TagSerializer, MaterialSerializer, ActivitySerializer, ResourceSerializer, CurriculumSerializer, CurriculumActivityRelationshipSerializer
+from lessons.models import Curriculum
+from lessons.models import Activity
+from lessons.models import Tag
+from lessons.models import Material
+from lessons.models import Resource
+from lessons.models import CurriculumActivityRelationship
+from lessons.models import Step
+
+from lessons.serializers import TagSerializer
+from lessons.serializers import MaterialSerializer
+from lessons.serializers import ActivitySerializer
+from lessons.serializers import ResourceSerializer
+from lessons.serializers import CurriculumSerializer
+from lessons.serializers import CurriculumActivityRelationshipSerializer
+from lessons.serializers import StepSerializer
 
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -134,6 +147,14 @@ class ResourceViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StepViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list` and `detail` actions.
+    """
+    queryset = Step.objects.all()
+    serializer_class = StepSerializer
 
 
 class ActivityViewSet(viewsets.ModelViewSet):

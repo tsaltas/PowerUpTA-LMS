@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
-from lessons.models import Tag, Resource, Material, Activity, Curriculum, ActivityRelationship, CurriculumActivityRelationship
+from lessons.models import Tag, Resource, Material, Activity, Curriculum, ActivityRelationship, CurriculumActivityRelationship, Step
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -123,11 +123,19 @@ class MaterialSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+class StepSerializer(serializers.ModelSerializer):
+    activity = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Step
+        fields = ('text', 'activity', 'number', 'step_activity')
+
 
 class ActivitySerializer(serializers.HyperlinkedModelSerializer):
     tags = TagSerializer(many=True, required=False)
     materials = MaterialSerializer(many=True, required=False)
     resources = ResourceSerializer(many=True, required=False)
+    steps = StepSerializer(many=True, required=False)
 
     class Meta:
         model = Activity
@@ -143,6 +151,7 @@ class ActivitySerializer(serializers.HyperlinkedModelSerializer):
                   'get_relationships',
                   'materials',
                   'resources',
+                  'steps'
                  )
 
     def to_representation(self, instance):
