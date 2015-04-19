@@ -9,11 +9,12 @@
  *  DARK GREY: #666666
  **/
 
-/* help see all boxes on page 
+/* help see all boxes on page
 * {
    border: 1px dotted silver !important;
 }
 */
+
 
 body {
   font-family: "Raleway", "Segoe UI", "Segoe WP", "Segoe Regular", sans-serif;
@@ -68,6 +69,15 @@ hr {
   padding-top: 0px;
 }
 
+.tip {
+  font-family: "Raleway", "Segoe UI", "Segoe WP", "Segoe Regular", sans-serif;
+  font-size: 1rem;
+  line-height: 1;
+  color: #666666; 
+  left-border: 0px;
+  left-padding: 0px;
+}
+
 /* Icons and Buttons */
 .fa-md {
 	font-size: 2.0rem !important;
@@ -98,7 +108,7 @@ button {
 .fa-btn.active,
 .fa-btn:hover
 {
-	font-size: 3.0rem !important;
+	font-size: 2.0rem !important;
   line-height: 1.1;
 }
 
@@ -145,8 +155,17 @@ button {
   padding-top: 0px;
 }
 
+.no-pad-vertical {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 .no-pad {
   padding: 0px;
+}
+
+.no-pad-left {
+  padding-left: 0px;
 }
 
 .all-pad {
@@ -173,6 +192,15 @@ button {
 
 .light-pad-top {
   padding-top: 5px;
+}
+
+.light-pad-vertical {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.light-pad-right {
+  padding-right: 5px;
 }
 
 .pad-right {
@@ -227,7 +255,10 @@ h3 {
   font-size: 1.5rem; }
 
 h4 {
-  font-size: 1.2rem; }
+  font-size: 1.2rem;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
 
 @media (max-width: 640px) {
   body {
