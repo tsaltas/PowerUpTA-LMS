@@ -56,6 +56,18 @@ lessonsServices.service('inheritTagsService', [
         return curriculum;
     };
 
+    // Function adds a tag to curriculum if tag has the right type
+    this.addTagToCurriculum = function(curriculum, tag) {
+        if (!curriculum.tags) curriculum.tags = [];
+        if (tag.category == "Language" | tag.category == "Technology") {
+            // do not add duplicates to list
+            if (!utilitiesService.containsObject(curriculum.tags, tag)) {
+                curriculum.tags.push(tag);
+            }
+        }
+        return curriculum;
+    };
+
    // Function takes a list of curricula and inherits tags from activities
     this.getCurriculaTags = function(curricula) {
         _.each(curricula, function (curriculum, index, list) {

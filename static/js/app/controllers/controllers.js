@@ -134,12 +134,9 @@ lessonsControllers.controller('AppCtrl', ['$scope'
 
         // if an existing tag was selected in drop-down menu (it's not undefined)
         if (addTag) {
-            // add tag to curriculum (on front-end)
-            if (utilitiesService.containsObject(curriculum.tags, addTag) == false) {
-                curriculum.tags.push(addTag);
-            }
-
-            // Add tag to activity (back-end and front-end)
+            // add tag to curriculum
+            curriculum = inheritTagsService.addTagToCurriculum(curriculum, addTag);
+            // Add tag to activity
             activity = addTagActivity(activity, addTag)
         }
 
@@ -157,12 +154,12 @@ lessonsControllers.controller('AppCtrl', ['$scope'
                 }
             });
             
-            // Add new tag to curriculum (front-end)
-            // Add new tag to activity (back-end and front-end)
-            // Add to the drop-down selection menu
             modalInstance.result.then(function (newTag) {
-                curriculum.tags.push(newTag);
+                // Add new tag to curriculum
+                curriculum = inheritTagsService.addTagToCurriculum(curriculum, newTag);
+                // Add new tag to activity (back-end and front-end)
                 activity = addTagActivity(activity, newTag);
+                // Add to the drop-down selection menu
                 $scope.tags.push(newTag);
             });
         }
