@@ -76,7 +76,7 @@ class Activity(models.Model):
 
     # REQUIRED
     name = models.CharField(max_length=50, unique=True)
-    tags = models.ManyToManyField(Tag, related_name="activities")
+    tags = models.ManyToManyField(Tag, related_name='activities')
     # OPTIONAL
     description = models.TextField(blank=True)
     category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
@@ -114,7 +114,7 @@ class Step(models.Model):
     """
     # REQUIRED
     text = models.CharField(max_length=50)
-    activity = models.ForeignKey(Activity)
+    activity = models.ForeignKey(Activity, related_name = 'steps')
     number = models.IntegerField()
     # OPTIONAL
     step_activity = models.IntegerField(blank=True, null=True)  # ID number of the activity which is the step
