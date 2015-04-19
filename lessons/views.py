@@ -34,12 +34,12 @@ class TagViewSet(viewsets.ModelViewSet):
             activities = request.data["activities"]
 
         if serializer.is_valid():
-            # print "serializer was valid!"
+            print "serializer was valid!"
             # Save new tag instance and pass in list of activities to be associated with the tag
             serializer.save(activities=activities)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            # print "serializer not valid"
+            print "serializer not valid"
             print serializer.errors
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
