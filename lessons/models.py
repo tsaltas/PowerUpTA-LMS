@@ -60,6 +60,21 @@ class Resource(models.Model):
         return self.name + ": " + self.url
 
 
+class Step(models.Model):
+    """
+    An activity consists of steps (which have links to other activities).
+    """
+    # REQUIRED
+    text = models.CharField(max_length=50, unique=True)
+    number = models.IntegerField()
+    # A step has a many-to-many relationship with activities (DEFINED IN ACTIVITY)
+    # OPTIONAL
+    step_activity = models.IntegerField()  # ID number of the activity which is the step
+
+    def __unicode__(self):
+        return self.name + ": " + self.activity_id
+
+
 class Activity(models.Model):
     """
     An activity is a single exercise for a student.
@@ -90,6 +105,7 @@ class Activity(models.Model):
     )
     materials = models.ManyToManyField(Material, blank=True, related_name="activities")
     resources = models.ManyToManyField(Resource, blank=True, related_name="activities")
+    steps = models.ManyToManyField(Step, blank=True, related_name="activities")
     # An activity has a many-to-many relationship with Curriculum (defined in curriculum)
 
     class Meta:
