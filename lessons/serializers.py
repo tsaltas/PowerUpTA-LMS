@@ -123,8 +123,10 @@ class MaterialSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class StepSerializer(serializers.ModelSerializer):
     activity = serializers.PrimaryKeyRelatedField(read_only=True)
+    step_activity = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Step
