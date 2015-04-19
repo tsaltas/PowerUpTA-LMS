@@ -43,8 +43,6 @@ curriculumControllers.controller('NewCurrModalCtrl', ['$scope'
                 // Add activity to curriculum
                 result = addActivityService.addActivity(result, $scope.activity_rels)
             }
-            // Create empty tag list
-            result.tags = [];
             $modalInstance.close(result);
         }).then(function() {
             return $scope.newCurriculum = new Curriculum();

@@ -34,14 +34,57 @@ lessonsServices.service('utilitiesService', function() {
     };
 });
 
+lessonsServices.service('inheritTagsService', [
+    'utilitiesService'
+    , function(
+        utilitiesService
+    ){
+    
+    // Function takes a curriculum and activity and inherits tags
+    this.getTagsFromActivity = function(curriculum, activity) {
+        if (!curriculum.tags) curriculum.tags = [];
+
+        _.each(activity.tags, function (tag, index, list) {
+            // only inherit language and technology tags
+            if (tag.category == "Language" | tag.category == "Technology") {
+                // do not add duplicates to list
+                if (!utilitiesService.containsObject(curriculum.tags, tag)) {
+                    curriculum.tags.push(tag);
+                }
+            }
+        });
+        return curriculum;
+    };
+
+   // Function takes a list of curricula and inherits tags from activities
+    this.getCurriculaTags = function(curricula) {
+        _.each(curricula, function (curriculum, index, list) {
+        curriculum.tags = []
+            _.each(curriculum.activities, function (activity, index, list) {
+                _.each(activity.tags, function (tag, index, list) {
+                    // only inherit language and technology tags
+                    if (tag.category == "Language" | tag.category == "Technology") {
+                        // do not add duplicates to list
+                        if (!utilitiesService.containsObject(curriculum.tags, tag)) {
+                            curriculum.tags.push(tag);
+                        }
+                    }
+                });
+            });
+        });
+    };
+}]);
+
 
 // Submit PATCH request to API adding a new activity to a curriculum
 lessonsServices.service('addActivityService', [
     'Curriculum'
     , 'utilitiesService'
+    , 'inheritTagsService'
     , function (
         Curriculum
         , utilitiesService
+        , inheritTagsService
     ){
     this.addActivity = function(curriculum, newActivity) {
         console.log("Checking if activity is already on curriculum.");
@@ -78,13 +121,8 @@ lessonsServices.service('addActivityService', [
         // Update curriculum tags
         console.log("Updating curriculum tags.");
 
-        _.each(curriculum.activities, function (activity, index, list) {
-            _.each(activity.tags, function (tag, index, list) {
-                if (utilitiesService.containsObject(curriculum.tags, tag) == false) {
-                    curriculum.tags.push(tag);
-                }
-            });
-        });
+        // Inherit tags from activities
+        curriculum = inheritTagsService.getTagsFromActivity(curriculum, newActivity);
 
         console.log("Returning updated curriculum:");
         // Return updated curriculum with new activity

@@ -18,6 +18,7 @@ lessonsControllers.controller('AppCtrl', ['$scope'
   , 'Activity'
   , 'addActivityService'
   , 'utilitiesService'
+  , 'inheritTagsService'
   , function ($scope
     , $modal
     , Curriculum
@@ -25,34 +26,11 @@ lessonsControllers.controller('AppCtrl', ['$scope'
     , Activity
     , addActivityService
     , utilitiesService
+    , inheritTagsService
   ){
-    // curriculum inherits tags from nested activities
-    var getCurriculumTags = function(curricula) {
-        // curriculum inherits tags from activities
-        for (var i = 0; i < curricula.length; i++) {
-            curricula[i].tags = [];
-            var curr = curricula[i];
-            var tagNames = []
-            for (var j = 0; j < curr.activities.length; j++) {
-                var activity = curr.activities[j];
-                for (var k = 0; k < activity.tags.length; k++) {
-                    var tag = activity.tags[k];
-                    // only inherit language and technology tags
-                    if (tag.category == "Language" | tag.category == "Technology") {
-                        // do not add duplicates to list
-                        // tag names should be unique (enforced by API)
-                        if (tagNames.indexOf(tag.name) == -1) {
-                            curricula[i].tags.push(tag);
-                            tagNames.push(tag.name);
-                        }
-                    }
-                }
-            }
-        } 
-    };
 
     // List of curricula for main app page
-    $scope.curricula = Curriculum.query(getCurriculumTags);
+    $scope.curricula = Curriculum.query(inheritTagsService.getCurriculaTags);
 
     // List of tags to add tag to lesson
     $scope.tags = Tag.query();
@@ -129,9 +107,6 @@ lessonsControllers.controller('AppCtrl', ['$scope'
                 // Add newly created activity to curriculum (without page refresh)  
                 console.log("Adding new activity to curriculum.");
                 curriculum = addActivityService.addActivity(curriculum, newActivity)
-
-                // Add to activity list (so it shows up in list of activities)
-                //$scope.activities.push(newActivity);
             }); 
         }
     };
