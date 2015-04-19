@@ -44,6 +44,11 @@ lessonsServices.service('addActivityService', [
         , utilitiesService
     ){
     this.addActivity = function(curriculum, newActivity) {
+        console.log("Checking if activity is already on curriculum.");
+        if (utilitiesService.containsObject(curriculum.activities, newActivity)) {
+            return curriculum;
+        }
+
         console.log("Creating list of activities to update curriculum:");
         // Create new list of activity IDs for curriculum
         var activityList = []
