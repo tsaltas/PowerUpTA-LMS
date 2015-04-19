@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from lessons.models import Curriculum, Tag, Material, Resource, Activity, ActivityRelationship, CurriculumActivityRelationship
+from lessons.models import Curriculum, Tag, Material, Resource, Activity, Step, ActivityRelationship, CurriculumActivityRelationship
 
 
 class ActivityRelationshipInline(admin.TabularInline):
@@ -60,10 +60,17 @@ class MaterialAdmin(admin.ModelAdmin):
 
 @admin.register(Resource)
 class ResourceAdmin(admin.ModelAdmin):
-    fields = (('name', 'url'),)
+    fields = (('text', 'step_activity'),())
     list_display = ('name', 'url',)
     list_editable = ('name', 'url',)
     list_display_links = None
+
+
+@admin.register(Step)
+class StepAdmin(admin.ModelAdmin):
+    fields = (('text', 'activity', 'number'), 'step_activity')
+    list_display = ('text', 'activity', 'number')
+    list_filter = ('activity',)
 
 
 @admin.register(ActivityRelationship)
