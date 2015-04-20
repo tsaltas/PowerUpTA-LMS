@@ -25,24 +25,7 @@ activityControllers.controller('NewActivityModalCtrl', ['$scope'
     $scope.tags = Tag.query();
 
     // list of possible categories for new activity form
-    $scope.categories = [
-        {
-            code: "OFF"
-            , type: "Offline"
-        }
-        , {
-            code: "ONL"
-          , type: "Online"  
-        }
-        , {
-            code: "DIS"
-            , type: "Discussion"
-        }
-        , {
-            code: "EXT"
-            , type: "Extension"
-        }
-    ];
+    $scope.categories = ["Offline", "Online", "Discussion", "Extension"];
         
     $scope.newActivity = new Activity();
 
@@ -111,24 +94,7 @@ activityControllers.controller('EditActivityModalCtrl', ['$scope'
     $scope.tags = Tag.query();
 
     // list of possible categories for new activity form
-    $scope.categories = [
-        {
-            code: "OFF"
-            , type: "Offline"
-        }
-        , {
-            code: "ONL"
-          , type: "Online"  
-        }
-        , {
-            code: "DIS"
-            , type: "Discussion"
-        }
-        , {
-            code: "EXT"
-            , type: "Extension"
-        }
-    ];
+    $scope.categories = ["Offline", "Online", "Discussion", "Extension"];
         
     $scope.activity = activity;
 

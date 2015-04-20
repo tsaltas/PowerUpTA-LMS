@@ -136,7 +136,7 @@ lessonsControllers.controller('AppCtrl', ['$scope'
             console.log("Successfully updated activity:");
             console.log(updatedActivity);
 
-            // TODO? Update activity wherever it appears on the page  
+            // TODO? Update activity wherever it appears on the page
         }); 
     };
 
