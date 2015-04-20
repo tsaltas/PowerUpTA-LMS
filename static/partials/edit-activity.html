@@ -19,7 +19,7 @@
 			<form id="edit-activity-form" class="form-inline">
 				<div class="form-group">
 					<label class="sr-only" for="activityName">Name</label>
-					<input type="text" class="form-control form-fixed-width" id="activityName" ng-model="activity.name" placeholder={{activity.name}} autofocus>
+					<input type="text" class="form-control form-fixed-width" id="activityName" ng-model="activity.name" placeholder="{{ activity.name || 'Name' }}" autofocus>
 				</div>
 				<br>
 				<br>
@@ -35,13 +35,13 @@
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="activityNotes">Teaching Notes</label>
-					<textarea class="form-control form-fixed-width" id="activityNotes" ng-model="activity.teaching_notes" placeholder={{activity.teaching_notes}}></textarea>
+					<textarea class="form-control form-fixed-width" id="activityNotes" ng-model="activity.teaching_notes" placeholder="{{ activity.teaching_notes || 'Teaching notes (optional)' }}"></textarea>
 				</div>
 				<br>
 				<br>
 				<div class="form-group">
 					<label class="sr-only" for="activityVideo">Video URL</label>
-					<input type="url" class="form-control form-fixed-width" id="activityVideo" ng-model="activity.video_url" placeholder={{activity.video_url}}}>
+					<input type="url" class="form-control form-fixed-width" id="activityVideo" ng-model="activity.video_url" placeholder="{{ activity.video_url || 'Video URL (optional)' }}">
 				</div>
 				<br>
 				<br>

@@ -79,7 +79,7 @@ class Activity(models.Model):
     tags = models.ManyToManyField(Tag, related_name='activities')
     # OPTIONAL
     description = models.TextField(blank=True)
-    category = models.CharField(max_length=15, choices=CATEGORIES, blank=True)
+    category = models.CharField(max_length=15, choices=CATEGORIES, blank=True, null=True)
     teaching_notes = models.TextField(blank=True)
     video_url = models.URLField(blank=True)  # Assuming link to YouTube
     image = models.ImageField(upload_to='activity_images', blank=True)

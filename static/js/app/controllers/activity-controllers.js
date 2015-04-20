@@ -113,6 +113,7 @@ activityControllers.controller('EditActivityModalCtrl', ['$scope'
 
         }, function(response) {
             activity = response;
+            $modalInstance.close(response);
         });
 
         // Return updated activity
