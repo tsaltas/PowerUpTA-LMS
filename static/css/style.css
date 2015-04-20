@@ -36,7 +36,8 @@ hr {
 }
 
 .row {
-	padding-top: 10px;
+	padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 /* Sections */
@@ -215,6 +216,11 @@ button {
 	margin: 0px;
 }
 
+.light-margin-vertical {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .first-element {
 	padding-top: 50px;
 }
@@ -224,7 +230,7 @@ button {
 }
 
 .icon-pad {
-	padding-top: 10px;
+	padding-top: 5px;
 }
 
 .img-thumbnail {
