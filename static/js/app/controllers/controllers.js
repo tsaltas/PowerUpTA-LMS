@@ -113,6 +113,32 @@ lessonsControllers.controller('AppCtrl', ['$scope'
             }); 
         }
     };
+    
+    // open modal window to edit activity
+    $scope.editActivity = function (activity, size) {
+        console.log("Inside edit activity function.");
+        
+        // Open modal window with edit activity form
+        console.log("Creating modal window to edit activity.");
+
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/edit-activity.html',
+            controller: 'EditActivityModalCtrl',
+            size: size,
+            resolve: {
+                activity: function () {
+                    return activity;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (updatedActivity) {
+            console.log("Successfully updated activity:");
+            console.log(updatedActivity);
+
+            // TODO? Update activity wherever it appears on the page  
+        }); 
+    };
 
     // open modal window to create new tag 
     $scope.newTag = function (curriculum, activity, addTag, size) {

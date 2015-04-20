@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+
+<body>
+	<div class="no-pad fixed">
+		<div class="modal-header">
+			<h3 class="modal-title">
+				Edit Activity
+				<button class="btn btn-warning pull-right" ng-click="cancel()">Cancel</button>
+			</h3>
+
+		</div>
+		<div class="modal-body">
+			<form id="edit-activity-form" class="form-inline">
+				<div class="form-group">
+					<label class="sr-only" for="activityName">Name</label>
+					<input type="text" class="form-control form-fixed-width" id="activityName" ng-model="activity.name" placeholder={{activity.name}} autofocus>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="activityTags">Tags</label>
+					Add Tags (Hold down "Control", or "Command" on a Mac, to select more than one.)
+					<select class="form-control form-fixed-width" id="activityTags" ng-model="activity.tag_IDs" ng-options="tag.id as tag.name for tag in tags" multiple>
+					</select>
+					<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag()"></i>
+					<span ng-show="newTagLabel">Add new tag</span>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="activityNotes">Teaching Notes</label>
+					<textarea class="form-control form-fixed-width" id="activityNotes" ng-model="activity.teaching_notes" placeholder={{activity.teaching_notes}}></textarea>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="activityVideo">Video URL</label>
+					<input type="url" class="form-control form-fixed-width" id="activityVideo" ng-model="activity.video_url" placeholder={{activity.video_url}}}>
+				</div>
+				<br>
+				<br>
+				<div class="form-group">
+					<label class="sr-only" for="activityCategory">Category</label>
+					<select class="form-control form-fixed-width" id="activityCategory" ng-model="activity.category" ng-options="cat.code as cat.type for cat in categories">
+						<option value=''>Category (Optional)</option>
+					</select>
+				</div>
+				<br>
+				<br>
+				<button class="btn btn-danger" ng-click="delete()">Delete from curriculum</button>
+				<button class="btn btn-primary pull-right" ng-click="save()">Update Activity</button>
+				<br>
+				<br>
+				<p class="error">{{errors}}</p>
+			</form>
+		</div>
+	</div>
+</body>
+
+</html>

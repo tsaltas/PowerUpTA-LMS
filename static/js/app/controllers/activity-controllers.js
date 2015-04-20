@@ -22,7 +22,6 @@ activityControllers.controller('NewActivityModalCtrl', ['$scope'
 
     console.log("Inside new activity modal window controller.");
     // list of tags for new activity form
-    $scope.tags = [];
     $scope.tags = Tag.query();
 
     // list of possible categories for new activity form
@@ -71,6 +70,96 @@ activityControllers.controller('NewActivityModalCtrl', ['$scope'
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
+    };
+
+    // open modal window to create new tag 
+    $scope.newTag = function (size) {
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/new-tag.html',
+            controller: 'NewTagModalCtrl',
+            size: size,
+            resolve: {
+                activityID: function () {
+                    return null;
+                }
+            }
+        });
+        
+        modalInstance.result.then(function (newTag) {
+            // Add to the drop-down selection menu
+            $scope.tags.push(newTag);
+        });
+    };
+}]);
+
+activityControllers.controller('EditActivityModalCtrl', ['$scope'
+    , '$modalInstance'
+    , '$modal'
+    , 'Activity'
+    , 'Tag'
+    , 'activity'
+    , function ($scope
+        , $modalInstance
+        , $modal
+        , Activity
+        , Tag
+        , activity
+    ) {
+
+    console.log("Inside edit activity modal window controller.");
+    // list of tags for new activity form
+    $scope.tags = Tag.query();
+
+    // list of possible categories for new activity form
+    $scope.categories = [
+        {
+            code: "OFF"
+            , type: "Offline"
+        }
+        , {
+            code: "ONL"
+          , type: "Online"  
+        }
+        , {
+            code: "DIS"
+            , type: "Discussion"
+        }
+        , {
+            code: "EXT"
+            , type: "Extension"
+        }
+    ];
+        
+    $scope.activity = activity;
+
+    $scope.save = function() {
+        // TODO: Update ordering within curriculum
+
+        // Make PATCH request to update activity
+        // Update activity object on front-end
+        console.log("Saving updated activity to database.");
+        Activity.update({ id:activity.id }, {
+            'name': activity.name
+            , 'tag_IDs': activity.tag_IDs
+            , 'teaching_notes': activity.teaching_notes
+            , 'video_url': activity.video_url
+            , 'category': activity.category
+
+        }, function(response) {
+            activity = response;
+        });
+
+        // Return updated activity
+        return activity;
+        // TODO: Handle errors (like when creating a new object)
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+
+    $scope.delete = function () {
+        // TODO
     };
 
     // open modal window to create new tag 

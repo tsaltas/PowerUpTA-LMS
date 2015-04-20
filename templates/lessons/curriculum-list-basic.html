@@ -88,7 +88,7 @@
 										<!-- Open modal window with activity steps -->
 										<a><i class="btn fa fa-plus fa-btn no-border no-pad" ng-mouseenter="stepLabel = true" ng-mouseleave="stepLabel = false" ng-click="activitySteps(activity.id, activity.steps, 'sm')"></i></a>
 										<!-- Open pre-populated modal window to edit activity -->
-										<i class="btn fa fa-edit fa-md no-border no-pad" ng-mouseenter="activityEditLabel = true" ng-mouseleave="activityEditLabel = false"></i> 
+										<i class="btn fa fa-edit fa-md no-border no-pad" ng-mouseenter="activityEditLabel = true" ng-mouseleave="activityEditLabel = false" ng-click="editActivity(activity)"></i> 
 										<!-- REMOVED: Modal window with related activities. Can open in new window or jump to appropriate section -->
 										<!-- <a><i class="fa fa-plus fa-btn" ng-mouseenter="relatedLabel = true" ng-mouseleave="relatedLabel = false" ng-click="relatedActivities()"></i></a> -->
 									</span>
@@ -99,7 +99,7 @@
 										<p ng-show="resourcesLabel" class="tip pull-right">Helpful hints</p>
 										<p ng-show="relatedLabel" class="tip pull-right">Related lessons</p>
 										<p ng-show="stepLabel" class="tip pull-right">View steps</p>
-										<p ng-show="activityEditLabel" class="tip pull-right">Edit activity</p>
+										<p ng-show="activityEditLabel" class="tip pull-right">Edit lesson</p>
 									</span>
 								</div>
 							</div>

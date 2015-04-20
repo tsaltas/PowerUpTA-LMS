@@ -134,7 +134,7 @@ button {
   width: 570px;
 }
 
-#new-activity-form .form-fixed-width {
+#new-activity-form, #edit-activity-form .form-fixed-width {
   width: 570px;
 }
 

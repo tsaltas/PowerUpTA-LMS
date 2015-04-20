@@ -68,10 +68,10 @@ class Activity(models.Model):
         # First element of tuple is the value stored in the DB
         # Second element of tuple is displayed by the default form widget or in a ModelChoiceField
         # Given an instance of an Activity object called "a", the display value can be accessed like this: a.get_category_display()
-        ('OFF', 'Offline'),
-        ('ONL', 'Online'),
-        ('DIS', 'Discussion'),
-        ('EXT', 'Extension'),
+        ('Offline', 'Offline'),
+        ('Online', 'Online'),
+        ('Discussion', 'Discussion'),
+        ('Extension', 'Extension'),
     )
 
     # REQUIRED
@@ -79,7 +79,7 @@ class Activity(models.Model):
     tags = models.ManyToManyField(Tag, related_name='activities')
     # OPTIONAL
     description = models.TextField(blank=True)
-    category = models.CharField(max_length=3, choices=CATEGORIES, blank=True)
+    category = models.CharField(max_length=15, choices=CATEGORIES, blank=True)
     teaching_notes = models.TextField(blank=True)
     video_url = models.URLField(blank=True)  # Assuming link to YouTube
     image = models.ImageField(upload_to='activity_images', blank=True)

@@ -108,7 +108,7 @@ class ActivityTests(APITestCase):
         activity3 = Activity.objects.create(
             name='TestActivity3'
             , description="This is the third test activity."
-            , category='OFF'
+            , category='Offline'
         )
         activity3.materials.add(material1)
 
@@ -131,6 +131,7 @@ class ActivityTests(APITestCase):
             , 'resources': [
                 ResourceSerializer(resource1).data
             ]
+            , 'steps': []
         }
         cls.activity2 = {
             'id': 2
@@ -148,6 +149,7 @@ class ActivityTests(APITestCase):
                 ResourceSerializer(resource1).data
                 , ResourceSerializer(resource2).data
             ]
+            , 'steps': []
         }
         cls.activity3 = {
             'id': 3
@@ -164,6 +166,7 @@ class ActivityTests(APITestCase):
                 MaterialSerializer(material1).data
             ]
             , 'resources': []
+            , 'steps': []
         }
 
     @classmethod
@@ -217,6 +220,9 @@ class ActivityTests(APITestCase):
         """
         Should be able to create a new activity object with valid data.
         """
+        # TODO: Made description optional but did not write tests
+        # TODO: Test "steps" relationships
+
         # 0 optional objects
         activity4 = {
             'name': 'Test4'
@@ -236,7 +242,7 @@ class ActivityTests(APITestCase):
             'name': 'Test5'
             , 'description': 'This is just a test activity.'
             , 'tag_IDs': [self.tag2.id]
-            , 'category': 'OFF'
+            , 'category': 'Offline'
             , 'teaching_notes': 'This is hard to teach.'
             , 'video_url': 'http://www.test5.com'
             , 'curriculum_rels': []
@@ -250,7 +256,7 @@ class ActivityTests(APITestCase):
             'name': 'Test6'
             , 'description': 'This is just a test activity.'
             , 'tag_IDs': [self.tag1.id]
-            , 'category': 'ONL'
+            , 'category': 'Online'
             , 'teaching_notes': 'This is easy to teach.'
             , 'video_url': ''
             , 'curriculum_rels': []
@@ -264,7 +270,7 @@ class ActivityTests(APITestCase):
             'name': 'Test7'
             , 'description': 'This is just a test activity.'
             , 'tag_IDs': [self.tag2.id]
-            , 'category': 'DIS'
+            , 'category': 'Discussion'
             , 'teaching_notes': 'Students should work at their own pace.'
             , 'video_url': ''
             , 'curriculum_rels': [
@@ -283,7 +289,7 @@ class ActivityTests(APITestCase):
             'name': 'Test8'
             , 'description': 'This is just a loaded test activity.'
             , 'tag_IDs': [self.tag1.id, self.tag2.id]
-            , 'category': 'EXT'
+            , 'category': 'Extension'
             , 'teaching_notes': ''
             , 'video_url': 'http://www.test8.com'
             , 'curriculum_rels': [
@@ -327,6 +333,7 @@ class ActivityTests(APITestCase):
         activity4['resources'] = []
         del(activity4['activity_rels'])
         activity4['get_relationships'] = []
+        activity4['steps'] = []
 
         activity5['id'] = 5
         activity5['image'] = None
@@ -343,6 +350,7 @@ class ActivityTests(APITestCase):
         activity5['resources'] = []
         del(activity5['activity_rels'])
         activity5['get_relationships'] = []
+        activity5['steps'] = []
 
         activity6['id'] = 6
         activity6['image'] = None
@@ -359,6 +367,7 @@ class ActivityTests(APITestCase):
         activity6['resources'] = [ResourceSerializer(self.resource1).data]
         del(activity6['activity_rels'])
         activity6['get_relationships'] = []
+        activity6['steps'] = []
 
         activity7['id'] = 7
         activity7['image'] = None
@@ -375,6 +384,7 @@ class ActivityTests(APITestCase):
         activity7['resources'] = []
         del(activity7['activity_rels'])
         activity7['get_relationships'] = []
+        activity7['steps'] = []
 
         self.assertEqual(response4.data, activity4)
         self.assertEqual(response5.data, activity5)
@@ -406,6 +416,7 @@ class ActivityTests(APITestCase):
         ]
         del(activity8['activity_rels'])
         activity8['get_relationships'] = []
+        activity8['steps'] = []
 
         self.assertEqual(response8.status_code, status.HTTP_201_CREATED)
 
@@ -494,6 +505,7 @@ class ActivityTests(APITestCase):
         del(activity4['resource_IDs'])
         activity4['resources'] = []
         del(activity4['activity_rels'])
+        activity4['steps'] = []
 
         activity5['id'] = response5.data['id']
         activity5['image'] = None
@@ -508,6 +520,7 @@ class ActivityTests(APITestCase):
         del(activity5['resource_IDs'])
         activity5['resources'] = []
         del(activity5['activity_rels'])
+        activity5['steps'] = []
 
         activity6['id'] = response6.data['id']
         activity6['image'] = None
@@ -522,6 +535,7 @@ class ActivityTests(APITestCase):
         del(activity6['resource_IDs'])
         activity6['resources'] = []
         del(activity6['activity_rels'])
+        activity6['steps'] = []
 
         # Should NOT be a symmetric activity relationship between Activity 4 and Activity 5
         # Activity 4 is an extension of Activity 5
@@ -559,23 +573,6 @@ class ActivityTests(APITestCase):
         response = self.client.post(self.url, activity)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'name': ['This field may not be blank.']})
-
-        # Description missing
-        activity = {
-            'name': 'TestActivity - No Description'
-            , 'description': ''
-            , 'tag_IDs': [self.tag1.id]
-            , 'category': ''
-            , 'teaching_notes': ''
-            , 'video_url': ''
-            , 'curriculum_rels': []
-            , 'activity_rels': []
-            , 'material_IDs': []
-            , 'resource_IDs': []
-        }
-        response = self.client.post(self.url, activity)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'description': ['This field may not be blank.']})
 
         # Tag missing
         activity = {
@@ -804,6 +801,7 @@ class ActivityTests(APITestCase):
             , 'resources': [
                 ResourceSerializer(self.resource1).data
             ]
+            , 'steps': []
         }
 
         # Update name
@@ -819,13 +817,13 @@ class ActivityTests(APITestCase):
         self.assertEqual(response.data, activity1)
 
         # Add category
-        response = self.client.patch(self.url + "1/", {'category': 'OFF'}, format='json')
+        response = self.client.patch(self.url + "1/", {'category': 'Offline'}, format='json')
         activity1['category'] = 'Offline'
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, activity1)
 
         # Update category
-        response = self.client.patch(self.url + "1/", {'category': 'ONL'}, format='json')
+        response = self.client.patch(self.url + "1/", {'category': 'Online'}, format='json')
         activity1['category'] = 'Online'
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, activity1)
@@ -905,13 +903,6 @@ class ActivityTests(APITestCase):
         response = self.client.patch(self.url + "1/", {'name': ''}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, {'name': ["This field may not be blank."]})
-        response = self.client.get(self.url + "1/")
-        self.assertEqual(response.data, self.activity1)
-
-        # Blank description
-        response = self.client.patch(self.url + "1/", {'description': ''}, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'description': ["This field may not be blank."]})
         response = self.client.get(self.url + "1/")
         self.assertEqual(response.data, self.activity1)
 
