@@ -26,7 +26,9 @@
 				<div class="form-group">
 					<label class="sr-only" for="activityTags">Tags</label>
 					Add Tags (Hold down "Control", or "Command" on a Mac, to select more than one.)
-					<select class="form-control form-fixed-width" id="activityTags" ng-model="activity.tag_IDs" ng-options="tag.id as tag.name for tag in tags" multiple>
+					<select class="form-control form-fixed-width" id="activityTags" ng-model="activity.tag_IDs" multiple>
+						<option ng-repeat="tag in tags" value="{{tag.id}}" label="{{tag.name}}" ng-if="activity.tags.indexOf(tag) != -1" selected>{{tag.name}}</option>
+						<option ng-repeat="tag in tags" value="{{tag.id}}" label="{{tag.name}}" ng-if="activity.tags.indexOf(tag) == -1">{{tag.name}}</option>
 					</select>
 					<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag()"></i>
 					<span ng-show="newTagLabel">Add new tag</span>
