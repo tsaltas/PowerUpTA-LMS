@@ -17,7 +17,7 @@
     <div class="modal-body">
       <ul>
         <div ng-repeat="resource in resources">
-          <li><a href={{resource.url}} target="_blank">{{resource.name}}</a></li>
+          <li><a ng-cloak href={{resource.url}} target="_blank">{{resource.name}}</a></li>
         </div>
       </ul>
       <div class="row no-pad">

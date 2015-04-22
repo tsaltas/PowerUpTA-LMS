@@ -17,7 +17,7 @@
     <div class="modal-body">
       <ul>
         <div ng-repeat="step in steps | orderBy:'number'">
-          <li>{{step.number}}) {{step.text}} (Activity number {{step.step_activity}})</li>
+          <li ng-cloak>{{step.number}}) {{step.text}} (Activity number {{step.step_activity}})</li>
         </div>
       </ul>
       <div class="row no-pad">

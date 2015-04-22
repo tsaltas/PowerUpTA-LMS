@@ -25,7 +25,7 @@
 						<i class="fa fa-globe fa-lg"></i>
 					</div>
 					<div class="col-sm-3">
-						<h3 class="no-margin">{{curriculum.name}}</h3>
+						<h3 ng-cloak class="no-margin">{{curriculum.name}}</h3>
 					</div>
 					<div class="col-sm-8">
 						<span class="pull-right icon-pad">
@@ -38,8 +38,8 @@
 							<p ng-show="currEditLabel" class="tip pull-right">Edit Curriculum</p>
 							<p ng-show="currPDFLabel" class="tip pull-right">Export to PDF</p>
 						</span>
-						<h4>Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h4>
-						<p>{{curriculum.description}}</p>
+						<h4 ng-cloak>Grades {{curriculum.lower_grade}}-{{curriculum.upper_grade}}, {{curriculum.tagline}}</h4>
+						<p ng-cloak>{{curriculum.description}}</p>
 						<span ng-show="notEmpty({{curriculum.tags}})" ng-repeat="tag in curriculum.tags">
 							<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
 						</span>
@@ -58,10 +58,10 @@
 								<span ng-switch-when="Discussion">
 									<i class="fa fa-users fa-fw fa-md icon-pad"></i>
 								</span>
-								<span class="icon-label">{{activity.category}}</span>
+								<span ng-cloak class="icon-label">{{activity.category}}</span>
 							</div>
 							<div class="col-xs-6">
-								<h4>
+								<h4 ng-cloak>
 									{{activity.name}}
 									<!-- Show link to video -->
 									<span ng-show="notEmpty('{{activity.video_url}}')">
@@ -69,7 +69,7 @@
 										<span class="tip" ng-show="videoLabel">View video</span>
 									</span>
 								</h4>
-								<p class="notes">{{activity.teaching_notes}}<p>
+								<p ng-cloak class="notes">{{activity.teaching_notes}}<p>
 									<span ng-show="notEmpty({{activity.tags}})" ng-repeat="tag in activity.tags">
 										<img ng-src="{{tag.logo}}" alt="tag.name" class="img-thumbnail img-responsive">
 									</span>
@@ -77,7 +77,7 @@
 										<option value=''>Create new tag</option>
 									</select>
 									<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-tag" ng-mouseenter="newTagLabel = true" ng-mouseleave="newTagLabel = false" ng-click="newTag(curriculum, activity, addTag)"></i>
-									<span ng-show="newTagLabel" class="tip">Add {{addTag.name || "new tag"}}</span>
+									<span ng-cloak ng-show="newTagLabel" class="tip">Add {{addTag.name || "new tag"}}</span>
 								</div>
 								<div class="col-xs-2">
 									<span class="pull-right icon-pad">
@@ -111,7 +111,7 @@
 									<option value=''>Create new activity</option>
 								</select>
 								<i class="add-object btn fa fa-plus-circle fa-btn no-pad" id="new-activity" ng-mouseenter="newActivityLabel = true" ng-mouseleave="newActivityLabel = false" ng-click="newActivity(curriculum, addActivity)"></i>
-								<span ng-show="newActivityLabel" class="tip">Add {{addActivity.name || "new activity"}}</span>
+								<span ng-cloak ng-show="newActivityLabel" class="tip">Add {{addActivity.name || "new activity"}}</span>
 							</div>
 						</div>
 					</accordion-group>

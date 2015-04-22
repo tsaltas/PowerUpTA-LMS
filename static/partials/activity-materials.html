@@ -17,7 +17,7 @@
     <div class="modal-body">
       <ul>
         <div ng-repeat="material in materials">
-          <li><a href={{material.url}} target="_blank">{{material.name}}</a></li>
+          <li><a ng-cloak href={{material.url}} target="_blank">{{material.name}}</a></li>
         </div>
       </ul>
       <div class="row no-pad">

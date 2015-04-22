@@ -410,3 +410,9 @@ h4 {
         display:block !important;
     } 
 }
+
+/* Hide angular directives in HTML template until fully loaded */
+
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
