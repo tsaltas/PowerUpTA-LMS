@@ -18,7 +18,7 @@
 
 	<div class="container curr-list">
 		<accordion id="curr-accordion" close-others="oneAtATime">
-			<div ng-repeat="curriculum in curricula | filter:query">
+			<div ng-cloak ng-repeat="curriculum in curricula | filter:query">
 
 				<div class="row">
 					<div class="col-xs-1 col-center icon-pad">
@@ -45,7 +45,7 @@
 						</span>
 					</div>
 					<accordion-group id="activity-group" heading="View lessons">
-					<div ng-repeat="activity in curriculum.activities">
+					<div ng-cloak ng-repeat="activity in curriculum.activities">
 						<div class="row">
 							<div class="col-xs-offset-2 col-xs-2" ng-switch on="activity.category">
 								<!-- Show appropriate logo for curriculum type -->
